@@ -1,0 +1,47 @@
+{
+  "@@locale": "ne",
+
+  "appName": "Flutter Clean Starter",
+
+  "hello": "Hello",
+  "welcomeBack": "Welcome back!",
+  "enterToYourAccount": "Enter to your account",
+  "logIn": "Log in",
+  "logOut": "Log out",
+  "login": "Login",
+  "loginSuccessful": "Login successful",
+  "loggedOutSuccessfully": "Logged out successfully",
+
+  "customerId": "Customer Id",
+  "customerIdHint": "customer-1@example",
+  "phoneNumber": "Phone Number",
+  "phoneNumberHint": "98XXXXXXXX",
+  "pleaseEnterCustomerId": "Please enter customer id",
+  "pleaseEnterValidCustomerId": "Please enter valid customer id",
+  "pleaseEnterPhoneNumber": "Please enter phone number",
+  "pleaseEnterValidPhoneNumber": "Please enter valid phone number",
+
+  "networkRestored": "Network restored. Refreshing data...",
+  "somethingWentWrong": "Something went wrong",
+
+  "errNoInternet": "Please check your internet connection and try again.",
+  "errTimeout": "The server is taking longer than usual. Please try again.",
+  "errServer": "Something went wrong on our end. Please try again in a moment.",
+  "errAuth": "Sign-in failed. Please check your details and try again.",
+  "errSessionExpired": "Your session has expired. Please log in again.",
+  "errCache": "Couldn't load saved data. Try refreshing.",
+  "errUnexpected": "Something unexpected happened. Please try again.",
+
+  "retry": "Retry",
+  "cancel": "Cancel",
+  "goToHome": "Go to Home",
+  "goToLogin": "Go to Login",
+  "errorPageAppBar": "Error",
+  "pageNotFoundAppBar": "Page Not Found",
+  "notFoundDescription": "The page you are looking for does not exist.",
+  "unauthorizedAppBar": "Unauthorized",
+  "accessDenied": "Access Denied",
+  "unauthorizedMessage": "You are not authorized to access this page. Please log in again.",
+
+  "a11yBack": "Back"
+}
