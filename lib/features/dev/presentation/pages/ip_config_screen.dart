@@ -71,7 +71,7 @@ class _IpConfigScreenState extends State<IpConfigScreen> {
     sl<Dio>().options.baseUrl = ApiConstants.baseUrl;
 
     final isLoggedIn = SecureStorageHelper().isUserLoggedIn();
-    context.goNamed(isLoggedIn ? MainRoutes.demoName : MainRoutes.authName);
+    context.goNamed(isLoggedIn ? MainRoutes.taskBoardName : MainRoutes.authName);
   }
 
   @override

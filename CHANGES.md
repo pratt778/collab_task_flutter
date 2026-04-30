@@ -12,9 +12,11 @@ Group entries under one date heading per day. Newest date at the top.
 ---
 
 ## 2026-05-01
-- **Project Initiation**: Started the transition from `flutter_clean_starter` to `CollabTask`.
-- **Validation**: Verified the starter codebase, dependencies, and architecture.
-- **Planning**: Reviewed and aligned the `build_plan.md` and `collab_task.md` with the existing chassis.
+- **Project Renaming**: Renamed package from `flutter_clean_starter` to `collab_task` globally. Updated Android and iOS display names and package identifiers.
+- **Phase 1 (Foundation)**: Registered `WebSocketService` in DI, added task/ws endpoints to `ApiConstants`, and created `MockDataGenerator`.
+- **Phase 2 (Core Layer)**: Implemented Task entities, models, datasources, and repositories. Added use cases for CRUD operations.
+- **Phase 3 (Task UI)**: Created `TaskBoardScreen` with Kanban layout, `TaskCard` widget, and `TaskDetailScreen` placeholder. Updated routing and splash screen navigation.
+- **Codebase Cleanup**: Removed the `demo` feature and its tests. Fixed all lints and static analysis errors.
 
 ## 2026-04-27
 - **Initial scaffold** extracted from `irrigation_flutter`. See [`STARTER.md`](STARTER.md) for day-1 setup.

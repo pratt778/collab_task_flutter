@@ -5,8 +5,9 @@ import 'package:collab_task/core/app/pages/splash_screen.dart';
 import 'package:collab_task/core/helper/page_transition_helper.dart';
 import 'package:collab_task/core/helper/secure_storage_helper.dart';
 import 'package:collab_task/features/auth/presentation/pages/login_screen.dart';
-import 'package:collab_task/features/demo/presentation/pages/demo_screen.dart';
 import 'package:collab_task/features/dev/presentation/pages/ip_config_screen.dart';
+import 'package:collab_task/features/tasks/presentation/pages/task_board_screen.dart';
+import 'package:collab_task/features/tasks/presentation/pages/task_detail_screen.dart';
 
 class MainRoutes {
   MainRoutes._();
@@ -17,8 +18,10 @@ class MainRoutes {
   static const String ipConfigPath = '/ipConfig';
   static const String authName = 'auth';
   static const String authPath = '/auth';
-  static const String demoName = 'demo';
-  static const String demoPath = '/demo';
+  static const String taskBoardName = 'taskBoard';
+  static const String taskBoardPath = '/tasks';
+  static const String taskDetailName = 'taskDetail';
+  static const String taskDetailPath = '/tasks/:id';
 
   static final GoRouter router = GoRouter(
     navigatorKey: navigatorKey,
@@ -66,10 +69,20 @@ class MainRoutes {
       GoRoute(
         pageBuilder: (context, state) => slideTransitionPage<void>(
           state: state,
-          child: const DemoScreen(),
+          child: const TaskBoardScreen(),
         ),
-        name: demoName,
-        path: demoPath,
+        name: taskBoardName,
+        path: taskBoardPath,
+      ),
+      GoRoute(
+        pageBuilder: (context, state) => slideTransitionPage<void>(
+          state: state,
+          child: TaskDetailScreen(
+            taskId: state.pathParameters['id']!,
+          ),
+        ),
+        name: taskDetailName,
+        path: taskDetailPath,
       ),
     ],
   );

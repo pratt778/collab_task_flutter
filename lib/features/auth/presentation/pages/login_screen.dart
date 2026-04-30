@@ -94,7 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
               context.showSnackbar(
                 AppLocalizations.of(context).loginSuccessful,
               );
-              context.goNamed(MainRoutes.demoName);
+              context.goNamed(MainRoutes.taskBoardName);
             },
           );
         },

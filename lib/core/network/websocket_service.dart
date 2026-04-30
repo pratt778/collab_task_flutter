@@ -42,7 +42,7 @@ class WebSocketService {
       final wsUrl = baseUrl
           .replaceFirst('https://', 'wss://')
           .replaceFirst('http://', 'ws://');
-      final url = '$wsUrl?token=$token';
+      final url = '$wsUrl/${ApiConstants.ws}?token=$token';
 
       debugPrint('[WS] Connecting to $url');
       _webSocket = await WebSocket.connect(

@@ -32,7 +32,7 @@ class _SplashScreenState extends State<SplashScreen> {
     }
 
     final isLoggedIn = SecureStorageHelper().isUserLoggedIn();
-    context.goNamed(isLoggedIn ? MainRoutes.demoName : MainRoutes.authName);
+    context.goNamed(isLoggedIn ? MainRoutes.taskBoardName : MainRoutes.authName);
   }
 
   @override

@@ -105,7 +105,7 @@ All endpoints return JSON. Error responses use Failure types from `lib/core/erro
   "id": "task_1",
   "title": "Design login flow",
   "description": "Finalize wireframes and color scheme",
-  "status": "todo",  // "todo" | "in_progress" | "done"
+  "status": "todo",  // "todo" | "inProgress" | "done"
   "assignees": ["user_1", "user_2"],
   "dueDate": "2026-05-15T00:00:00Z",
   "createdAt": "2026-04-30T10:00:00Z",
@@ -143,7 +143,7 @@ All endpoints return JSON. Error responses use Failure types from `lib/core/erro
 
 {
   "type": "task_updated",
-  "data": { "taskId": "task_1", "changes": { "status": "in_progress" } }
+  "data": { "taskId": "task_1", "changes": { "status": "inProgress" } }
 }
 
 {
@@ -238,7 +238,7 @@ Generate 10–20 sample tasks for UI testing:
 ```dart
 List<TaskModel> generateMockTasks() => [
   TaskModel(id: 'task_1', title: 'Design login', status: 'todo', ...),
-  TaskModel(id: 'task_2', title: 'Set up database', status: 'in_progress', ...),
+  TaskModel(id: 'task_2', title: 'Set up database', status: 'inProgress', ...),
   ...
 ];
 ```

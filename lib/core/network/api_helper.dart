@@ -183,6 +183,40 @@ class ApiHelper {
     return response;
   }
 
+  Future<Response<T>> patch<T>({
+    required String path,
+    required dynamic body,
+    Map<String, dynamic> queryParams = const {},
+    String? authHeader,
+    String? acceptHeader,
+    bool isMultipart = false,
+    Map<String, dynamic>? extraHeaders,
+    Options? options,
+    String? requestKey,
+  }) async {
+    final key =
+        requestKey ?? buildRequestKey('PATCH', path, queryParams: queryParams);
+    final cancelToken = _createCancelToken(key);
+
+    final headers = await _buildHeaders(
+      authHeader: authHeader,
+      acceptHeader: acceptHeader,
+      isMultipart: isMultipart,
+      extraHeaders: extraHeaders,
+    );
+
+    final response = await dio.patch<T>(
+      path,
+      data: body,
+      queryParameters: queryParams,
+      cancelToken: cancelToken,
+      options: (options ?? Options()).copyWith(headers: headers),
+    );
+
+    _validateResponse(response);
+    return response;
+  }
+
   Future<Response<T>> put<T>({
     required String path,
     required dynamic body,

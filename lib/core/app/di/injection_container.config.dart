@@ -41,6 +41,26 @@ import 'package:collab_task/features/locale/presentation/cubit/locale_cubit.dart
     as _i881;
 import 'package:collab_task/features/shared/cubits/network_cubits.dart'
     as _i889;
+import 'package:collab_task/features/tasks/data/datasources/task_datasource.dart'
+    as _i423;
+import 'package:collab_task/features/tasks/data/repositories/task_repository_impl.dart'
+    as _i4;
+import 'package:collab_task/features/tasks/domain/repositories/task_repository.dart'
+    as _i123;
+import 'package:collab_task/features/tasks/domain/usecases/create_task_usecase.dart'
+    as _i647;
+import 'package:collab_task/features/tasks/domain/usecases/delete_task_usecase.dart'
+    as _i532;
+import 'package:collab_task/features/tasks/domain/usecases/get_task_detail_usecase.dart'
+    as _i121;
+import 'package:collab_task/features/tasks/domain/usecases/get_tasks_usecase.dart'
+    as _i130;
+import 'package:collab_task/features/tasks/domain/usecases/update_task_usecase.dart'
+    as _i522;
+import 'package:collab_task/features/tasks/presentation/cubit/task_detail_cubit.dart'
+    as _i223;
+import 'package:collab_task/features/tasks/presentation/cubit/task_list_cubit.dart'
+    as _i885;
 import 'package:collab_task/features/theme/presentation/cubit/theme_cubit.dart'
     as _i544;
 import 'package:dio/dio.dart' as _i361;
@@ -77,6 +97,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i29.ApiHelper>(
       () => registerModule.apiHelper(gh<_i361.Dio>()),
     );
+    gh.lazySingleton<_i423.TaskDatasource>(
+      () => _i423.TaskDatasourceImpl(gh<_i29.ApiHelper>()),
+    );
     gh.lazySingleton<_i313.DemoRemoteDatasource>(
       () => _i313.DemoRemoteDatasourceImpl(apiHelper: gh<_i29.ApiHelper>()),
     );
@@ -88,11 +111,42 @@ extension GetItInjectableX on _i174.GetIt {
         remoteDatasource: gh<_i867.AuthRemoteDatasource>(),
       ),
     );
+    gh.lazySingleton<_i123.TaskRepository>(
+      () => _i4.TaskRepositoryImpl(gh<_i423.TaskDatasource>()),
+    );
     gh.lazySingleton<_i55.LoginUseCase>(
       () => _i55.LoginUseCase(gh<_i835.AuthRepository>()),
     );
     gh.lazySingleton<_i330.LogoutUseCase>(
       () => _i330.LogoutUseCase(gh<_i835.AuthRepository>()),
+    );
+    gh.lazySingleton<_i647.CreateTaskUseCase>(
+      () => _i647.CreateTaskUseCase(gh<_i123.TaskRepository>()),
+    );
+    gh.lazySingleton<_i532.DeleteTaskUseCase>(
+      () => _i532.DeleteTaskUseCase(gh<_i123.TaskRepository>()),
+    );
+    gh.lazySingleton<_i121.GetTaskDetailUseCase>(
+      () => _i121.GetTaskDetailUseCase(gh<_i123.TaskRepository>()),
+    );
+    gh.lazySingleton<_i130.GetTasksUseCase>(
+      () => _i130.GetTasksUseCase(gh<_i123.TaskRepository>()),
+    );
+    gh.lazySingleton<_i522.UpdateTaskUseCase>(
+      () => _i522.UpdateTaskUseCase(gh<_i123.TaskRepository>()),
+    );
+    gh.factory<_i885.TaskListCubit>(
+      () => _i885.TaskListCubit(
+        gh<_i130.GetTasksUseCase>(),
+        gh<_i196.WebSocketService>(),
+      ),
+    );
+    gh.factory<_i223.TaskDetailCubit>(
+      () => _i223.TaskDetailCubit(
+        gh<_i121.GetTaskDetailUseCase>(),
+        gh<_i522.UpdateTaskUseCase>(),
+        gh<_i532.DeleteTaskUseCase>(),
+      ),
     );
     gh.lazySingleton<_i133.DemoRepository>(
       () => _i691.DemoRepositoryImpl(

@@ -151,7 +151,7 @@ class FcmNotificationService {
   /// Handle tap on a local notification (foreground notifications via flutter_local_notifications)
   void _onLocalNotificationTap(NotificationResponse details) {
     log('Local notification tapped: ${details.payload}');
-    MainRoutes.router.goNamed(MainRoutes.demoName);
+    MainRoutes.router.goNamed(MainRoutes.taskBoardName);
   }
 
   /// Handle navigation when user taps a FCM notification (background/terminated).
@@ -161,7 +161,7 @@ class FcmNotificationService {
   /// `message.data['type']` to land on the right screen for each notification kind.
   void _handleNotificationTap(RemoteMessage message) {
     debugPrint('Notification data: ${message.data}');
-    MainRoutes.router.goNamed(MainRoutes.demoName);
+    MainRoutes.router.goNamed(MainRoutes.taskBoardName);
   }
 
   // ── Topic Subscription ──
