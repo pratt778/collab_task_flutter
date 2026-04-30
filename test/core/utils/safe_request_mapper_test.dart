@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_clean_starter/core/error/exceptions.dart';
-import 'package:flutter_clean_starter/core/error/failures.dart';
-import 'package:flutter_clean_starter/core/utils/safe_request_mapper.dart';
+import 'package:collab_task/core/error/exceptions.dart';
+import 'package:collab_task/core/error/failures.dart';
+import 'package:collab_task/core/utils/safe_request_mapper.dart';
 
 void main() {
   final requestOptions = RequestOptions(path: '/test');

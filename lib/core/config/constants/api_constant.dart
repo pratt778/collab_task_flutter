@@ -21,4 +21,13 @@ class ApiConstants {
 
   // Demo (jsonplaceholder placeholder list)
   static const String demos = 'posts';
+
+  // ── Tasks ────────────────────────────────────────────────────────────
+  static const String tasks = 'tasks';
+  static const String taskDetail = 'tasks/:id';
+  static const String taskChecklist = 'tasks/:id/checklist';
+  static const String taskChecklistItem = 'tasks/:id/checklist/:checkId';
+
+  // ── WebSockets ───────────────────────────────────────────────────────
+  static const String ws = 'ws';
 }

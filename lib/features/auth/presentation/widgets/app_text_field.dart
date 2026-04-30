@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_clean_starter/core/config/constants/app_size_constant.dart';
-import 'package:flutter_clean_starter/core/config/constants/color_constant.dart';
-import 'package:flutter_clean_starter/core/config/constants/typography_constant.dart';
-import 'package:flutter_clean_starter/core/config/theme/app_colors_extension.dart';
+import 'package:collab_task/core/config/constants/app_size_constant.dart';
+import 'package:collab_task/core/config/constants/color_constant.dart';
+import 'package:collab_task/core/config/constants/typography_constant.dart';
+import 'package:collab_task/core/config/theme/app_colors_extension.dart';
 
 class AppTextField extends StatelessWidget {
   final String label;

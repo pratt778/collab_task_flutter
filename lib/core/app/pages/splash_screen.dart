@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:flutter_clean_starter/core/app/router/app_router.dart';
-import 'package:flutter_clean_starter/core/config/constants/app_constant.dart';
-import 'package:flutter_clean_starter/core/config/constants/color_constant.dart';
-import 'package:flutter_clean_starter/core/config/constants/typography_constant.dart';
-import 'package:flutter_clean_starter/core/helper/secure_storage_helper.dart';
-import 'package:flutter_clean_starter/l10n/gen/app_localizations.dart';
+import 'package:collab_task/core/app/router/app_router.dart';
+import 'package:collab_task/core/config/constants/app_constant.dart';
+import 'package:collab_task/core/config/constants/color_constant.dart';
+import 'package:collab_task/core/config/constants/typography_constant.dart';
+import 'package:collab_task/core/helper/secure_storage_helper.dart';
+import 'package:collab_task/l10n/gen/app_localizations.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});

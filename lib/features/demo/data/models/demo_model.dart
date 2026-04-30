@@ -1,4 +1,4 @@
-import 'package:flutter_clean_starter/features/demo/domain/entities/demo_entity.dart';
+import 'package:collab_task/features/demo/domain/entities/demo_entity.dart';
 
 class DemoModel {
   final int id;

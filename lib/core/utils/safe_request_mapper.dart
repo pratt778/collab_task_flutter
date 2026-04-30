@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_clean_starter/core/error/exceptions.dart';
-import 'package:flutter_clean_starter/core/error/failures.dart';
+import 'package:collab_task/core/error/exceptions.dart';
+import 'package:collab_task/core/error/failures.dart';
 
 class SafeRequest {
   static Future<T> call<T>(Future<T> Function() request) async {

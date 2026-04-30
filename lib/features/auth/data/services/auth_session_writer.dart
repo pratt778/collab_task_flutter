@@ -1,19 +1,37 @@
-import 'package:flutter_clean_starter/core/helper/secure_storage_helper.dart';
-import 'package:flutter_clean_starter/core/services/fcm_notification_service.dart';
-import 'package:flutter_clean_starter/features/auth/domain/entities/login_entity.dart';
+import 'package:injectable/injectable.dart';
+import 'package:collab_task/core/helper/secure_storage_helper.dart';
+import 'package:collab_task/features/auth/domain/entities/login_entity.dart';
 
+/// Owns the post-login persistence and clear-session policy. Inject this into
+/// `AuthCubit` instead of letting the cubit touch storage directly — keeps
+/// the cubit testable without mocking `SecureStorageHelper` calls.
+///
+/// Add per-project side effects (FCM topic subscribe, analytics user-id, etc.)
+/// here as you wire them. Example:
+///
+/// ```dart
+/// AuthSessionWriter({
+///   required this.secureStorage,
+///   required this.fcm,            // add this field
+/// });
+///
+/// Future<void> persistLogin(...) async {
+///   await fcm.subscribeToTopics(user.id.toString());
+///   secureStorage.saveUserCode(...);
+///   ...
+/// }
+/// ```
+@lazySingleton
 class AuthSessionWriter {
-  AuthSessionWriter({required this.secureStorage, required this.fcm});
+  AuthSessionWriter({required this.secureStorage});
 
   final SecureStorageHelper secureStorage;
-  final FcmNotificationService fcm;
 
   Future<void> persistLogin({
     required LoginResponseEntity user,
     required String phoneNumber,
     required String accountInfo,
   }) async {
-    fcm.subscribeToTopics(user.id.toString());
     secureStorage.saveUserCode(user.id.toString());
     secureStorage.saveUserName(user.nameEn);
     secureStorage.saveToken(user.token);
@@ -23,6 +41,5 @@ class AuthSessionWriter {
 
   void clearSession() {
     secureStorage.logOut();
-    fcm.unsubscribeFromTopics('1');
   }
 }

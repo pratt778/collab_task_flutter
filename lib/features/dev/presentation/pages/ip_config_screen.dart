@@ -2,16 +2,16 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:flutter_clean_starter/core/app/di/injection_container.dart';
-import 'package:flutter_clean_starter/core/app/router/app_router.dart';
-import 'package:flutter_clean_starter/core/config/constants/api_constant.dart';
-import 'package:flutter_clean_starter/core/config/constants/app_size_constant.dart';
-import 'package:flutter_clean_starter/core/config/constants/color_constant.dart';
-import 'package:flutter_clean_starter/core/config/constants/typography_constant.dart';
-import 'package:flutter_clean_starter/core/config/theme/app_colors_extension.dart';
-import 'package:flutter_clean_starter/core/helper/secure_storage_helper.dart';
-import 'package:flutter_clean_starter/features/auth/presentation/widgets/app_primary_button.dart';
-import 'package:flutter_clean_starter/features/shared/widget/custom_appbar.dart';
+import 'package:collab_task/core/app/di/injection_container.dart';
+import 'package:collab_task/core/app/router/app_router.dart';
+import 'package:collab_task/core/config/constants/api_constant.dart';
+import 'package:collab_task/core/config/constants/app_size_constant.dart';
+import 'package:collab_task/core/config/constants/color_constant.dart';
+import 'package:collab_task/core/config/constants/typography_constant.dart';
+import 'package:collab_task/core/config/theme/app_colors_extension.dart';
+import 'package:collab_task/core/helper/secure_storage_helper.dart';
+import 'package:collab_task/features/auth/presentation/widgets/app_primary_button.dart';
+import 'package:collab_task/features/shared/widget/custom_appbar.dart';
 
 enum _IpPreset { dev, local, custom }
 

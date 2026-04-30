@@ -1,8 +1,9 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_clean_starter/core/config/constants/api_constant.dart';
-import 'package:flutter_clean_starter/core/network/api_helper.dart';
-import 'package:flutter_clean_starter/core/utils/safe_request_mapper.dart';
-import 'package:flutter_clean_starter/features/auth/data/models/login_response_model.dart';
+import 'package:injectable/injectable.dart';
+import 'package:collab_task/core/config/constants/api_constant.dart';
+import 'package:collab_task/core/network/api_helper.dart';
+import 'package:collab_task/core/utils/safe_request_mapper.dart';
+import 'package:collab_task/features/auth/data/models/login_response_model.dart';
 
 abstract class AuthRemoteDatasource {
   Future<LoginResponseModel> login({
@@ -13,6 +14,7 @@ abstract class AuthRemoteDatasource {
   Future<void> logout();
 }
 
+@LazySingleton(as: AuthRemoteDatasource)
 class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
   final ApiHelper apiHelper;
   AuthRemoteDatasourceImpl({required this.apiHelper});

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:flutter_clean_starter/core/config/constants/api_constant.dart';
+import 'package:injectable/injectable.dart';
+import 'package:collab_task/core/config/constants/api_constant.dart';
 
+@lazySingleton
 class SecureStorageHelper {
   static final SecureStorageHelper _instance = SecureStorageHelper._internal();
 

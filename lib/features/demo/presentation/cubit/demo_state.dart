@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:flutter_clean_starter/core/error/failures.dart';
-import 'package:flutter_clean_starter/features/demo/domain/entities/demo_entity.dart';
+import 'package:collab_task/core/error/failures.dart';
+import 'package:collab_task/features/demo/domain/entities/demo_entity.dart';
 
 part 'demo_state.freezed.dart';
 

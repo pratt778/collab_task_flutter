@@ -1,7 +1,7 @@
 // features/auth/presentation/cubit/auth_state.dart
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:flutter_clean_starter/core/error/failures.dart';
-import 'package:flutter_clean_starter/features/auth/domain/entities/login_entity.dart';
+import 'package:collab_task/core/error/failures.dart';
+import 'package:collab_task/features/auth/domain/entities/login_entity.dart';
 
 part 'auth_state.freezed.dart';
 

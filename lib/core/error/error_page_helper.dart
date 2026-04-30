@@ -1,8 +1,8 @@
 import 'package:flutter/widgets.dart';
-import 'package:flutter_clean_starter/core/app/pages/app_error_page.dart';
-import 'package:flutter_clean_starter/core/app/pages/not_found_page.dart';
-import 'package:flutter_clean_starter/core/error/failure_messages.dart';
-import 'package:flutter_clean_starter/core/error/failures.dart';
+import 'package:collab_task/core/app/pages/app_error_page.dart';
+import 'package:collab_task/core/app/pages/not_found_page.dart';
+import 'package:collab_task/core/error/failure_messages.dart';
+import 'package:collab_task/core/error/failures.dart';
 
 /// True when [failure] should swap the whole scaffold for a full-screen page
 /// (no internet OR backend says 404). Anything else stays inline.

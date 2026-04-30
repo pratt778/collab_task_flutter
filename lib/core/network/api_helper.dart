@@ -6,9 +6,9 @@ import 'dart:io';
 import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_clean_starter/core/config/constants/app_constant.dart';
-import 'package:flutter_clean_starter/core/error/exceptions.dart';
-import 'package:flutter_clean_starter/core/helper/secure_storage_helper.dart';
+import 'package:collab_task/core/config/constants/app_constant.dart';
+import 'package:collab_task/core/error/exceptions.dart';
+import 'package:collab_task/core/helper/secure_storage_helper.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 class ApiHelper {

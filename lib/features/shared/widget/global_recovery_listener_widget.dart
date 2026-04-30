@@ -2,10 +2,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_clean_starter/core/app/app.dart';
-import 'package:flutter_clean_starter/core/extension/snackbar_extension.dart';
-import 'package:flutter_clean_starter/features/shared/cubits/network_cubits.dart';
-import 'package:flutter_clean_starter/l10n/gen/app_localizations.dart';
+import 'package:collab_task/core/app/app.dart';
+import 'package:collab_task/core/extension/snackbar_extension.dart';
+import 'package:collab_task/features/shared/cubits/network_cubits.dart';
+import 'package:collab_task/l10n/gen/app_localizations.dart';
 
 class GlobalNetworkRecoveryListener extends StatefulWidget {
   final Widget child;

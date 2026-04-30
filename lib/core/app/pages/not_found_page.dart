@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:flutter_clean_starter/core/app/router/app_router.dart';
-import 'package:flutter_clean_starter/core/extension/nepali_converter_extension.dart';
-import 'package:flutter_clean_starter/features/shared/widget/custom_appbar.dart';
-import 'package:flutter_clean_starter/l10n/gen/app_localizations.dart';
+import 'package:collab_task/core/app/router/app_router.dart';
+import 'package:collab_task/features/shared/widget/custom_appbar.dart';
+import 'package:collab_task/l10n/gen/app_localizations.dart';
 
 class NotFoundPage extends StatelessWidget {
   final String? message;
@@ -14,8 +13,6 @@ class NotFoundPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final isLocaleEnglish =
-        Localizations.localeOf(context).languageCode == 'en';
     return Scaffold(
       appBar: CustomAppBar(
         title: statusCode?.toString() ?? l.pageNotFoundAppBar,
@@ -30,9 +27,7 @@ class NotFoundPage extends StatelessWidget {
               const Icon(Icons.search_off_rounded, size: 72),
               const SizedBox(height: 16),
               Text(
-                isLocaleEnglish
-                    ? statusCode.toString()
-                    : statusCode?.toString().toNepali() ?? '',
+                statusCode?.toString() ?? '',
                 style: const TextStyle(
                   fontSize: 36,
                   fontWeight: FontWeight.bold,

@@ -1,20 +1,19 @@
-import 'dart:developer';
-
 import 'package:chucker_flutter/chucker_flutter.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_clean_starter/core/app/app.dart';
-import 'package:flutter_clean_starter/core/app/bloc_observer.dart';
-import 'package:flutter_clean_starter/core/app/di/injection_container.dart';
-import 'package:flutter_clean_starter/core/app/di/multi_bloc_provider.dart';
-import 'package:flutter_clean_starter/core/config/constants/api_constant.dart';
-import 'package:flutter_clean_starter/core/config/constants/app_constant.dart';
-import 'package:flutter_clean_starter/core/helper/secure_storage_helper.dart';
-import 'package:flutter_clean_starter/core/services/fcm_notification_service.dart';
-import 'package:flutter_clean_starter/firebase_options.dart';
+import 'package:collab_task/core/app/app.dart';
+import 'package:collab_task/core/app/bloc_observer.dart';
+import 'package:collab_task/core/app/di/injection_container.dart';
+import 'package:collab_task/core/app/di/multi_bloc_provider.dart';
+import 'package:collab_task/core/config/constants/api_constant.dart';
+import 'package:collab_task/core/config/constants/app_constant.dart';
+import 'package:collab_task/core/helper/secure_storage_helper.dart';
+// Uncomment when you wire Firebase + FCM (see initializeApp).
+// import 'package:firebase_core/firebase_core.dart';
+// import 'package:firebase_messaging/firebase_messaging.dart';
+// import 'package:collab_task/core/services/fcm_notification_service.dart';
+// import 'package:collab_task/firebase_options.dart';
 
 var globalMessengerKey = GlobalKey<ScaffoldMessengerState>();
 var navigatorKey = GlobalKey<NavigatorState>();
@@ -38,17 +37,7 @@ void mainCommon() async {
 }
 
 Future<void> initializeApp() async {
-  // Initialize Firebase
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
-  // Get FCM token
-  final fcmToken = await FirebaseMessaging.instance.getToken();
-
-  // Initialize Shared Preferences
   await SecureStorageHelper().init();
-  if (fcmToken != null) {
-    SecureStorageHelper().saveDeviceToken(fcmToken);
-  }
 
   if (AppConfig.enableIpConfig) {
     ApiConstants.baseUrl = ApiConstants.buildBaseUrl(
@@ -56,17 +45,25 @@ Future<void> initializeApp() async {
     );
   }
 
+
   ChuckerFlutter.showOnRelease =
       !AppConfig.isProduction && SecureStorageHelper().getChuckerEnabled();
 
-  // Initialize FCM notification service (foreground display + tap handling)
-  await FcmNotificationService().init();
+  // ── Firebase + FCM (disabled in the starter) ──────────────────────────
+  // To enable push notifications:
+  //   1. Run `flutterfire configure` (regenerates lib/firebase_options.dart,
+  //      android/app/google-services.json, ios/Runner/GoogleService-Info.plist).
+  //   2. Uncomment the Firebase imports at the top of this file.
+  //   3. Uncomment the block below.
+  //   4. The FCM service is already wired in the DI container — no further
+  //      changes needed there.
+  //
+  // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  // final fcmToken = await FirebaseMessaging.instance.getToken();
+  // if (fcmToken != null) {
+  //   SecureStorageHelper().saveDeviceToken(fcmToken);
+  // }
+  // await FcmNotificationService().init();
 
   setupInjection();
-
-  log('Device token: ${SecureStorageHelper().getDeviceToken()}');
-
-  debugPrint('Device token: ${SecureStorageHelper().getDeviceToken()}');
-
-  SecureStorageHelper().debugDump();
 }

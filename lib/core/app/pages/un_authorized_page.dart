@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:flutter_clean_starter/core/app/router/app_router.dart';
-import 'package:flutter_clean_starter/l10n/gen/app_localizations.dart';
+import 'package:collab_task/core/app/router/app_router.dart';
+import 'package:collab_task/l10n/gen/app_localizations.dart';
 
 class UnauthorizedPage extends StatelessWidget {
   final String? message;

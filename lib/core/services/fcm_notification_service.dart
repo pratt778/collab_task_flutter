@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_clean_starter/core/app/router/app_router.dart';
+import 'package:collab_task/core/app/router/app_router.dart';
 
 /// Top-level function required by FirebaseMessaging for background messages.
 /// Must not be inside a class or an anonymous closure.

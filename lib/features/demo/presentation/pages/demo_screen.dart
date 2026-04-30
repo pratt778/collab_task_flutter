@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_clean_starter/core/config/constants/typography_constant.dart';
-import 'package:flutter_clean_starter/core/config/theme/app_colors_extension.dart';
-import 'package:flutter_clean_starter/core/error/error_page_helper.dart';
-import 'package:flutter_clean_starter/core/error/failure_messages.dart';
-import 'package:flutter_clean_starter/features/auth/presentation/cubit/auth_cubit.dart';
-import 'package:flutter_clean_starter/features/demo/presentation/cubit/demo_cubit.dart';
-import 'package:flutter_clean_starter/features/demo/presentation/cubit/demo_state.dart';
-import 'package:flutter_clean_starter/features/shared/widget/network_auto_refresh_mixin.dart';
+import 'package:collab_task/core/config/constants/typography_constant.dart';
+import 'package:collab_task/core/config/theme/app_colors_extension.dart';
+import 'package:collab_task/core/error/error_page_helper.dart';
+import 'package:collab_task/core/error/failure_messages.dart';
+import 'package:collab_task/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:collab_task/features/demo/presentation/cubit/demo_cubit.dart';
+import 'package:collab_task/features/demo/presentation/cubit/demo_state.dart';
+import 'package:collab_task/features/shared/widget/network_auto_refresh_mixin.dart';
 import 'package:shimmer/shimmer.dart';
 
 class DemoScreen extends StatefulWidget {

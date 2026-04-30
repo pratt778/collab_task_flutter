@@ -7,7 +7,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 /// Pair with `PaintingBinding.imageCache.maximumSizeBytes` (set in
 /// `main_common.dart`) which caps the in-memory decoded-image cache.
 class AppImageCacheManager {
-  static const _key = 'irrigationImageCache';
+  static const _key = 'flutterCleanStarterImageCache';
 
   static final CacheManager instance = CacheManager(
     Config(

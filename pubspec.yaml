@@ -1,4 +1,4 @@
-name: flutter_clean_starter
+name: collab_task
 description: "Flutter clean-architecture starter — chassis with auth + items reference features. See STARTER.md."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -56,7 +56,6 @@ dependencies:
 
   vector_graphics: any
   image_picker: ^1.2.1
-  flutter_html: ^3.0.0
   cached_network_image: ^3.4.1
   flutter_cache_manager: ^3.4.1
   shimmer: ^3.0.0
@@ -65,7 +64,7 @@ dependencies:
     sdk: flutter
   internet_connection_checker_plus: ^2.9.1+2
   intl: ^0.20.2
-  nepali_utils: ^3.0.8
+  injectable: ^2.5.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -84,6 +83,9 @@ dev_dependencies:
   json_serializable: ^6.13.1
   flutter_gen_runner: ^5.13.0+1
   change_app_package_name: ^1.5.0
+  flutter_launcher_icons: ^0.14.4
+  flutter_native_splash: ^2.4.6
+  injectable_generator: ^2.7.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -94,6 +96,30 @@ flutter_gen:
   integrations:
     flutter_svg: true
 
+# App launcher icons. Drop a 1024x1024 PNG at assets/icon.png, then run:
+#   dart run flutter_launcher_icons
+flutter_launcher_icons:
+  android: "ic_launcher"
+  ios: true
+  image_path: "assets/icon.png"
+  remove_alpha_ios: true
+  min_sdk_android: 21
+  # Adaptive icon (Android 8+). Provide a transparent foreground:
+  # adaptive_icon_background: "#096B72"
+  # adaptive_icon_foreground: "assets/icon_foreground.png"
+
+# Native splash screen. Drop a centered logo PNG at assets/splash.png, then run:
+#   dart run flutter_native_splash:create
+# To remove the splash later: dart run flutter_native_splash:remove
+flutter_native_splash:
+  color: "#096B72"  # AppColors.primaryTeal
+  image: assets/splash.png
+  android_12:
+    color: "#096B72"
+    image: assets/splash.png
+  # Set to true if your splash logo should fill the available area:
+  fullscreen: false
+
 flutter:
   generate: true
   # The following line ensures that the Material Icons font is
@@ -102,9 +128,9 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, uncomment and populate this section:
-  # assets:
-  #   - assets/images/
-  #   - assets/icons/
+  assets:
+    - assets/images/
+    - assets/icons/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

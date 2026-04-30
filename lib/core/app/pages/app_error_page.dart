@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_clean_starter/features/shared/widget/custom_appbar.dart';
-import 'package:flutter_clean_starter/l10n/gen/app_localizations.dart';
+import 'package:collab_task/features/shared/widget/custom_appbar.dart';
+import 'package:collab_task/l10n/gen/app_localizations.dart';
 
 class AppErrorPage extends StatelessWidget {
   final String? title;

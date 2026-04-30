@@ -1,17 +1,12 @@
-# irrigation_flutter
+# Flutter Clean Starter
 
-A new Flutter project.
+A Flutter chassis with clean architecture, freezed sealed cubit states, dartz `Either<Failure, T>` repos, get_it DI, ARB localization, theming, error pages, network recovery, and reference tests — wired end-to-end and ready to fork.
 
-## Getting Started
+**Start here:** [`STARTER.md`](STARTER.md) for day-1 setup.
+**Conventions:** [`CLAUDE.md`](CLAUDE.md).
+**Testing:** [`test.md`](test.md).
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```bash
+flutter pub get
+flutter run -t lib/main_development.dart
+```

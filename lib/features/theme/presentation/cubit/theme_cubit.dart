@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_clean_starter/core/helper/secure_storage_helper.dart';
+import 'package:injectable/injectable.dart';
+import 'package:collab_task/core/helper/secure_storage_helper.dart';
 
 /// Cubit that drives `MaterialApp.themeMode` and persists the choice
 /// to `SecureStorageHelper`. State is a plain `ThemeMode` — no custom
 /// state class because there's no loading/error to model.
+@injectable
 class ThemeCubit extends Cubit<ThemeMode> {
   final SecureStorageHelper _storage;
 

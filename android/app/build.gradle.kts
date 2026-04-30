@@ -1,15 +1,15 @@
 plugins {
     id("com.android.application")
-    // START: FlutterFire Configuration
-    id("com.google.gms.google-services")
-    // END: FlutterFire Configuration
+    // FlutterFire — re-enable along with the matching plugin in
+    // `android/settings.gradle.kts` after running `flutterfire configure`.
+    // id("com.google.gms.google-services")
     id("kotlin-android")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
 
 android {
-    namespace = "com.example.flutter_clean_starter"
+    namespace = "com.prattss.collab_task"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -25,7 +25,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.flutter_clean_starter"
+        applicationId = "com.prattss.collab_task"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
@@ -40,18 +40,18 @@ android {
             dimension = "environment"
             // applicationIdSuffix = ".dev"
             versionNameSuffix = "-dev"
-            resValue("string", "app_name", "Irrigation Dev") // Optional: custom app name
+            resValue("string", "app_name", "CollabTask Dev") // Optional: custom app name
         }
         create("staging") {
             dimension = "environment"
             // applicationIdSuffix = ".staging"
             versionNameSuffix = "-staging"
-            resValue("string", "app_name", "Irrigation Staging")
+            resValue("string", "app_name", "CollabTask Staging")
         }
         create("production") {
             dimension = "environment"
             // No suffix for production - keeps base applicationId
-            resValue("string", "app_name", "Irrigation")
+            resValue("string", "app_name", "CollabTask")
         }
     }
 

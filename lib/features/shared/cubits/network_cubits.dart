@@ -3,9 +3,11 @@ import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:injectable/injectable.dart';
 
 enum NetworkStatus { online, offline }
 
+@lazySingleton
 class NetworkCubit extends Cubit<NetworkStatus> {
   NetworkCubit() : super(NetworkStatus.offline) {
     _init();

@@ -5,7 +5,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Irrigation (Development)",
+      "name": "Flutter Clean Starter (Development)",
       "request": "launch",
       "type": "dart",
       "program": "lib/main_development.dart",
@@ -13,7 +13,7 @@
       "args": ["--flavor", "development"]
     },
     {
-      "name": "Irrigation (Staging)",
+      "name": "Flutter Clean Starter (Staging)",
       "request": "launch",
       "type": "dart",
       "program": "lib/main_staging.dart",
@@ -21,7 +21,7 @@
       "args": ["--flavor", "staging"]
     },
     {
-      "name": "Irrigation (Production)",
+      "name": "Flutter Clean Starter (Production)",
       "request": "launch",
       "type": "dart",
       "program": "lib/main_production.dart",
@@ -29,18 +29,18 @@
       "args": ["--flavor", "production"]
     },
     {
-      "name": "irrigation_flutter",
+      "name": "flutter_clean_starter",
       "request": "launch",
       "type": "dart"
     },
     {
-      "name": "irrigation_flutter (profile mode)",
+      "name": "flutter_clean_starter (profile mode)",
       "request": "launch",
       "type": "dart",
       "flutterMode": "profile"
     },
     {
-      "name": "irrigation_flutter (release mode)",
+      "name": "flutter_clean_starter (release mode)",
       "request": "launch",
       "type": "dart",
       "flutterMode": "release"

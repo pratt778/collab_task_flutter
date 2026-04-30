@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
-import 'package:flutter_clean_starter/core/error/failures.dart';
-import 'package:flutter_clean_starter/l10n/gen/app_localizations.dart';
+import 'package:collab_task/core/error/failures.dart';
+import 'package:collab_task/l10n/gen/app_localizations.dart';
 
 /// Resolves a [Failure] to a user-facing, locale-aware message.
 ///

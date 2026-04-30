@@ -1,12 +1,12 @@
 import 'package:go_router/go_router.dart';
-import 'package:flutter_clean_starter/core/app/app.dart';
-import 'package:flutter_clean_starter/core/app/pages/app_error_page.dart';
-import 'package:flutter_clean_starter/core/app/pages/splash_screen.dart';
-import 'package:flutter_clean_starter/core/helper/page_transition_helper.dart';
-import 'package:flutter_clean_starter/core/helper/secure_storage_helper.dart';
-import 'package:flutter_clean_starter/features/auth/presentation/pages/login_screen.dart';
-import 'package:flutter_clean_starter/features/demo/presentation/pages/demo_screen.dart';
-import 'package:flutter_clean_starter/features/dev/presentation/pages/ip_config_screen.dart';
+import 'package:collab_task/core/app/app.dart';
+import 'package:collab_task/core/app/pages/app_error_page.dart';
+import 'package:collab_task/core/app/pages/splash_screen.dart';
+import 'package:collab_task/core/helper/page_transition_helper.dart';
+import 'package:collab_task/core/helper/secure_storage_helper.dart';
+import 'package:collab_task/features/auth/presentation/pages/login_screen.dart';
+import 'package:collab_task/features/demo/presentation/pages/demo_screen.dart';
+import 'package:collab_task/features/dev/presentation/pages/ip_config_screen.dart';
 
 class MainRoutes {
   MainRoutes._();

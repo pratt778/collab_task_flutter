@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_clean_starter/core/config/constants/app_size_constant.dart';
-import 'package:flutter_clean_starter/core/config/theme/app_colors_extension.dart';
+import 'package:collab_task/core/config/constants/app_size_constant.dart';
+import 'package:collab_task/core/config/theme/app_colors_extension.dart';
 
 class AppUI {
   // Standard Card Decoration — theme-aware, call with a BuildContext

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_clean_starter/core/helper/secure_storage_helper.dart';
-import 'package:flutter_clean_starter/features/auth/data/services/auth_session_writer.dart';
-import 'package:flutter_clean_starter/features/auth/domain/usecases/login_usecase.dart';
-import 'package:flutter_clean_starter/features/auth/domain/usecases/logout_usecase.dart';
-import 'package:flutter_clean_starter/features/auth/presentation/cubit/auth_state.dart';
+import 'package:injectable/injectable.dart';
+import 'package:collab_task/core/helper/secure_storage_helper.dart';
+import 'package:collab_task/features/auth/data/services/auth_session_writer.dart';
+import 'package:collab_task/features/auth/domain/usecases/login_usecase.dart';
+import 'package:collab_task/features/auth/domain/usecases/logout_usecase.dart';
+import 'package:collab_task/features/auth/presentation/cubit/auth_state.dart';
 
+@lazySingleton
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit({
     required this.loginUseCase,

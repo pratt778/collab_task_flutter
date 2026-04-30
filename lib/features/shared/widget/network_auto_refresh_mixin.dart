@@ -2,7 +2,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_clean_starter/features/shared/cubits/network_cubits.dart';
+import 'package:collab_task/features/shared/cubits/network_cubits.dart';
 
 mixin NetworkAutoRefreshMixin<T extends StatefulWidget> on State<T> {
   StreamSubscription<void>? _recoverySub;

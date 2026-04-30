@@ -1,4 +1,4 @@
-import 'package:flutter_clean_starter/features/auth/domain/entities/login_entity.dart';
+import 'package:collab_task/features/auth/domain/entities/login_entity.dart';
 
 import 'organization_model.dart';
 

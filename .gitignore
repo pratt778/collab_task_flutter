@@ -44,6 +44,27 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-## Claude code
-CLAUDE.md
-CHANGES.md
+# Secrets — never commit these
+.env
+.env.local
+.env.*.local
+
+# Android signing — committing the keystore lets anyone sign a build as you
+*.keystore
+*.jks
+key.properties
+android/app/upload-keystore.jks
+android/key.properties
+
+# Xcode per-user state
+ios/Runner.xcodeproj/xcuserdata/
+ios/Runner.xcworkspace/xcuserdata/
+ios/Runner.xcodeproj/project.xcworkspace/xcuserdata/
+
+# Firebase configs — uncomment if your team treats these as private.
+# Firebase API keys are app identifiers, not secrets, but the files include
+# OAuth client IDs and bundle/package mappings some teams prefer to keep out
+# of public repos. Most teams commit them; flip these on if yours doesn't.
+# lib/firebase_options.dart
+# **/google-services.json
+# **/GoogleService-Info.plist
