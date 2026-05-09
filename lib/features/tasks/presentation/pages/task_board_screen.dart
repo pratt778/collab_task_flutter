@@ -92,254 +92,218 @@ class _TaskBoardScreenState extends State<TaskBoardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('CollabTask Board'),
-        actions: [
-          IconButton(
-            onPressed: () => context.pushNamed(MainRoutes.notificationName),
-            icon: const Icon(Icons.notifications_outlined),
-          ),
-          IconButton(
-            onPressed: () {
-              setState(() {
-                _currentTasks = List.from(_mockTasks);
-              });
-            },
-            icon: const Icon(Icons.refresh),
-          ),
-        ],
-      ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            DrawerHeader(
-              decoration: const BoxDecoration(color: Colors.blue),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CircleAvatar(
-                    radius: 30.r,
-                    backgroundColor: Colors.white,
-                    child: Text(
-                      'JD',
-                      style: TextStyle(
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blue,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 12.h),
-                  Text(
-                    'John Doe',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18.sp,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    'john.doe@example.com',
-                    style: TextStyle(color: Colors.white70, fontSize: 14.sp),
-                  ),
-                ],
-              ),
+    return DefaultTabController(
+      length: 3,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('CollabTask Board'),
+          actions: [
+            IconButton(
+              onPressed: () => context.pushNamed(MainRoutes.notificationName),
+              icon: const Icon(Icons.notifications_outlined),
             ),
-            ListTile(
-              leading: const Icon(Icons.dashboard_outlined),
-              title: const Text('Task Board'),
-              onTap: () {
-                Navigator.pop(context);
+            IconButton(
+              onPressed: () {
+                setState(() {
+                  _currentTasks = List.from(_mockTasks);
+                });
               },
-            ),
-            ListTile(
-              leading: const Icon(Icons.notifications_outlined),
-              title: const Text('Notifications'),
-              onTap: () {
-                Navigator.pop(context);
-                context.pushNamed(MainRoutes.notificationName);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.settings_outlined),
-              title: const Text('Settings'),
-              onTap: () {
-                Navigator.pop(context);
-                context.pushNamed(MainRoutes.settingsName);
-              },
-            ),
-            const Divider(),
-            ListTile(
-              leading: const Icon(Icons.logout, color: Colors.red),
-              title: const Text('Logout', style: TextStyle(color: Colors.red)),
-              onTap: () {
-                // TODO: Implement logout
-                Navigator.pop(context);
-              },
+              icon: const Icon(Icons.refresh),
             ),
           ],
+          bottom: TabBar(
+            indicatorColor: AppColors.primaryBlue,
+            labelColor: AppColors.primaryBlue,
+            unselectedLabelColor: AppColors.textTertiary,
+            tabs: const [
+              Tab(text: 'To Do'),
+              Tab(text: 'In Progress'),
+              Tab(text: 'Done'),
+            ],
+          ),
         ),
-      ),
-      body: _buildBoard(_currentTasks), 
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showModalBottomSheet(
-            context: context,
-            isScrollControlled: true,
-            builder: (_) => CreateTaskModal(
-              onCreated: (newTask) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Simulated creation of task: ${newTask.title}')),
-                );
-                Navigator.pop(context); 
-              },
-            ),
-          );
-        },
-        child: const Icon(Icons.add),
-      ),
-    );
-  }
-
-  Widget _buildBoard(List<TaskEntity> tasks) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildColumn('To Do', TaskStatus.todo, tasks),
-          _buildColumn('In Progress', TaskStatus.inProgress, tasks),
-          _buildColumn('Done', TaskStatus.done, tasks),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildColumn(String title, TaskStatus status, List<TaskEntity> tasks) {
-    final columnTasks = tasks.where((t) => t.status == status).toList();
-    Color accentColor;
-
-    switch (status) {
-      case TaskStatus.todo:
-        accentColor = AppColors.primaryIndigo;
-        break;
-      case TaskStatus.inProgress:
-        accentColor = AppColors.warningAmber;
-        break;
-      case TaskStatus.done:
-        accentColor = AppColors.successGreen;
-        break;
-    }
-
-    return DragTarget<TaskEntity>(
-      onWillAcceptWithDetails: (details) => details.data.status != status,
-      onAcceptWithDetails: (details) {
-        final taskToMove = details.data;
-        setState(() {
-          final taskIndex = _currentTasks.indexWhere((t) => t.id == taskToMove.id);
-          if (taskIndex != -1) {
-            _currentTasks[taskIndex] = taskToMove.copyWith(
-              status: status,
-              updatedAt: DateTime.now(),
-            );
-          }
-        });
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Moved to ${title.toUpperCase()}'),
-            backgroundColor: accentColor,
-          ),
-        );
-      },
-      builder: (context, candidateData, rejectedData) {
-        return Container(
-          width: 0.85.sw,
-          margin: EdgeInsets.all(12.r),
-          decoration: BoxDecoration(
-            color: candidateData.isNotEmpty
-                ? accentColor.withValues(alpha: 0.1)
-                : AppColors.scaffoldBackground,
-            borderRadius: BorderRadius.circular(24.r),
-          ),
+        drawer: Drawer(
+          backgroundColor: Colors.white,
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Column Header
-              Padding(
-                padding: EdgeInsets.fromLTRB(16.r, 20.r, 16.r, 12.r),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              Container(
+                padding: EdgeInsets.fromLTRB(24.w, 64.h, 24.w, 32.h),
+                width: double.infinity,
+                decoration: const BoxDecoration(
+                  color: AppColors.surfaceSubtle,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        Container(
-                          width: 8.w,
-                          height: 24.h,
-                          decoration: BoxDecoration(
-                            color: accentColor,
-                            borderRadius: BorderRadius.circular(4.r),
-                          ),
-                        ),
-                        SizedBox(width: 12.w),
-                        Text(
-                          title,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w800,
-                            fontSize: 18.sp,
-                            color: AppColors.textDark,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12.r),
-                        boxShadow: AppColors.softShadow,
-                      ),
+                    CircleAvatar(
+                      radius: 28.r,
+                      backgroundColor: AppColors.primaryBlue,
                       child: Text(
-                        columnTasks.length.toString(),
+                        'JD',
                         style: TextStyle(
-                          fontSize: 13.sp,
-                          fontWeight: FontWeight.w700,
-                          color: accentColor,
+                          fontSize: 20.sp,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
                         ),
                       ),
+                    ),
+                    SizedBox(height: 16.h),
+                    Text(
+                      'John Doe',
+                      style: TextStyle(
+                        color: AppColors.textDark,
+                        fontSize: 18.sp,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    Text(
+                      'john.doe@example.com',
+                      style: TextStyle(color: AppColors.textSecondary, fontSize: 13.sp),
                     ),
                   ],
                 ),
               ),
-              
-              // Tasks List
               Expanded(
-                child: ListView.builder(
-                  padding: EdgeInsets.symmetric(horizontal: 12.r, vertical: 8.r),
-                  itemCount: columnTasks.length,
-                  itemBuilder: (context, index) {
-                    final task = columnTasks[index];
-                    return LongPressDraggable<TaskEntity>(
-                      data: task,
-                      feedback: SizedBox(
-                        width: 0.75.sw,
-                        child: TaskCard(task: task), 
-                      ),
-                      childWhenDragging: Opacity(
-                        opacity: 0.3,
-                        child: TaskCard(task: task), 
-                      ),
-                      child: TaskCard(task: task),
-                    );
-                  },
+                child: ListView(
+                  padding: EdgeInsets.symmetric(vertical: 8.h),
+                  children: [
+                    _buildDrawerItem(Icons.dashboard_outlined, 'Task Board', () => Navigator.pop(context)),
+                    _buildDrawerItem(Icons.notifications_outlined, 'Notifications', () {
+                      Navigator.pop(context);
+                      context.pushNamed(MainRoutes.notificationName);
+                    }),
+                    _buildDrawerItem(Icons.settings_outlined, 'Settings', () {
+                      Navigator.pop(context);
+                      context.pushNamed(MainRoutes.settingsName);
+                    }),
+                  ],
                 ),
               ),
+              const Divider(height: 1, color: AppColors.borderSubtle),
+              ListTile(
+                leading: const Icon(Icons.logout, color: AppColors.errorRed),
+                title: Text('Logout', style: TextStyle(color: AppColors.errorRed, fontWeight: FontWeight.w600)),
+                onTap: () => Navigator.pop(context),
+              ),
+              SizedBox(height: 24.h),
             ],
           ),
+        ),
+
+        body: TabBarView(
+          children: [
+            _buildTaskList(TaskStatus.todo),
+            _buildTaskList(TaskStatus.inProgress),
+            _buildTaskList(TaskStatus.done),
+          ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              builder: (_) => CreateTaskModal(
+                onCreated: (newTask) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Simulated creation: ${newTask.title}')),
+                  );
+                  Navigator.pop(context); 
+                },
+              ),
+            );
+          },
+          child: const Icon(Icons.add),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTaskList(TaskStatus status) {
+    final tasks = _currentTasks.where((t) => t.status == status).toList();
+    if (tasks.isEmpty) {
+      return Center(
+        child: Text(
+          'No tasks here',
+          style: TextStyle(color: AppColors.textTertiary, fontSize: 16.sp),
+        ),
+      );
+    }
+    return ListView.builder(
+      padding: EdgeInsets.symmetric(horizontal: 20.r, vertical: 20.r),
+      itemCount: tasks.length,
+      itemBuilder: (context, index) {
+        final task = tasks[index];
+        return TaskCard(
+          task: task,
+          onMove: () => _showMoveBottomSheet(task),
         );
       },
     );
+  }
+
+  Widget _buildDrawerItem(IconData icon, String title, VoidCallback onTap) {
+    return ListTile(
+      leading: Icon(icon, color: AppColors.textDark, size: 22.sp),
+      title: Text(title, style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w600, color: AppColors.textDark)),
+      onTap: onTap,
+    );
+  }
+
+  void _showMoveBottomSheet(TaskEntity task) {
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24.r))),
+      builder: (context) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: EdgeInsets.all(20.r),
+            child: Text('Move task to...', style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w800)),
+          ),
+          ...TaskStatus.values.map((status) => ListTile(
+            leading: Icon(_getStatusIcon(status), color: _getStatusColor(status)),
+            title: Text(_getStatusName(status)),
+            enabled: task.status != status,
+            onTap: () {
+              setState(() {
+                final taskIndex = _currentTasks.indexWhere((t) => t.id == task.id);
+                if (taskIndex != -1) {
+                  _currentTasks[taskIndex] = task.copyWith(
+                    status: status,
+                    updatedAt: DateTime.now(),
+                  );
+                }
+              });
+              Navigator.pop(context);
+            },
+          )),
+          SizedBox(height: 20.h),
+        ],
+      ),
+    );
+  }
+
+  IconData _getStatusIcon(TaskStatus status) {
+    switch (status) {
+      case TaskStatus.todo: return Icons.radio_button_unchecked;
+      case TaskStatus.inProgress: return Icons.radio_button_checked;
+      case TaskStatus.done: return Icons.check_circle;
+    }
+  }
+
+  Color _getStatusColor(TaskStatus status) {
+    switch (status) {
+      case TaskStatus.todo: return AppColors.primaryIndigo;
+      case TaskStatus.inProgress: return AppColors.warningAmber;
+      case TaskStatus.done: return AppColors.successGreen;
+    }
+  }
+
+  String _getStatusName(TaskStatus status) {
+    switch (status) {
+      case TaskStatus.todo: return 'To Do';
+      case TaskStatus.inProgress: return 'In Progress';
+      case TaskStatus.done: return 'Done';
+    }
   }
 }

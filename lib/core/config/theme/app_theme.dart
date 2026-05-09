@@ -6,9 +6,9 @@ import 'package:collab_task/core/config/theme/app_colors_extension.dart';
 class AppTheme {
   static final ThemeData light = _buildTheme(
     ColorScheme.fromSeed(
-      seedColor: AppColors.primaryTeal,
-      primary: AppColors.primaryTeal,
-      secondary: AppColors.secondaryTeal,
+      seedColor: AppColors.primaryBlue,
+      primary: AppColors.primaryBlue,
+      secondary: AppColors.primaryIndigo,
       error: AppColors.errorRed,
       surface: AppColorsExtension.light.surface,
       onPrimary: Colors.white,
@@ -21,10 +21,10 @@ class AppTheme {
 
   static final ThemeData dark = _buildTheme(
     ColorScheme.fromSeed(
-      seedColor: AppColors.primaryTeal,
+      seedColor: AppColors.primaryBlue,
       brightness: Brightness.dark,
-      primary: AppColors.secondaryTeal,
-      secondary: AppColors.primaryTeal,
+      primary: AppColors.primaryBlue,
+      secondary: AppColors.primaryIndigo,
       error: AppColors.errorRed,
       surface: AppColorsExtension.dark.surface,
       onPrimary: Colors.white,
@@ -51,159 +51,76 @@ class AppTheme {
       brightness: colorScheme.brightness,
       colorScheme: colorScheme,
       textTheme: textTheme,
-      scaffoldBackgroundColor: AppColors.scaffoldBackground,
+      scaffoldBackgroundColor: appColors.scaffold,
       extensions: <ThemeExtension<dynamic>>[appColors],
 
-      // AppBar - Modern & Clean
+      // AppBar
       appBarTheme: AppBarTheme(
-        backgroundColor: AppColors.scaffoldBackground,
-        foregroundColor: AppColors.textDark,
+        backgroundColor: appColors.scaffold,
+        foregroundColor: appColors.textPrimary,
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: false,
         titleTextStyle: GoogleFonts.inter(
           fontSize: 18,
           fontWeight: FontWeight.w700,
-          color: AppColors.textDark,
+          color: appColors.textPrimary,
         ),
       ),
 
-      // Elevated Button - Modern with rounding
+      // Buttons
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primaryBlue,
+          backgroundColor: appColors.primary,
           foregroundColor: Colors.white,
           elevation: 0,
-          textStyle: GoogleFonts.inter(
-            fontSize: 15,
-            fontWeight: FontWeight.w600,
-          ),
+          textStyle: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w600),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         ),
       ),
 
-      // Outlined Button
-      outlinedButtonTheme: OutlinedButtonThemeData(
-        style: OutlinedButton.styleFrom(
-          foregroundColor: AppColors.primaryBlue,
-          side: const BorderSide(color: AppColors.borderSubtle),
-          textStyle: GoogleFonts.inter(
-            fontSize: 15,
-            fontWeight: FontWeight.w600,
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-        ),
-      ),
-
-      // Input Decoration - Clean & Minimal
+      // Input
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: Colors.white,
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        fillColor: appColors.surface,
+        contentPadding: const EdgeInsets.all(16),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: AppColors.borderSubtle),
+          borderSide: BorderSide(color: appColors.border),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: AppColors.borderSubtle),
+          borderSide: BorderSide(color: appColors.border),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: AppColors.primaryBlue, width: 1.5),
+          borderSide: BorderSide(color: appColors.primary, width: 1.5),
         ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: AppColors.errorRed),
-        ),
-        hintStyle: GoogleFonts.inter(
-          fontSize: 14,
-          color: AppColors.textTertiary,
-        ),
+        hintStyle: GoogleFonts.inter(fontSize: 14, color: appColors.textTertiary),
       ),
 
-      // Card - Sleek with soft shadows
+      // Card
       cardTheme: CardThemeData(
-        color: Colors.white,
+        color: appColors.surface,
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
-          side: const BorderSide(color: AppColors.borderSubtle, width: 0.5),
+          side: BorderSide(color: appColors.border, width: 0.5),
         ),
       ),
 
       // Floating Action Button
       floatingActionButtonTheme: FloatingActionButtonThemeData(
-        backgroundColor: AppColors.primaryBlue,
+        backgroundColor: appColors.primary,
         foregroundColor: Colors.white,
         elevation: 4,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(18),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
       ),
 
-      // Checkbox
-      checkboxTheme: CheckboxThemeData(
-        fillColor: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.selected)) {
-            return AppColors.primaryBlue;
-          }
-          return Colors.white;
-        }),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(6),
-        ),
-        side: const BorderSide(color: AppColors.borderMedium),
-      ),
-
-      // Switch
-      switchTheme: SwitchThemeData(
-        thumbColor: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.selected)) {
-            return AppColors.primaryTeal;
-          }
-          return appColors.surface;
-        }),
-        trackColor: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.selected)) {
-            return AppColors.secondaryTeal;
-          }
-          return appColors.surfaceMuted;
-        }),
-      ),
-
-      // SnackBar
-      snackBarTheme: SnackBarThemeData(
-        backgroundColor: appColors.textPrimary,
-        contentTextStyle: TextStyle(
-          fontFamily: 'Inter',
-          fontSize: 14,
-          color: appColors.surface,
-        ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-        behavior: SnackBarBehavior.floating,
-      ),
-
-      // Dialog
-      dialogTheme: DialogThemeData(
-        backgroundColor: appColors.surface,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-      ),
-
-      // ProgressIndicator
-      progressIndicatorTheme: const ProgressIndicatorThemeData(
-        color: AppColors.primaryTeal,
+      // Progress
+      progressIndicatorTheme: ProgressIndicatorThemeData(
+        color: appColors.primary,
       ),
     );
   }

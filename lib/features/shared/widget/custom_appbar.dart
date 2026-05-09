@@ -27,7 +27,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       // height: 127.h,
       padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
       decoration: BoxDecoration(
-        color: AppColors.primaryTeal, // Teal background from screenshot
+        color: AppColors.primaryBlue, // Teal background from screenshot
         borderRadius: BorderRadius.vertical(
           bottom: Radius.circular(20.r), // Large curved corners
         ),

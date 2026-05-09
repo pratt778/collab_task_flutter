@@ -32,33 +32,13 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
-    }
-    flavorDimensions += "environment"
 
-    productFlavors {
-        create("development") {
-            dimension = "environment"
-            // applicationIdSuffix = ".dev"
-            versionNameSuffix = "-dev"
-            resValue("string", "app_name", "CollabTask Dev") // Optional: custom app name
-        }
-        create("staging") {
-            dimension = "environment"
-            // applicationIdSuffix = ".staging"
-            versionNameSuffix = "-staging"
-            resValue("string", "app_name", "CollabTask Staging")
-        }
-        create("production") {
-            dimension = "environment"
-            // No suffix for production - keeps base applicationId
-            resValue("string", "app_name", "CollabTask")
-        }
+        resValue("string", "app_name", "CollabTask")
     }
 
     buildTypes {
         getByName("debug") {
             signingConfig = signingConfigs.getByName("debug")
-            matchingFallbacks += listOf("development", "debug")
         }
         release {
             // TODO: Add your own signing config for the release build.

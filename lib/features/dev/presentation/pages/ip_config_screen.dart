@@ -83,95 +83,105 @@ class _IpConfigScreenState extends State<IpConfigScreen> {
         showBackButton: false,
       ),
       body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                'Select API environment',
-                style: AppTypography.h3.copyWith(
-                  color: context.appColors.textPrimary,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              8.verticalSpace,
-              Text(
-                'Current: $_currentHost',
-                style: AppTypography.bodyMedium.copyWith(
-                  color: context.appColors.textSecondary,
-                ),
-              ),
-              20.verticalSpace,
-              _PresetTile(
-                label: 'Dev',
-                subtitle: ApiConstants.devIp,
-                selected: _selected == _IpPreset.dev,
-                onTap: () => setState(() => _selected = _IpPreset.dev),
-              ),
-              12.verticalSpace,
-              _PresetTile(
-                label: 'Local',
-                subtitle: ApiConstants.localIp,
-                selected: _selected == _IpPreset.local,
-                onTap: () => setState(() => _selected = _IpPreset.local),
-              ),
-              12.verticalSpace,
-              _PresetTile(
-                label: 'Custom',
-                subtitle: 'Enter your own host',
-                selected: _selected == _IpPreset.custom,
-                onTap: () => setState(() => _selected = _IpPreset.custom),
-              ),
-              if (_selected == _IpPreset.custom) ...[
-                12.verticalSpace,
-                TextField(
-                  controller: _customController,
-                  keyboardType: TextInputType.url,
-                  autocorrect: false,
-                  onChanged: (_) => setState(() {}),
-                  style: AppTypography.bodyMedium.copyWith(
-                    color: context.appColors.textPrimary,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight - 40.h),
+                child: IntrinsicHeight(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(
+                        'Select API environment',
+                        style: AppTypography.h3.copyWith(
+                          color: context.appColors.textPrimary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      8.verticalSpace,
+                      Text(
+                        'Current: $_currentHost',
+                        style: AppTypography.bodyMedium.copyWith(
+                          color: context.appColors.textSecondary,
+                        ),
+                      ),
+                      20.verticalSpace,
+                      _PresetTile(
+                        label: 'Dev',
+                        subtitle: ApiConstants.devIp,
+                        selected: _selected == _IpPreset.dev,
+                        onTap: () => setState(() => _selected = _IpPreset.dev),
+                      ),
+                      12.verticalSpace,
+                      _PresetTile(
+                        label: 'Local',
+                        subtitle: ApiConstants.localIp,
+                        selected: _selected == _IpPreset.local,
+                        onTap: () => setState(() => _selected = _IpPreset.local),
+                      ),
+                      12.verticalSpace,
+                      _PresetTile(
+                        label: 'Custom',
+                        subtitle: 'Enter your own host',
+                        selected: _selected == _IpPreset.custom,
+                        onTap: () => setState(() => _selected = _IpPreset.custom),
+                      ),
+                      if (_selected == _IpPreset.custom) ...[
+                        12.verticalSpace,
+                        TextField(
+                          controller: _customController,
+                          keyboardType: TextInputType.url,
+                          autocorrect: false,
+                          onChanged: (_) => setState(() {}),
+                          style: AppTypography.bodyMedium.copyWith(
+                            color: context.appColors.textPrimary,
+                          ),
+                          decoration: InputDecoration(
+                            hintText: 'http://192.168.1.50:8080',
+                            hintStyle: AppTypography.bodyMedium.copyWith(
+                              color: context.appColors.textTertiary,
+                            ),
+                            filled: true,
+                            fillColor: context.appColors.surfaceAlt,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(AppSizes.radiusM),
+                              borderSide: BorderSide(
+                                color: context.appColors.dividerLight,
+                              ),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(AppSizes.radiusM),
+                              borderSide: BorderSide(
+                                color: context.appColors.dividerLight,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(AppSizes.radiusM),
+                              borderSide: const BorderSide(
+                                color: AppColors.primaryBlue,
+                              ),
+                            ),
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: 14.w,
+                              vertical: 14.h,
+                            ),
+                          ),
+                        ),
+                      ],
+                      const Spacer(),
+                      SizedBox(height: 24.h),
+                      AppPrimaryButton(
+                        text: 'Next',
+                        onPressed: _resolvedHost == null ? null : _onNext,
+                      ),
+                    ],
                   ),
-                  decoration: InputDecoration(
-                    hintText: 'http://192.168.1.50:8080',
-                    hintStyle: AppTypography.bodyMedium.copyWith(
-                      color: context.appColors.textTertiary,
-                    ),
-                    filled: true,
-                    fillColor: context.appColors.surfaceAlt,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(AppSizes.radiusM),
-                      borderSide: BorderSide(
-                        color: context.appColors.dividerLight,
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(AppSizes.radiusM),
-                      borderSide: BorderSide(
-                        color: context.appColors.dividerLight,
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(AppSizes.radiusM),
-                      borderSide: const BorderSide(
-                        color: AppColors.primaryTeal,
-                      ),
-                    ),
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: 14.w,
-                      vertical: 14.h,
-                    ),
-                  ),
                 ),
-              ],
-              const Spacer(),
-              AppPrimaryButton(
-                text: 'Next',
-                onPressed: _resolvedHost == null ? null : _onNext,
               ),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
@@ -203,7 +213,7 @@ class _PresetTile extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppSizes.radiusM),
           border: Border.all(
             color: selected
-                ? AppColors.primaryTeal
+                ? AppColors.primaryBlue
                 : context.appColors.dividerLight,
             width: selected ? 1.5 : 1,
           ),
@@ -215,7 +225,7 @@ class _PresetTile extends StatelessWidget {
                   ? Icons.radio_button_checked
                   : Icons.radio_button_unchecked,
               color: selected
-                  ? AppColors.primaryTeal
+                  ? AppColors.primaryBlue
                   : context.appColors.textTertiary,
               size: 22.r,
             ),

@@ -89,16 +89,15 @@ Base rule set: `package:flutter_lints/flutter.yaml`. Custom rules in `analysis_o
 ## Routing
 
 - go_router with routes defined in `lib/core/app/router/app_router.dart`.
-- Initial route: `/` (splash). Splash decides destination: prod → `/auth` or `/demo` via `isUserLoggedIn()`; dev/staging → `/ipConfig` (see Environment Config).
-- `redirect` exempts `splashPath` and `ipConfigPath` from the unauthenticated → `/auth` bounce; other unauthenticated routes are redirected.
+- Initial route: `/` (splash). Splash decides destination: release → `/auth` via `isUserLoggedIn()`; debug → `/ipConfig`.
 
-## Environment Config
+## Project Configuration
 
-- Three entry points: `main_development.dart`, `main_staging.dart`, `main_production.dart`.
-- `AppConfig` in `lib/core/config/constants/app_constant.dart` controls env-specific behavior. `AppConfig.enableIpConfig` is `true` for dev/staging, `false` for prod.
-- Chucker HTTP inspector disabled in production.
-- **Runtime base URL (dev/staging).** `ApiConstants.baseUrl` is a mutable `static String` so the dev IP-config screen can swap hosts without a rebuild. `main_common.dart` reads the saved host via `SecureStorageHelper.getBaseIp()` and patches `baseUrl` *before* `setupInjection()` so `Dio`'s `baseUrl` is correct on first request. In prod the default (`devIp`) is untouched.
-- **IP config screen** (`lib/features/dev/presentation/pages/ip_config_screen.dart`) is routed-to from splash when `enableIpConfig` is true. On "Next" it saves the host, mutates `ApiConstants.baseUrl`, patches `sl<Dio>().options.baseUrl` for live session, then navigates to `/demo` or `/auth`. Plain English strings (not localized — dev-only surface).
+- Single entry point: `lib/main.dart`.
+- `AppConfig` in `lib/core/config/constants/app_constant.dart` controls runtime behavior. `AppConfig.enableIpConfig` is `true` in debug mode, `false` in release mode.
+- Chucker HTTP inspector disabled in release mode.
+- **Runtime base URL (Debug only).** `ApiConstants.baseUrl` is a mutable `static String` so the dev IP-config screen can swap hosts without a rebuild. `main.dart` reads the saved host via `SecureStorageHelper.getBaseIp()` and patches `baseUrl` *before* `setupInjection()` so `Dio`'s `baseUrl` is correct on first request.
+- **IP config screen** (`lib/features/dev/presentation/pages/ip_config_screen.dart`) is routed-to from splash when `enableIpConfig` is true. On "Next" it saves the host, mutates `ApiConstants.baseUrl`, patches `sl<Dio>().options.baseUrl` for live session, then navigates to `/auth`.
 
 ## Theming
 
@@ -161,15 +160,15 @@ Group entries from the same day under one heading; newest date at the top. Skip 
 
 Firebase + FCM are **off by default** in the starter. To wire them, follow the steps in [`STARTER.md`](STARTER.md). Until you do:
 
-- `lib/main_common.dart` has the Firebase + FCM init commented out with TODOs.
+- `lib/main.dart` has the Firebase + FCM init commented out with TODOs.
 - `injection_container.dart` does **not** register `FcmNotificationService`.
 - `AuthSessionWriter` does **not** call FCM. Re-add `fcm.subscribeToTopics(...)` there once you've enabled FCM and want post-login topic subscriptions.
 
 ## Common Commands
 
 ```bash
-# Run the app (dev)
-flutter run -t lib/main_development.dart
+# Run the app
+flutter run
 
 # Run all tests
 flutter test

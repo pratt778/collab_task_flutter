@@ -7,8 +7,9 @@ import 'package:collab_task/features/tasks/domain/entities/task_entity.dart';
 
 class TaskCard extends StatelessWidget {
   final TaskEntity task;
+  final VoidCallback? onMove;
 
-  const TaskCard({super.key, required this.task});
+  const TaskCard({super.key, required this.task, this.onMove});
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +41,9 @@ class TaskCard extends StatelessWidget {
               Wrap(
                 spacing: 6.w,
                 runSpacing: 6.h,
-                children: task.labels.map((label) => _buildLabel(label)).toList(),
+                children: task.labels
+                    .map(_buildLabel)
+                    .toList(),
               ),
               SizedBox(height: 12.h),
             ],
@@ -55,7 +58,7 @@ class TaskCard extends StatelessWidget {
                 height: 1.3,
               ),
             ),
-            
+
             if (task.description.isNotEmpty) ...[
               SizedBox(height: 8.h),
               Text(
@@ -84,7 +87,9 @@ class TaskCard extends StatelessWidget {
                         minHeight: 6.h,
                         backgroundColor: AppColors.surfaceSubtle,
                         valueColor: AlwaysStoppedAnimation<Color>(
-                          progress == 1.0 ? AppColors.successGreen : AppColors.primaryBlue,
+                          progress == 1.0
+                              ? AppColors.successGreen
+                              : AppColors.primaryBlue,
                         ),
                       ),
                     ),
@@ -128,7 +133,9 @@ class TaskCard extends StatelessWidget {
                       Icon(
                         Icons.access_time_rounded,
                         size: 16.sp,
-                        color: _isOverdue(task.dueDate!) ? AppColors.errorRed : AppColors.textTertiary,
+                        color: _isOverdue(task.dueDate!)
+                            ? AppColors.errorRed
+                            : AppColors.textTertiary,
                       ),
                       SizedBox(width: 4.w),
                       Text(
@@ -136,23 +143,42 @@ class TaskCard extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 12.sp,
                           fontWeight: FontWeight.w600,
-                          color: _isOverdue(task.dueDate!) ? AppColors.errorRed : AppColors.textSecondary,
+                          color: _isOverdue(task.dueDate!)
+                              ? AppColors.errorRed
+                              : AppColors.textSecondary,
                         ),
                       ),
                     ],
                   ],
                 ),
-                
-                // Assignees
-                if (task.assignees.isNotEmpty)
-                  _buildAssignees(task.assignees),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+
+                // Assignees & Move Button
+                Row(
+                  children: [
+                    if (task.assignees.isNotEmpty) _buildAssignees(task.assignees),
+                    if (task.assignees.isNotEmpty) SizedBox(width: 8.w),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: AppColors.surfaceSubtle,
+                        borderRadius: BorderRadius.circular(12.r),
+                      ),
+                      child: IconButton(
+                        icon: Icon(Icons.drive_file_move_rounded, size: 18.sp, color: AppColors.textSecondary),
+                        onPressed: onMove,
+                        padding: EdgeInsets.all(8.r),
+                        constraints: const BoxConstraints(),
+                      ),
+                    ),
+                  ],
+                ),
+                ],
+                ),
+                ],
+                ),
+                ),
+                );
+                }
+
 
   Widget _buildLabel(String label) {
     Color labelColor;
@@ -200,13 +226,17 @@ class TaskCard extends StatelessWidget {
   }
 
   Widget _buildAssignees(List<String> assignees) {
+    final showCount = assignees.length > 3 ? 3 : assignees.length;
+    final width = (showCount > 1) ? (showCount - 1) * 14.w + 24.w : 24.w;
+
     return SizedBox(
       height: 24.h,
+      width: width,
       child: Stack(
         children: List.generate(
-          assignees.length > 3 ? 3 : assignees.length,
+          showCount,
           (index) => Positioned(
-            right: index * 14.0,
+            right: index * 14.w,
             child: Container(
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
@@ -243,21 +273,36 @@ class TaskCard extends StatelessWidget {
 
   String _formatDate(DateTime date) {
     final now = DateTime.now();
-    if (date.year == now.year && date.month == now.month && date.day == now.day) {
+    if (date.year == now.year &&
+        date.month == now.month &&
+        date.day == now.day) {
       return 'Today';
     }
     return '${date.day} ${_getMonth(date.month)}';
   }
 
   bool _isOverdue(DateTime date) {
-    return date.isBefore(DateTime.now()) && 
-           !(date.year == DateTime.now().year && 
-             date.month == DateTime.now().month && 
-             date.day == DateTime.now().day);
+    return date.isBefore(DateTime.now()) &&
+        !(date.year == DateTime.now().year &&
+            date.month == DateTime.now().month &&
+            date.day == DateTime.now().day);
   }
 
   String _getMonth(int month) {
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
     return months[month - 1];
   }
 }

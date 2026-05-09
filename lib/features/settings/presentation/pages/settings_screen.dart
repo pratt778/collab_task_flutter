@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:collab_task/core/config/constants/color_constant.dart';
+import 'package:collab_task/features/theme/presentation/cubit/theme_cubit.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -12,7 +14,6 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   bool _notificationsEnabled = true;
   bool _pushNotifications = true;
-  String _selectedTheme = 'system';
   String _selectedLanguage = 'english';
 
   @override
@@ -31,29 +32,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
       body: ListView(
         padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
         children: [
-          // Account Section
           _buildSectionHeader('ACCOUNT'),
           _buildGroupedContainer([
             _buildSettingsTile(
               icon: Icons.person_rounded,
-              iconBg: AppColors.surfaceBlue,
-              iconColor: AppColors.primaryBlue,
               title: 'Profile',
               subtitle: 'Update your personal info',
               onTap: () {},
             ),
             _buildSettingsTile(
               icon: Icons.lock_rounded,
-              iconBg: AppColors.surfaceRose,
-              iconColor: AppColors.errorRed,
               title: 'Security',
               subtitle: 'Password and biometric',
               onTap: () {},
             ),
             _buildSettingsTile(
               icon: Icons.notifications_rounded,
-              iconBg: AppColors.surfaceAmber,
-              iconColor: AppColors.warningAmber,
               title: 'Notifications',
               subtitle: 'Preferences and alerts',
               onTap: () {},
@@ -62,21 +56,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
           SizedBox(height: 32.h),
 
-          // Preferences Section
           _buildSectionHeader('PREFERENCES'),
           _buildGroupedContainer([
             _buildSettingsTile(
               icon: Icons.palette_rounded,
-              iconBg: AppColors.surfaceIndigo,
-              iconColor: AppColors.primaryViolet,
               title: 'Theme',
-              subtitle: _getThemeLabel(_selectedTheme),
+              subtitle: _getThemeLabel(context.watch<ThemeCubit>().state),
               onTap: _showThemeBottomSheet,
             ),
             _buildSettingsTile(
               icon: Icons.translate_rounded,
-              iconBg: AppColors.surfaceEmerald,
-              iconColor: AppColors.primaryTeal,
               title: 'Language',
               subtitle: _getLanguageLabel(_selectedLanguage),
               onTap: _showLanguageBottomSheet,
@@ -85,13 +74,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
           SizedBox(height: 32.h),
 
-          // App Settings
           _buildSectionHeader('APP SETTINGS'),
           _buildGroupedContainer([
             _buildSwitchTile(
               icon: Icons.cloud_done_rounded,
-              iconBg: AppColors.surfaceBlue,
-              iconColor: AppColors.primaryBlue,
               title: 'Auto-sync',
               subtitle: 'Keep data updated in real-time',
               value: _notificationsEnabled,
@@ -99,8 +85,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             _buildSwitchTile(
               icon: Icons.vibration_rounded,
-              iconBg: AppColors.surfaceSubtle,
-              iconColor: AppColors.textSecondary,
               title: 'Haptic Feedback',
               subtitle: 'Soft vibrations on interactions',
               value: _pushNotifications,
@@ -110,11 +94,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
           SizedBox(height: 48.h),
 
-          // Logout Button
           Container(
             width: double.infinity,
-            decoration: BoxDecoration(
-              boxShadow: AppColors.softShadow,
+            decoration: const BoxDecoration(
+              boxShadow: [],
             ),
             child: ElevatedButton.icon(
               onPressed: _showLogoutDialog,
@@ -179,8 +162,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Widget _buildSettingsTile({
     required IconData icon,
-    required Color iconBg,
-    required Color iconColor,
     required String title,
     required String subtitle,
     required VoidCallback onTap,
@@ -193,14 +174,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           padding: EdgeInsets.all(16.r),
           child: Row(
             children: [
-              Container(
-                padding: EdgeInsets.all(10.r),
-                decoration: BoxDecoration(
-                  color: iconBg,
-                  borderRadius: BorderRadius.circular(14.r),
-                ),
-                child: Icon(icon, size: 22.sp, color: iconColor),
-              ),
+              Icon(icon, size: 22.sp, color: AppColors.textSecondary),
               SizedBox(width: 16.w),
               Expanded(
                 child: Column(
@@ -228,8 +202,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Widget _buildSwitchTile({
     required IconData icon,
-    required Color iconBg,
-    required Color iconColor,
     required String title,
     required String subtitle,
     required bool value,
@@ -239,14 +211,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       padding: EdgeInsets.all(16.r),
       child: Row(
         children: [
-          Container(
-            padding: EdgeInsets.all(10.r),
-            decoration: BoxDecoration(
-              color: iconBg,
-              borderRadius: BorderRadius.circular(14.r),
-            ),
-            child: Icon(icon, size: 22.sp, color: iconColor),
-          ),
+          Icon(icon, size: 22.sp, color: AppColors.textSecondary),
           SizedBox(width: 16.w),
           Expanded(
             child: Column(
@@ -267,13 +232,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
           Switch.adaptive(
             value: value,
             onChanged: onChanged,
-            activeColor: AppColors.primaryBlue,
+            activeThumbColor: AppColors.primaryBlue,
             activeTrackColor: AppColors.primaryBlue.withValues(alpha: 0.2),
           ),
         ],
       ),
     );
   }
+
 
   void _showThemeBottomSheet() {
     showModalBottomSheet(
@@ -288,12 +254,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
           children: [
             Text('Appearance', style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w800)),
             SizedBox(height: 16.h),
-            ...[('light', 'Light Mode'), ('dark', 'Dark Mode'), ('system', 'System Default')].map((t) => 
-              RadioListTile<String>(
+            ...[
+              (ThemeMode.light, 'Light Mode'), 
+              (ThemeMode.dark, 'Dark Mode'), 
+              (ThemeMode.system, 'System Default')
+            ].map((t) => 
+              RadioListTile<ThemeMode>(
                 value: t.$1,
-                groupValue: _selectedTheme,
+                groupValue: context.watch<ThemeCubit>().state,
                 onChanged: (v) {
-                  setState(() => _selectedTheme = v!);
+                  context.read<ThemeCubit>().updateTheme(v!);
                   Navigator.pop(context);
                 },
                 title: Text(t.$2, style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w600)),
@@ -342,20 +312,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.r)),
-        title: Text('Logout', style: TextStyle(fontWeight: FontWeight.w800)),
-        content: Text('Are you sure you want to exit?'),
+        title: const Text('Logout', style: TextStyle(fontWeight: FontWeight.w800)),
+        content: const Text('Are you sure you want to exit?'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: Text('Cancel')),
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
           ElevatedButton(
             onPressed: () => Navigator.pop(context),
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.errorRed, foregroundColor: Colors.white),
-            child: Text('Logout'),
+            child: const Text('Logout'),
           ),
         ],
       ),
     );
   }
 
-  String _getThemeLabel(String t) => t == 'light' ? 'Light Mode' : t == 'dark' ? 'Dark Mode' : 'System Default';
+  String _getThemeLabel(ThemeMode mode) {
+    switch (mode) {
+      case ThemeMode.light: return 'Light Mode';
+      case ThemeMode.dark: return 'Dark Mode';
+      case ThemeMode.system: return 'System Default';
+    }
+  }
   String _getLanguageLabel(String l) => l == 'english' ? 'English' : 'Nepali (नेपाली)';
 }

@@ -107,7 +107,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           children: [
             Container(
               padding: EdgeInsets.all(32.r),
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: AppColors.surfaceSubtle,
                 shape: BoxShape.circle,
               ),
@@ -149,7 +149,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   Widget _buildNotificationTile(Map<String, dynamic> notification) {
     final isUnread = !(notification['read'] as bool);
     final type = notification['type'] as String;
-    final color = _getTypeColor(type);
 
     return Material(
       color: isUnread ? AppColors.primaryBlue.withValues(alpha: 0.03) : Colors.transparent,
@@ -161,44 +160,23 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         },
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             border: Border(bottom: BorderSide(color: AppColors.borderSubtle, width: 0.5)),
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Avatar with Type Badge
-              Stack(
-                children: [
-                  Container(
-                    width: 48.w,
-                    height: 48.h,
-                    decoration: BoxDecoration(
-                      color: color.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(16.r),
-                    ),
-                    child: Center(
-                      child: Text(
-                        notification['avatar'] as String,
-                        style: TextStyle(fontSize: 24.sp),
-                      ),
-                    ),
-                  ),
-                  if (isUnread)
-                    Positioned(
-                      right: 0,
-                      top: 0,
-                      child: Container(
-                        width: 12.w,
-                        height: 12.h,
-                        decoration: BoxDecoration(
-                          color: AppColors.primaryBlue,
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white, width: 2),
-                        ),
-                      ),
-                    ),
-                ],
+              // Icon container - Monochromatic
+              Container(
+                width: 48.w,
+                height: 48.h,
+                decoration: BoxDecoration(
+                  color: AppColors.surfaceSubtle,
+                  borderRadius: BorderRadius.circular(16.r),
+                ),
+                child: Center(
+                  child: Icon(_getTypeIcon(type), size: 22.sp, color: AppColors.textSecondary),
+                ),
               ),
               SizedBox(width: 16.w),
 
@@ -249,13 +227,24 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       overflow: TextOverflow.ellipsis,
                     ),
                     SizedBox(height: 8.h),
-                    Text(
-                      notification['timestamp'] as String,
-                      style: TextStyle(
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textTertiary,
-                      ),
+                    Row(
+                      children: [
+                        if (isUnread)
+                          Container(
+                            width: 6.w,
+                            height: 6.h,
+                            margin: EdgeInsets.only(right: 8.w),
+                            decoration: const BoxDecoration(color: AppColors.primaryBlue, shape: BoxShape.circle),
+                          ),
+                        Text(
+                          notification['timestamp'] as String,
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textTertiary,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -267,14 +256,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     );
   }
 
-  Color _getTypeColor(String type) {
+  IconData _getTypeIcon(String type) {
     switch (type) {
-      case 'mention': return AppColors.primaryViolet;
-      case 'assigned': return AppColors.warningAmber;
-      case 'status': return AppColors.successGreen;
-      case 'comment': return AppColors.primaryBlue;
-      case 'deadline': return AppColors.errorRed;
-      default: return AppColors.textSecondary;
+      case 'mention': return Icons.alternate_email_rounded;
+      case 'assigned': return Icons.person_add_alt_1_rounded;
+      case 'status': return Icons.check_circle_outline_rounded;
+      case 'comment': return Icons.chat_bubble_outline_rounded;
+      case 'deadline': return Icons.access_time_rounded;
+      default: return Icons.notifications_none_rounded;
     }
   }
 

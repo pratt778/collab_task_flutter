@@ -46,7 +46,7 @@ class _SplashScreenState extends State<SplashScreen> {
               padding: EdgeInsets.all(20.r),
               decoration: const BoxDecoration(
                 shape: BoxShape.circle,
-                color: AppColors.primaryTeal,
+                color: AppColors.primaryBlue,
               ),
               child: Icon(
                 Icons.flutter_dash,
@@ -57,11 +57,11 @@ class _SplashScreenState extends State<SplashScreen> {
             SizedBox(height: 24.h),
             Text(
               AppLocalizations.of(context).appName,
-              style: AppTypography.h1.copyWith(color: AppColors.primaryTeal),
+              style: AppTypography.h1.copyWith(color: AppColors.primaryBlue),
             ),
             const SizedBox(height: 24),
             CircularProgressIndicator(
-              color: AppColors.primaryTeal,
+              color: AppColors.primaryBlue,
               strokeWidth: 4.r,
             ),
           ],

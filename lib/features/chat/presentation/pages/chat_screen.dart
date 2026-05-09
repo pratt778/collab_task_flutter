@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:collab_task/features/shared/widget/custom_appbar.dart';
-import 'package:collab_task/l10n/gen/app_localizations.dart';
 
 class ChatScreen extends StatelessWidget {
   const ChatScreen({super.key});

@@ -20,4 +20,9 @@ class ThemeCubit extends Cubit<ThemeMode> {
     _storage.saveDarkMode(next == ThemeMode.dark);
     emit(next);
   }
+
+  void updateTheme(ThemeMode themeMode) {
+    _storage.saveDarkMode(themeMode == ThemeMode.dark);
+    emit(themeMode);
+  }
 }
