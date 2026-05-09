@@ -30,4 +30,8 @@ class ApiConstants {
 
   // ── WebSockets ───────────────────────────────────────────────────────
   static const String ws = 'ws';
+
+  // ── Supabase (Optional: Use if not using REST API Helper) ────────────
+  static const String supabaseUrl = 'YOUR_SUPABASE_URL';
+  static const String supabaseAnonKey = 'YOUR_SUPABASE_ANON_KEY';
 }

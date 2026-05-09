@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:collab_task/core/config/constants/color_constant.dart';
 
 /// Semantic color tokens that flip between light and dark mode.
 ///
@@ -7,6 +8,10 @@ import 'package:flutter/material.dart';
 /// they don't change between modes.
 @immutable
 class AppColorsExtension extends ThemeExtension<AppColorsExtension> {
+  final Color primary;
+  final Color secondary;
+  final Color textDark;
+  final Color surfaceWhite;
   final Color scaffold;
   final Color surface;
   final Color surfaceAlt;
@@ -22,6 +27,10 @@ class AppColorsExtension extends ThemeExtension<AppColorsExtension> {
   final Color shadow;
 
   const AppColorsExtension({
+    required this.primary,
+    required this.secondary,
+    required this.textDark,
+    required this.surfaceWhite,
     required this.scaffold,
     required this.surface,
     required this.surfaceAlt,
@@ -38,6 +47,10 @@ class AppColorsExtension extends ThemeExtension<AppColorsExtension> {
   });
 
   static const light = AppColorsExtension(
+    primary: AppColors.primaryTeal,
+    secondary: AppColors.secondaryTeal,
+    textDark: AppColors.textDark,
+    surfaceWhite: AppColors.surfaceWhite,
     scaffold: Color(0xFFF9F9F9),
     surface: Color(0xFFFFFFFF),
     surfaceAlt: Color(0xFFFAFAFA),
@@ -54,6 +67,10 @@ class AppColorsExtension extends ThemeExtension<AppColorsExtension> {
   );
 
   static const dark = AppColorsExtension(
+    primary: AppColors.primaryTeal,
+    secondary: AppColors.secondaryTeal,
+    textDark: AppColors.surfaceWhite, // In dark mode, textDark might be white?
+    surfaceWhite: AppColors.surfaceWhite,
     scaffold: Color(0xFF0E1213),
     surface: Color(0xFF161B1D),
     surfaceAlt: Color(0xFF1E2527),
@@ -71,6 +88,10 @@ class AppColorsExtension extends ThemeExtension<AppColorsExtension> {
 
   @override
   AppColorsExtension copyWith({
+    Color? primary,
+    Color? secondary,
+    Color? textDark,
+    Color? surfaceWhite,
     Color? scaffold,
     Color? surface,
     Color? surfaceAlt,
@@ -86,6 +107,10 @@ class AppColorsExtension extends ThemeExtension<AppColorsExtension> {
     Color? shadow,
   }) {
     return AppColorsExtension(
+      primary: primary ?? this.primary,
+      secondary: secondary ?? this.secondary,
+      textDark: textDark ?? this.textDark,
+      surfaceWhite: surfaceWhite ?? this.surfaceWhite,
       scaffold: scaffold ?? this.scaffold,
       surface: surface ?? this.surface,
       surfaceAlt: surfaceAlt ?? this.surfaceAlt,
@@ -109,6 +134,10 @@ class AppColorsExtension extends ThemeExtension<AppColorsExtension> {
   ) {
     if (other is! AppColorsExtension) return this;
     return AppColorsExtension(
+      primary: Color.lerp(primary, other.primary, t)!,
+      secondary: Color.lerp(secondary, other.secondary, t)!,
+      textDark: Color.lerp(textDark, other.textDark, t)!,
+      surfaceWhite: Color.lerp(surfaceWhite, other.surfaceWhite, t)!,
       scaffold: Color.lerp(scaffold, other.scaffold, t)!,
       surface: Color.lerp(surface, other.surface, t)!,
       surfaceAlt: Color.lerp(surfaceAlt, other.surfaceAlt, t)!,

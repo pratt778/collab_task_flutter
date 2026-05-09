@@ -68,3 +68,4 @@ ios/Runner.xcodeproj/project.xcworkspace/xcuserdata/
 # lib/firebase_options.dart
 # **/google-services.json
 # **/GoogleService-Info.plist
+.aider*

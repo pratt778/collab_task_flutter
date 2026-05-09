@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:collab_task/core/app/router/app_router.dart';
@@ -7,12 +6,7 @@ import 'package:collab_task/core/config/constants/app_size_constant.dart';
 import 'package:collab_task/core/config/constants/color_constant.dart';
 import 'package:collab_task/core/config/theme/app_colors_extension.dart';
 import 'package:collab_task/core/config/constants/typography_constant.dart';
-import 'package:collab_task/core/error/failure_messages.dart';
-import 'package:collab_task/core/extension/snackbar_extension.dart';
 import 'package:collab_task/l10n/gen/app_localizations.dart';
-import 'package:collab_task/core/helper/secure_storage_helper.dart';
-import 'package:collab_task/features/auth/presentation/cubit/auth_cubit.dart';
-import 'package:collab_task/features/auth/presentation/cubit/auth_state.dart';
 import 'package:collab_task/features/auth/presentation/widgets/app_primary_button.dart';
 import 'package:collab_task/features/auth/presentation/widgets/app_text_field.dart';
 
@@ -24,10 +18,9 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController _customerOrgIdController =
-      TextEditingController();
+  final TextEditingController _customerOrgIdController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  bool _rememberMe = false;
 
   @override
   void dispose() {
@@ -39,258 +32,159 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
-    _customerOrgIdController.text = SecureStorageHelper().getAccountInfo();
-    _phoneController.text = SecureStorageHelper().getPhoneNumber();
+    _customerOrgIdController.text = 'customer@organization';
+    _phoneController.text = '9876543210';
   }
 
   void _onLoginPressed() {
-    if (!_formKey.currentState!.validate()) return;
-
-    context.read<AuthCubit>().login(
-      phoneNumber: _phoneController.text.trim(),
-      customerNo: customerOrganizationCode(
-        _customerOrgIdController.text.trim(),
-      )['customerNo']!,
-      organizationCode: customerOrganizationCode(
-        _customerOrgIdController.text.trim(),
-      )['organizationCode']!,
-    );
+    context.goNamed(MainRoutes.taskBoardName);
   }
 
-  Map<String, String> customerOrganizationCode(String fullid) {
-    if (fullid.contains('@')) {
-      final List<String> parts = fullid.split('@');
-
-      // parts[0] is everything before @
-      // parts[1] is everything after @
-      final String customerNo = parts[0];
-      final String organizationCode = parts[1];
-
-      // Now use them in your request
-      debugPrint('Customer ID: $customerNo');
-      debugPrint('Org Code: $organizationCode');
-      return {'customerNo': customerNo, 'organizationCode': organizationCode};
-    } else {
-      // Handle error if the user forgets the @ symbol
-      debugPrint('Invalid format. Use customerId@orgCode');
-      return {};
-    }
+  void _onForgotPasswordPressed() {
+    context.goNamed(MainRoutes.forgotPasswordName);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // resizeToAvoidBottomInset: false,
-      body: BlocConsumer<AuthCubit, AuthState>(
-        listener: (context, state) {
-          state.whenOrNull(
-            error: (failure) {
-              context.showSnackbar(
-                localizedFailureMessage(context, failure),
-                isError: true,
-              );
-            },
-            authenticated: (user) {
-              context.showSnackbar(
-                AppLocalizations.of(context).loginSuccessful,
-              );
-              context.goNamed(MainRoutes.taskBoardName);
-            },
-          );
-        },
-        builder: (context, state) {
-          final bool isLoading = state.maybeWhen(
-            loading: () => true,
-            orElse: () => false,
-          );
-
-          return Stack(
-            children: [
-              Container(
-                height: double.infinity * 0.57,
-                width: double.infinity,
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      AppColors.primaryTeal,
-                      AppColors.secondaryTeal,
-                      AppColors.primaryTeal,
+      body: Stack(
+        children: [
+          Container(
+            height: 1.sw * 0.57,
+            width: double.infinity,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  AppColors.primaryTeal,
+                  AppColors.secondaryTeal,
+                  AppColors.primaryTeal,
+                ],
+              ),
+            ),
+          ),
+          SafeArea(
+            child: CustomScrollView(
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              slivers: [
+                SliverToBoxAdapter(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Center(
+                        child: Padding(
+                          padding: EdgeInsets.only(top: 80.h, bottom: 16.h),
+                          child: Icon(
+                            Icons.flutter_dash,
+                            size: 96.r,
+                            color: AppColors.surfaceWhite,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 24.w),
+                        child: Text(
+                          AppLocalizations.of(context).hello,
+                          style: AppTypography.h1.copyWith(
+                            color: AppColors.textDark,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 4.h),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 24.w),
+                        child: Text(
+                          AppLocalizations.of(context).welcomeBack,
+                          style: AppTypography.h1.copyWith(
+                            color: AppColors.surfaceWhite,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      24.verticalSpace,
                     ],
                   ),
                 ),
-              ),
-              SafeArea(
-                child: CustomScrollView(
-                  keyboardDismissBehavior:
-                      ScrollViewKeyboardDismissBehavior.onDrag,
-                  slivers: [
-                    SliverToBoxAdapter(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Branding placeholder — swap in your own logo asset.
-                          Center(
-                            child: Padding(
-                              padding: EdgeInsets.only(top: 80.h, bottom: 16.h),
-                              child: Icon(
-                                Icons.flutter_dash,
-                                size: 96.r,
-                                color: AppColors.surfaceWhite,
-                              ),
-                            ),
-                          ),
-                          // Hello text
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 24.w),
-                            child: Text(
-                              AppLocalizations.of(context).hello,
-                              style: AppTypography.h1.copyWith(
-                                color: AppColors.textDark,
-                                fontWeight: FontWeight.w800,
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 4.h),
-
-                          // Welcome back text
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 24.w),
-                            child: Text(
-                              AppLocalizations.of(context).welcomeBack,
-                              style: AppTypography.h1.copyWith(
-                                color: AppColors.surfaceWhite,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          24.verticalSpace,
-                        ],
-                      ),
+                SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 20.w,
+                      vertical: 27.h,
                     ),
-                    // White card with form — extends to bottom
-                    SliverFillRemaining(
-                      hasScrollBody: false,
-                      child: Container(
-                        width: double.infinity,
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 20.w,
-                          vertical: 27.h,
+                    decoration: BoxDecoration(
+                      color: context.appColors.surface,
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(AppSizes.radiusXL),
+                        topRight: Radius.circular(AppSizes.radiusXL),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.1),
+                          blurRadius: 20,
+                          offset: const Offset(0, 8),
                         ),
-                        decoration: BoxDecoration(
-                          color: context.appColors.surface,
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(AppSizes.radiusXL),
-                            topRight: Radius.circular(AppSizes.radiusXL),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Center(
+                          child: Text(
+                            AppLocalizations.of(context).enterToYourAccount,
+                            style: AppTypography.h3,
                           ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.1),
-                              blurRadius: 20,
-                              offset: const Offset(0, 8),
+                        ),
+                        SizedBox(height: 32.h),
+                        AppTextField(
+                          label: AppLocalizations.of(context).customerId,
+                          hintText: AppLocalizations.of(context).customerIdHint,
+                          controller: _customerOrgIdController,
+                        ),
+                        16.verticalSpace,
+                        AppTextField(
+                          label: AppLocalizations.of(context).phoneNumber,
+                          hintText: AppLocalizations.of(context).phoneNumberHint,
+                          keyboardType: TextInputType.phone,
+                          controller: _phoneController,
+                        ),
+                        8.verticalSpace,
+                        Row(
+                          children: [
+                            Checkbox(
+                              value: _rememberMe,
+                              onChanged: (value) {
+                                setState(() {
+                                  _rememberMe = value ?? false;
+                                });
+                              },
+                            ),
+                            const Text('Remember Me'),
+                            const Spacer(),
+                            TextButton(
+                              onPressed: _onForgotPasswordPressed,
+                              child: const Text('Forgot Password?'),
                             ),
                           ],
                         ),
-                        child: Form(
-                          key: _formKey,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Title
-                              Center(
-                                child: Text(
-                                  AppLocalizations.of(
-                                    context,
-                                  ).enterToYourAccount,
-                                  style: AppTypography.h3,
-                                ),
-                              ),
-                              SizedBox(height: 32.h),
-
-                              // User Name field
-                              AppTextField(
-                                label: AppLocalizations.of(context).customerId,
-                                hintText: AppLocalizations.of(
-                                  context,
-                                ).customerIdHint,
-                                controller: _customerOrgIdController,
-                                validator: (value) {
-                                  if (value == null || value.trim().isEmpty) {
-                                    return AppLocalizations.of(
-                                      context,
-                                    ).pleaseEnterCustomerId;
-                                  }
-                                  if (!value.contains('@')) {
-                                    return AppLocalizations.of(
-                                      context,
-                                    ).pleaseEnterValidCustomerId;
-                                  }
-                                  final parts = value.split('@');
-                                  if (parts.length != 2) {
-                                    return AppLocalizations.of(
-                                      context,
-                                    ).pleaseEnterValidCustomerId;
-                                  }
-                                  if (parts[0].isEmpty || parts[1].isEmpty) {
-                                    return AppLocalizations.of(
-                                      context,
-                                    ).pleaseEnterValidCustomerId;
-                                  }
-
-                                  return null;
-                                },
-                              ),
-                              16.verticalSpace,
-
-                              // Phone Number field
-                              AppTextField(
-                                label: AppLocalizations.of(context).phoneNumber,
-                                hintText: AppLocalizations.of(
-                                  context,
-                                ).phoneNumberHint,
-                                keyboardType: TextInputType.phone,
-                                controller: _phoneController,
-                                validator: (value) {
-                                  if (value == null || value.trim().isEmpty) {
-                                    return AppLocalizations.of(
-                                      context,
-                                    ).pleaseEnterPhoneNumber;
-                                  }
-                                  if (value.length != 10) {
-                                    return AppLocalizations.of(
-                                      context,
-                                    ).pleaseEnterValidPhoneNumber;
-                                  }
-                                  if (!value.startsWith('9')) {
-                                    return AppLocalizations.of(
-                                      context,
-                                    ).pleaseEnterValidPhoneNumber;
-                                  }
-                                  return null;
-                                },
-                              ),
-                              24.verticalSpace,
-
-                              // Login button
-                              AppPrimaryButton(
-                                text: AppLocalizations.of(context).logIn,
-                                icon: Icons.arrow_forward,
-                                isLoading: isLoading,
-                                onPressed: _onLoginPressed,
-                              ),
-                              85.verticalSpace,
-                            ],
-                          ),
+                        24.verticalSpace,
+                        AppPrimaryButton(
+                          text: AppLocalizations.of(context).logIn,
+                          icon: Icons.arrow_forward,
+                          onPressed: _onLoginPressed,
                         ),
-                      ),
+                        85.verticalSpace,
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
-            ],
-          );
-        },
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

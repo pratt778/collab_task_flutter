@@ -27,16 +27,6 @@ import 'package:collab_task/features/auth/domain/usecases/logout_usecase.dart'
     as _i330;
 import 'package:collab_task/features/auth/presentation/cubit/auth_cubit.dart'
     as _i981;
-import 'package:collab_task/features/demo/data/datasources/demo_datasource.dart'
-    as _i313;
-import 'package:collab_task/features/demo/data/repositories/demo_repo_impl.dart'
-    as _i691;
-import 'package:collab_task/features/demo/domain/repositories/demo_repository.dart'
-    as _i133;
-import 'package:collab_task/features/demo/domain/usecases/get_demos_usecase.dart'
-    as _i1062;
-import 'package:collab_task/features/demo/presentation/cubit/demo_cubit.dart'
-    as _i689;
 import 'package:collab_task/features/locale/presentation/cubit/locale_cubit.dart'
     as _i881;
 import 'package:collab_task/features/shared/cubits/network_cubits.dart'
@@ -100,9 +90,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i423.TaskDatasource>(
       () => _i423.TaskDatasourceImpl(gh<_i29.ApiHelper>()),
     );
-    gh.lazySingleton<_i313.DemoRemoteDatasource>(
-      () => _i313.DemoRemoteDatasourceImpl(apiHelper: gh<_i29.ApiHelper>()),
-    );
     gh.lazySingleton<_i867.AuthRemoteDatasource>(
       () => _i867.AuthRemoteDatasourceImpl(apiHelper: gh<_i29.ApiHelper>()),
     );
@@ -135,22 +122,11 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i522.UpdateTaskUseCase>(
       () => _i522.UpdateTaskUseCase(gh<_i123.TaskRepository>()),
     );
-    gh.factory<_i885.TaskListCubit>(
-      () => _i885.TaskListCubit(
-        gh<_i130.GetTasksUseCase>(),
-        gh<_i196.WebSocketService>(),
-      ),
-    );
     gh.factory<_i223.TaskDetailCubit>(
       () => _i223.TaskDetailCubit(
         gh<_i121.GetTaskDetailUseCase>(),
         gh<_i522.UpdateTaskUseCase>(),
         gh<_i532.DeleteTaskUseCase>(),
-      ),
-    );
-    gh.lazySingleton<_i133.DemoRepository>(
-      () => _i691.DemoRepositoryImpl(
-        remoteDatasource: gh<_i313.DemoRemoteDatasource>(),
       ),
     );
     gh.lazySingleton<_i981.AuthCubit>(
@@ -160,11 +136,12 @@ extension GetItInjectableX on _i174.GetIt {
         sessionWriter: gh<_i1007.AuthSessionWriter>(),
       ),
     );
-    gh.lazySingleton<_i1062.GetDemosUseCase>(
-      () => _i1062.GetDemosUseCase(gh<_i133.DemoRepository>()),
-    );
-    gh.factory<_i689.DemoCubit>(
-      () => _i689.DemoCubit(getDemosUseCase: gh<_i1062.GetDemosUseCase>()),
+    gh.factory<_i885.TaskListCubit>(
+      () => _i885.TaskListCubit(
+        gh<_i130.GetTasksUseCase>(),
+        gh<_i647.CreateTaskUseCase>(),
+        gh<_i196.WebSocketService>(),
+      ),
     );
     return this;
   }

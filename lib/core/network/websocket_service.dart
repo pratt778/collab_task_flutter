@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:collab_task/core/config/constants/api_constant.dart';
 
 /// Status enum for WebSocket connection states.
 enum WebSocketStatus { connecting, connected, disconnected, error }

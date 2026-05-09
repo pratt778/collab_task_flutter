@@ -65,6 +65,7 @@ dependencies:
   internet_connection_checker_plus: ^2.9.1+2
   intl: ^0.20.2
   injectable: ^2.5.1
+  supabase_flutter: ^2.12.4
 dev_dependencies:
   flutter_test:
     sdk: flutter

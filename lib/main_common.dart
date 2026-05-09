@@ -2,6 +2,7 @@ import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:collab_task/core/app/app.dart';
 import 'package:collab_task/core/app/bloc_observer.dart';
 import 'package:collab_task/core/app/di/injection_container.dart';
@@ -38,6 +39,14 @@ void mainCommon() async {
 
 Future<void> initializeApp() async {
   await SecureStorageHelper().init();
+
+  // Initialize Supabase if keys are provided
+  if (ApiConstants.supabaseUrl != 'YOUR_SUPABASE_URL') {
+    await Supabase.initialize(
+      url: ApiConstants.supabaseUrl,
+      anonKey: ApiConstants.supabaseAnonKey,
+    );
+  }
 
   if (AppConfig.enableIpConfig) {
     ApiConstants.baseUrl = ApiConstants.buildBaseUrl(
