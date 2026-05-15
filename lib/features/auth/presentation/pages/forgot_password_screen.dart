@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:collab_task/core/app/router/app_router.dart';
-import 'package:collab_task/core/config/constants/app_size_constant.dart';
 import 'package:collab_task/core/config/constants/color_constant.dart';
 import 'package:collab_task/core/config/theme/app_colors_extension.dart';
 import 'package:collab_task/core/config/constants/typography_constant.dart';
+import 'package:collab_task/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:collab_task/features/auth/presentation/cubit/auth_state.dart';
 import 'package:collab_task/features/auth/presentation/widgets/app_primary_button.dart';
 import 'package:collab_task/features/auth/presentation/widgets/app_text_field.dart';
 
@@ -25,14 +27,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     super.dispose();
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _emailController.text = 'john.doe@example.com';
-  }
-
   void _onSendOtpPressed() {
-    context.goNamed(MainRoutes.otpInputName);
+    if (_emailController.text.isEmpty) return;
+    context.read<AuthCubit>().resetPassword(_emailController.text.trim());
   }
 
   void _onBackToLoginPressed() {
@@ -41,104 +38,114 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: CustomScrollView(
-          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-          slivers: [
-            SliverToBoxAdapter(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Center(
-                    child: Padding(
-                      padding: EdgeInsets.only(top: 80.h, bottom: 16.h),
-                      child: Icon(
-                        Icons.lock_reset_outlined,
-                        size: 96.r,
-                        color: AppColors.textBlack,
+    final colors = context.appColors;
+
+    return BlocListener<AuthCubit, AuthState>(
+      listener: (context, state) {
+        state.maybeWhen(
+          error: (failure) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(failure.toString())),
+            );
+          },
+          unauthenticated: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Reset OTP sent to your email!')),
+            );
+            context.pushNamed(MainRoutes.otpInputName, extra: _emailController.text.trim());
+          },
+          orElse: () {},
+        );
+      },
+      child: Scaffold(
+        backgroundColor: colors.scaffold,
+        body: Stack(
+          children: [
+            const SizedBox.expand(),
+            // Hero Gradient Background
+            Container(
+              height: 300.h,
+              width: double.infinity,
+              decoration: const BoxDecoration(gradient: AppColors.primaryGradient),
+              child: SafeArea(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 30.h),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      GestureDetector(
+                        onTap: () => context.pop(),
+                        child: Container(
+                          padding: EdgeInsets.all(8.r),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                          child: Icon(Icons.arrow_back_ios_new_rounded, size: 18.sp, color: Colors.white),
+                        ),
                       ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24.w),
-                    child: Text(
-                      'Forgot Password?',
-                      style: AppTypography.h3.copyWith(
-                        color: AppColors.textDark,
-                        fontWeight: FontWeight.w800,
+                      SizedBox(height: 24.h),
+                      Text(
+                        'Reset Password',
+                        style: AppTypography.h1.copyWith(color: Colors.white, fontWeight: FontWeight.w900),
                       ),
-                    ),
-                  ),
-                  SizedBox(height: 4.h),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24.w),
-                    child: Text(
-                      'Enter your email to reset your password.',
-                      style: AppTypography.bodyMedium.copyWith(
-                        color: AppColors.textBlack,
-                        fontWeight: FontWeight.bold,
+                      Text(
+                        'We\'ll send a code to your email',
+                        style: TextStyle(color: Colors.white70, fontSize: 16.sp, fontWeight: FontWeight.w500),
                       ),
-                    ),
+                    ],
                   ),
-                  24.verticalSpace,
-                ],
+                ),
               ),
             ),
-            SliverFillRemaining(
-              hasScrollBody: false,
+
+            // Form card
+            Positioned.fill(
+              top: 220.h,
               child: Container(
-                width: double.infinity,
-                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 27.h),
+                padding: EdgeInsets.fromLTRB(24.w, 40.h, 24.w, 24.h),
                 decoration: BoxDecoration(
-                  color: context.appColors.surface,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(AppSizes.radiusXL),
-                    topRight: Radius.circular(AppSizes.radiusXL),
-                  ),
+                  color: colors.surface,
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(36.r)),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.1),
+                      color: Colors.black.withValues(alpha: 0.05),
                       blurRadius: 20,
-                      offset: const Offset(0, 8),
+                      offset: const Offset(0, -10),
                     ),
                   ],
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(height: 32.h),
                     AppTextField(
-                      label: 'Email',
-                      hintText: 'Enter your email address',
+                      label: 'Email Address',
+                      hintText: 'Enter your email',
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
                     ),
                     40.verticalSpace,
-                    AppPrimaryButton(
-                      text: 'Send OTP',
-                      icon: Icons.send_outlined,
-                      onPressed: _onSendOtpPressed,
+                    BlocBuilder<AuthCubit, AuthState>(
+                      builder: (context, state) {
+                        return AppPrimaryButton(
+                          text: 'Send OTP',
+                          onPressed: state.maybeWhen(
+                            loading: () => null,
+                            orElse: () => _onSendOtpPressed,
+                          ),
+                        );
+                      },
                     ),
-                    SizedBox(height: 20.h),
+                    32.verticalSpace,
                     Center(
                       child: TextButton(
                         onPressed: _onBackToLoginPressed,
-                        style: TextButton.styleFrom(
-                          padding: EdgeInsets.zero,
-                          minimumSize: Size.zero,
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        ),
-                        child: Text(
+                        child: const Text(
                           'Back to Login',
-                          style: AppTypography.bodyMedium.copyWith(
-                            color: context.appColors.primary,
-                            fontWeight: FontWeight.w600,
-                          ),
+                          style: TextStyle(fontWeight: FontWeight.w700, color: AppColors.primaryBlue),
                         ),
                       ),
                     ),
-                    85.verticalSpace,
                   ],
                 ),
               ),

@@ -96,7 +96,7 @@ class MainRoutes {
       GoRoute(
         pageBuilder: (context, state) => slideTransitionPage<void>(
           state: state,
-          child: const OtpInputScreen(),
+          child: OtpInputScreen(email: state.extra as String? ?? ''),
         ),
         name: otpInputName,
         path: otpInputPath,

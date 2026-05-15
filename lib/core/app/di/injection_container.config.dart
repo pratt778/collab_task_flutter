@@ -25,6 +25,14 @@ import 'package:collab_task/features/auth/domain/usecases/login_usecase.dart'
     as _i55;
 import 'package:collab_task/features/auth/domain/usecases/logout_usecase.dart'
     as _i330;
+import 'package:collab_task/features/auth/domain/usecases/register_usecase.dart'
+    as _i231;
+import 'package:collab_task/features/auth/domain/usecases/reset_password_usecase.dart'
+    as _i202;
+import 'package:collab_task/features/auth/domain/usecases/update_password_usecase.dart'
+    as _i825;
+import 'package:collab_task/features/auth/domain/usecases/verify_otp_usecase.dart'
+    as _i93;
 import 'package:collab_task/features/auth/presentation/cubit/auth_cubit.dart'
     as _i981;
 import 'package:collab_task/features/locale/presentation/cubit/locale_cubit.dart'
@@ -84,14 +92,14 @@ extension GetItInjectableX on _i174.GetIt {
         secureStorage: gh<_i445.SecureStorageHelper>(),
       ),
     );
+    gh.lazySingleton<_i867.AuthRemoteDatasource>(
+      () => _i867.AuthRemoteDatasourceImpl(),
+    );
     gh.lazySingleton<_i29.ApiHelper>(
       () => registerModule.apiHelper(gh<_i361.Dio>()),
     );
     gh.lazySingleton<_i423.TaskDatasource>(
       () => _i423.TaskDatasourceImpl(gh<_i29.ApiHelper>()),
-    );
-    gh.lazySingleton<_i867.AuthRemoteDatasource>(
-      () => _i867.AuthRemoteDatasourceImpl(apiHelper: gh<_i29.ApiHelper>()),
     );
     gh.lazySingleton<_i835.AuthRepository>(
       () => _i227.AuthRepositoryImpl(
@@ -106,6 +114,18 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i330.LogoutUseCase>(
       () => _i330.LogoutUseCase(gh<_i835.AuthRepository>()),
+    );
+    gh.lazySingleton<_i231.RegisterUseCase>(
+      () => _i231.RegisterUseCase(gh<_i835.AuthRepository>()),
+    );
+    gh.lazySingleton<_i202.ResetPasswordUseCase>(
+      () => _i202.ResetPasswordUseCase(gh<_i835.AuthRepository>()),
+    );
+    gh.lazySingleton<_i825.UpdatePasswordUseCase>(
+      () => _i825.UpdatePasswordUseCase(gh<_i835.AuthRepository>()),
+    );
+    gh.lazySingleton<_i93.VerifyOtpUseCase>(
+      () => _i93.VerifyOtpUseCase(gh<_i835.AuthRepository>()),
     );
     gh.lazySingleton<_i647.CreateTaskUseCase>(
       () => _i647.CreateTaskUseCase(gh<_i123.TaskRepository>()),
@@ -132,7 +152,11 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i981.AuthCubit>(
       () => _i981.AuthCubit(
         loginUseCase: gh<_i55.LoginUseCase>(),
+        registerUseCase: gh<_i231.RegisterUseCase>(),
         logoutUseCase: gh<_i330.LogoutUseCase>(),
+        resetPasswordUseCase: gh<_i202.ResetPasswordUseCase>(),
+        verifyOtpUseCase: gh<_i93.VerifyOtpUseCase>(),
+        updatePasswordUseCase: gh<_i825.UpdatePasswordUseCase>(),
         sessionWriter: gh<_i1007.AuthSessionWriter>(),
       ),
     );

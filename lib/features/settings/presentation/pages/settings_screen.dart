@@ -3,6 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:collab_task/core/config/constants/color_constant.dart';
 import 'package:collab_task/features/theme/presentation/cubit/theme_cubit.dart';
+import 'package:collab_task/features/shared/widget/logout_dialog.dart';
+import 'package:collab_task/features/auth/presentation/cubit/auth_cubit.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -100,7 +102,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
               boxShadow: [],
             ),
             child: ElevatedButton.icon(
-              onPressed: _showLogoutDialog,
+              onPressed: () => showLogoutDialog(
+                context,
+                onConfirm: () => context.read<AuthCubit>().logout(),
+              ),
               icon: const Icon(Icons.logout_rounded, color: Colors.white),
               label: Text('Logout Account', style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w700)),
               style: ElevatedButton.styleFrom(
@@ -303,25 +308,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  void _showLogoutDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.r)),
-        title: const Text('Logout', style: TextStyle(fontWeight: FontWeight.w800)),
-        content: const Text('Are you sure you want to exit?'),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context),
-            style: ElevatedButton.styleFrom(backgroundColor: AppColors.errorRed, foregroundColor: Colors.white),
-            child: const Text('Logout'),
-          ),
-        ],
       ),
     );
   }

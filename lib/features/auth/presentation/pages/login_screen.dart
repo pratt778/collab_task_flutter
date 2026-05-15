@@ -1,12 +1,14 @@
+import 'package:collab_task/core/extension/snackbar_extension.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:collab_task/core/app/router/app_router.dart';
-import 'package:collab_task/core/config/constants/app_size_constant.dart';
 import 'package:collab_task/core/config/constants/color_constant.dart';
 import 'package:collab_task/core/config/theme/app_colors_extension.dart';
 import 'package:collab_task/core/config/constants/typography_constant.dart';
-import 'package:collab_task/l10n/gen/app_localizations.dart';
+import 'package:collab_task/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:collab_task/features/auth/presentation/cubit/auth_state.dart';
 import 'package:collab_task/features/auth/presentation/widgets/app_primary_button.dart';
 import 'package:collab_task/features/auth/presentation/widgets/app_text_field.dart';
 
@@ -18,174 +20,229 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController _customerOrgIdController =
-      TextEditingController();
-  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   bool _rememberMe = false;
 
   @override
   void dispose() {
-    _customerOrgIdController.dispose();
-    _phoneController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _customerOrgIdController.text = 'customer@organization';
-    _phoneController.text = '9876543210';
-  }
-
   void _onLoginPressed() {
-    context.goNamed(MainRoutes.taskBoardName);
+    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
+      return;
+    }
+    context.read<AuthCubit>().login(
+      email: _emailController.text.trim(),
+      password: _passwordController.text.trim(),
+    );
   }
 
-  void _onForgotPasswordPressed() {
-    context.goNamed(MainRoutes.forgotPasswordName);
-  }
-
-  void _onRegisterPressed() {
-    context.goNamed(MainRoutes.registerName);
-  }
+  void _onForgotPasswordPressed() =>
+      context.goNamed(MainRoutes.forgotPasswordName);
+  void _onRegisterPressed() => context.goNamed(MainRoutes.registerName);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: CustomScrollView(
-          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-          slivers: [
-            SliverToBoxAdapter(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Center(
-                    child: Padding(
-                      padding: EdgeInsets.only(top: 80.h, bottom: 16.h),
-                      child: Icon(
-                        Icons.flutter_dash,
-                        size: 96.r,
-                        color: AppColors.textBlack,
-                      ),
-                    ),
+    final colors = context.appColors;
+
+    return BlocListener<AuthCubit, AuthState>(
+      listener: (context, state) {
+        state.whenOrNull(
+          authenticated: (_) {
+            context.showSnackbar('Logged in successfully');
+            context.goNamed(MainRoutes.taskBoardName);
+          },
+          error: (failure) {
+            context.showSnackbar(failure.message, isError: true);
+          },
+        );
+      },
+      child: Scaffold(
+        backgroundColor: colors.scaffold,
+        body: Stack(
+          children: [
+            const SizedBox.expand(),
+            // Hero Gradient Background
+            Container(
+              height: 320.h,
+              width: double.infinity,
+              decoration: const BoxDecoration(
+                gradient: AppColors.primaryGradient,
+              ),
+              child: SafeArea(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 24.w,
+                    vertical: 40.h,
                   ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24.w),
-                    child: Text(
-                      AppLocalizations.of(context).hello,
-                      style: AppTypography.h1.copyWith(
-                        color: AppColors.textDark,
-                        fontWeight: FontWeight.w800,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        padding: EdgeInsets.all(12.r),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(16.r),
+                        ),
+                        child: Icon(
+                          Icons.flutter_dash_rounded,
+                          size: 32.sp,
+                          color: Colors.white,
+                        ),
                       ),
-                    ),
-                  ),
-                  SizedBox(height: 4.h),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24.w),
-                    child: Text(
-                      AppLocalizations.of(context).welcomeBack,
-                      style: AppTypography.h1.copyWith(
-                        color: AppColors.textBlack,
-                        fontWeight: FontWeight.bold,
+                      SizedBox(height: 24.h),
+                      Text(
+                        'Hello',
+                        style: AppTypography.h1.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w900,
+                        ),
                       ),
-                    ),
+                      Text(
+                        'Sign in to continue',
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
                   ),
-                  24.verticalSpace,
-                ],
+                ),
               ),
             ),
-            SliverFillRemaining(
-              hasScrollBody: false,
+
+            // Login Form
+            Positioned.fill(
+              top: 240.h,
               child: Container(
-                width: double.infinity,
-                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 27.h),
+                padding: EdgeInsets.fromLTRB(24.w, 40.h, 24.w, 24.h),
                 decoration: BoxDecoration(
-                  color: context.appColors.surface,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(AppSizes.radiusXL),
-                    topRight: Radius.circular(AppSizes.radiusXL),
+                  color: colors.surface,
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(36.r),
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.1),
+                      color: Colors.black.withValues(alpha: 0.05),
                       blurRadius: 20,
-                      offset: const Offset(0, 8),
+                      offset: const Offset(0, -10),
                     ),
                   ],
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Center(
-                      child: Text(
-                        AppLocalizations.of(context).enterToYourAccount,
-                        style: AppTypography.h3,
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Welcome Back',
+                        style: TextStyle(
+                          fontSize: 22.sp,
+                          fontWeight: FontWeight.w800,
+                          color: colors.textPrimary,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 32.h),
-                    AppTextField(
-                      label: AppLocalizations.of(context).customerId,
-                      hintText: AppLocalizations.of(context).customerIdHint,
-                      controller: _customerOrgIdController,
-                    ),
-                    16.verticalSpace,
-                    AppTextField(
-                      label: AppLocalizations.of(context).phoneNumber,
-                      hintText: AppLocalizations.of(context).phoneNumberHint,
-                      keyboardType: TextInputType.phone,
-                      controller: _phoneController,
-                    ),
-                    8.verticalSpace,
-                    Row(
-                      children: [
-                        Checkbox(
-                          value: _rememberMe,
-                          onChanged: (value) {
-                            setState(() {
-                              _rememberMe = value ?? false;
-                            });
-                          },
-                        ),
-                        const Text('Remember Me'),
-                        const Spacer(),
-                        TextButton(
-                          onPressed: _onForgotPasswordPressed,
-                          child: const Text('Forgot Password?'),
-                        ),
-                      ],
-                    ),
-                    24.verticalSpace,
-                    AppPrimaryButton(
-                      text: AppLocalizations.of(context).logIn,
-                      icon: Icons.arrow_forward,
-                      onPressed: _onLoginPressed,
-                    ),
-                    24.verticalSpace,
-                    Center(
-                      child: GestureDetector(
-                        onTap: _onRegisterPressed,
-                        child: RichText(
-                          text: TextSpan(
-                            style: AppTypography.bodyMedium.copyWith(
-                              color: AppColors.textSecondary,
-                            ),
+                      SizedBox(height: 32.h),
+                      AppTextField(
+                        label: 'Email Address',
+                        hintText: 'Enter your email',
+                        controller: _emailController,
+                        keyboardType: TextInputType.emailAddress,
+                      ),
+                      16.verticalSpace,
+                      AppTextField(
+                        label: 'Password',
+                        hintText: 'Enter your password',
+                        controller: _passwordController,
+                        obscureText: true,
+                      ),
+                      SizedBox(height: 12.h),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
                             children: [
-                              const TextSpan(text: "Don't have an account? "),
-                              TextSpan(
-                                text: 'Register',
+                              SizedBox(
+                                height: 24.w,
+                                width: 24.w,
+                                child: Checkbox(
+                                  value: _rememberMe,
+                                  activeColor: AppColors.primaryBlue,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(6.r),
+                                  ),
+                                  onChanged: (v) =>
+                                      setState(() => _rememberMe = v!),
+                                ),
+                              ),
+                              SizedBox(width: 10.w),
+                              Text(
+                                'Remember me',
                                 style: TextStyle(
-                                  fontWeight: FontWeight.w700,
-                                  color: context.appColors.primary,
+                                  fontSize: 13.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: colors.textSecondary,
                                 ),
                               ),
                             ],
                           ),
+                          GestureDetector(
+                            onTap: _onForgotPasswordPressed,
+                            child: Text(
+                              'Forgot Password?',
+                              style: TextStyle(
+                                fontSize: 13.sp,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.primaryBlue,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      40.verticalSpace,
+                      BlocBuilder<AuthCubit, AuthState>(
+                        builder: (context, state) {
+                          return AppPrimaryButton(
+                            text: 'Login',
+                            onPressed: state.maybeWhen(
+                              loading: () => null,
+                              orElse: () => _onLoginPressed,
+                            ),
+                          );
+                        },
+                      ),
+                      32.verticalSpace,
+                      Center(
+                        child: GestureDetector(
+                          onTap: _onRegisterPressed,
+                          child: RichText(
+                            text: TextSpan(
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                color: colors.textSecondary,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              children: const [
+                                TextSpan(text: "Don't have an account? "),
+                                TextSpan(
+                                  text: 'Register',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w800,
+                                    color: AppColors.primaryBlue,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                    85.verticalSpace,
-                  ],
+                      SizedBox(height: 40.h),
+                    ],
+                  ),
                 ),
               ),
             ),

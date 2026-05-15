@@ -131,7 +131,7 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( LoginResponseEntity user)?  authenticated,TResult Function()?  unauthenticated,TResult Function( Failure failure)?  error,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( UserEntity user)?  authenticated,TResult Function()?  unauthenticated,TResult Function( Failure failure)?  error,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AuthInitial() when initial != null:
 return initial();case _AuthLoading() when loading != null:
@@ -156,7 +156,7 @@ return error(_that.failure);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( LoginResponseEntity user)  authenticated,required TResult Function()  unauthenticated,required TResult Function( Failure failure)  error,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( UserEntity user)  authenticated,required TResult Function()  unauthenticated,required TResult Function( Failure failure)  error,}) {final _that = this;
 switch (_that) {
 case _AuthInitial():
 return initial();case _AuthLoading():
@@ -180,7 +180,7 @@ return error(_that.failure);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( LoginResponseEntity user)?  authenticated,TResult? Function()?  unauthenticated,TResult? Function( Failure failure)?  error,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( UserEntity user)?  authenticated,TResult? Function()?  unauthenticated,TResult? Function( Failure failure)?  error,}) {final _that = this;
 switch (_that) {
 case _AuthInitial() when initial != null:
 return initial();case _AuthLoading() when loading != null:
@@ -266,7 +266,7 @@ class _AuthAuthenticated implements AuthState {
   const _AuthAuthenticated(this.user);
   
 
- final  LoginResponseEntity user;
+ final  UserEntity user;
 
 /// Create a copy of AuthState
 /// with the given fields replaced by the non-null parameter values.
@@ -298,7 +298,7 @@ abstract mixin class _$AuthAuthenticatedCopyWith<$Res> implements $AuthStateCopy
   factory _$AuthAuthenticatedCopyWith(_AuthAuthenticated value, $Res Function(_AuthAuthenticated) _then) = __$AuthAuthenticatedCopyWithImpl;
 @useResult
 $Res call({
- LoginResponseEntity user
+ UserEntity user
 });
 
 
@@ -318,7 +318,7 @@ class __$AuthAuthenticatedCopyWithImpl<$Res>
 @pragma('vm:prefer-inline') $Res call({Object? user = null,}) {
   return _then(_AuthAuthenticated(
 null == user ? _self.user : user // ignore: cast_nullable_to_non_nullable
-as LoginResponseEntity,
+as UserEntity,
   ));
 }
 

@@ -2,6 +2,7 @@ import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:collab_task/core/app/app.dart';
 import 'package:collab_task/core/app/bloc_observer.dart';
@@ -19,10 +20,13 @@ import 'package:collab_task/core/helper/secure_storage_helper.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
+  // Load environment variables
+  await dotenv.load();
+
   // AppConfig is now simplified
   AppConfig.init();
-  
+
   debugPrint('🚀 Running CollabTask');
 
   // Cap the in-memory image cache.
@@ -32,7 +36,7 @@ void main() async {
   // Lock the device orientation to portrait
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   Bloc.observer = AppBlocObserver();
-  
+
   // Initialize dependencies
   await initializeApp();
 
@@ -43,10 +47,18 @@ Future<void> initializeApp() async {
   await SecureStorageHelper().init();
 
   // Initialize Supabase if keys are provided
-  if (ApiConstants.supabaseUrl != 'YOUR_SUPABASE_URL') {
+  if (ApiConstants.supabaseUrl.isNotEmpty &&
+      ApiConstants.supabaseAnonKey.isNotEmpty) {
     await Supabase.initialize(
       url: ApiConstants.supabaseUrl,
       anonKey: ApiConstants.supabaseAnonKey,
+    );
+  } else {
+    debugPrint(
+      'superbase anon key: ${ApiConstants.supabaseAnonKey} and superbase url is ${ApiConstants.supabaseUrl} ',
+    );
+    debugPrint(
+      '⚠️ WARNING: Supabase keys are missing in .env. Auth will not work.',
     );
   }
 

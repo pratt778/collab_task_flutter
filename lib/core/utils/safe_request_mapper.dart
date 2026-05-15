@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 import 'package:collab_task/core/error/exceptions.dart';
 import 'package:collab_task/core/error/failures.dart';
 
@@ -10,6 +11,10 @@ class SafeRequest {
       throw ApiFailure(e.message);
     } on DioException catch (e) {
       throw _mapDioError(e);
+    } on sb.AuthException catch (e) {
+      throw AuthFailure(e.message);
+    } on sb.PostgrestException catch (e) {
+      throw ApiFailure(e.message);
     } on AuthException catch (e) {
       throw AuthFailure(e.message);
     } on CacheException catch (e) {

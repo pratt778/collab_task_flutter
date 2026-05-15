@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:collab_task/core/app/router/app_router.dart';
-import 'package:collab_task/core/config/constants/app_size_constant.dart';
 import 'package:collab_task/core/config/constants/color_constant.dart';
 import 'package:collab_task/core/config/theme/app_colors_extension.dart';
 import 'package:collab_task/core/config/constants/typography_constant.dart';
+import 'package:collab_task/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:collab_task/features/auth/presentation/cubit/auth_state.dart';
 import 'package:collab_task/features/auth/presentation/widgets/app_primary_button.dart';
 
 class OtpInputScreen extends StatefulWidget {
-  const OtpInputScreen({super.key});
+  final String email;
+  const OtpInputScreen({super.key, required this.email});
 
   @override
   State<OtpInputScreen> createState() => _OtpInputScreenState();
@@ -30,77 +33,93 @@ class _OtpInputScreenState extends State<OtpInputScreen> {
   }
 
   void _onVerifyOtpPressed() {
-    context.goNamed(MainRoutes.resetPasswordName);
+    final otp = _otpControllers.map((c) => c.text).join();
+    if (otp.length < 6) return;
+    context.read<AuthCubit>().verifyOtp(email: widget.email, token: otp);
   }
 
   void _onResendOtpPressed() {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Simulated: OTP resent.')));
+    context.read<AuthCubit>().resetPassword(widget.email);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: CustomScrollView(
-          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-          slivers: [
-            SliverToBoxAdapter(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Center(
-                    child: Padding(
-                      padding: EdgeInsets.only(top: 80.h, bottom: 16.h),
-                      child: Icon(
-                        Icons.dialpad_outlined,
-                        size: 96.r,
-                        color: AppColors.textBlack,
+    final colors = context.appColors;
+
+    return BlocListener<AuthCubit, AuthState>(
+      listener: (context, state) {
+        state.maybeWhen(
+          authenticated: (_) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('OTP Verified! Please set your new password.')),
+            );
+            context.goNamed(MainRoutes.resetPasswordName);
+          },
+          error: (failure) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(failure.toString())),
+            );
+          },
+          orElse: () {},
+        );
+      },
+      child: Scaffold(
+        backgroundColor: colors.scaffold,
+        body: Stack(
+          children: [
+            const SizedBox.expand(),
+            // Hero
+            Container(
+              height: 300.h,
+              width: double.infinity,
+              decoration: const BoxDecoration(gradient: AppColors.primaryGradient),
+              child: SafeArea(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 30.h),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      GestureDetector(
+                        onTap: () => context.pop(),
+                        child: Container(
+                          padding: EdgeInsets.all(8.r),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                          child: Icon(Icons.arrow_back_ios_new_rounded, size: 18.sp, color: Colors.white),
+                        ),
                       ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24.w),
-                    child: Text(
-                      'Enter OTP',
-                      style: AppTypography.h3.copyWith(
-                        color: AppColors.textDark,
-                        fontWeight: FontWeight.w800,
+                      SizedBox(height: 24.h),
+                      Text(
+                        'Verify OTP',
+                        style: AppTypography.h1.copyWith(color: Colors.white, fontWeight: FontWeight.w900),
                       ),
-                    ),
-                  ),
-                  SizedBox(height: 4.h),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24.w),
-                    child: Text(
-                      'We have sent a 6-digit OTP to your email.',
-                      style: AppTypography.bodyMedium.copyWith(
-                        color: AppColors.textBlack,
-                        fontWeight: FontWeight.bold,
+                      Text(
+                        'Sent to ${widget.email}',
+                        style: TextStyle(color: Colors.white70, fontSize: 14.sp, fontWeight: FontWeight.w500),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                    ),
+                    ],
                   ),
-                  24.verticalSpace,
-                ],
+                ),
               ),
             ),
-            SliverFillRemaining(
-              hasScrollBody: false,
+
+            // Form card
+            Positioned.fill(
+              top: 220.h,
               child: Container(
-                width: double.infinity,
-                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 27.h),
+                padding: EdgeInsets.fromLTRB(20.w, 40.h, 20.w, 24.h),
                 decoration: BoxDecoration(
-                  color: context.appColors.surface,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(AppSizes.radiusXL),
-                    topRight: Radius.circular(AppSizes.radiusXL),
-                  ),
+                  color: colors.surface,
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(36.r)),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.1),
+                      color: Colors.black.withValues(alpha: 0.05),
                       blurRadius: 20,
-                      offset: const Offset(0, 8),
+                      offset: const Offset(0, -10),
                     ),
                   ],
                 ),
@@ -112,79 +131,57 @@ class _OtpInputScreenState extends State<OtpInputScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: List.generate(6, (index) {
                         return SizedBox(
-                          width: 40.w,
-                          height: 45.h,
+                          width: 45.w,
+                          height: 55.h,
                           child: TextField(
                             controller: _otpControllers[index],
                             keyboardType: TextInputType.number,
                             textAlign: TextAlign.center,
-                            obscureText: true,
-                            style: AppTypography.h3.copyWith(letterSpacing: 8),
+                            maxLength: 1,
+                            style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w800, color: colors.textPrimary),
                             decoration: InputDecoration(
-                              hintText: '*',
-                              hintStyle: AppTypography.h3.copyWith(
-                                color: context.appColors.textTertiary,
-                              ),
                               counterText: '',
                               filled: true,
-                              fillColor: context.appColors.surfaceAlt,
+                              fillColor: AppColors.surfaceSubtle,
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(
-                                  AppSizes.radiusM,
-                                ),
-                                borderSide: BorderSide(
-                                  color: context.appColors.divider,
-                                ),
+                                borderRadius: BorderRadius.circular(12.r),
+                                borderSide: BorderSide.none,
                               ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(
-                                  AppSizes.radiusM,
-                                ),
-                                borderSide: BorderSide(
-                                  color: context.appColors.divider,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(
-                                  AppSizes.radiusM,
-                                ),
-                                borderSide: BorderSide(
-                                  color: context.appColors.primary,
-                                ),
-                              ),
-                              contentPadding: EdgeInsets.symmetric(
-                                vertical: 10.h,
-                              ),
+                              contentPadding: EdgeInsets.zero,
                             ),
+                            onChanged: (value) {
+                              if (value.isNotEmpty && index < 5) {
+                                FocusScope.of(context).nextFocus();
+                              } else if (value.isEmpty && index > 0) {
+                                FocusScope.of(context).previousFocus();
+                              }
+                            },
                           ),
                         );
                       }),
                     ),
                     40.verticalSpace,
-                    AppPrimaryButton(
-                      text: 'Verify OTP',
-                      icon: Icons.check_circle_outline,
-                      onPressed: _onVerifyOtpPressed,
+                    BlocBuilder<AuthCubit, AuthState>(
+                      builder: (context, state) {
+                        return AppPrimaryButton(
+                          text: 'Verify OTP',
+                          onPressed: state.maybeWhen(
+                            loading: () => null,
+                            orElse: () => _onVerifyOtpPressed,
+                          ),
+                        );
+                      },
                     ),
-                    SizedBox(height: 20.h),
+                    32.verticalSpace,
                     Center(
                       child: TextButton(
                         onPressed: _onResendOtpPressed,
-                        style: TextButton.styleFrom(
-                          padding: EdgeInsets.zero,
-                          minimumSize: Size.zero,
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        ),
-                        child: Text(
-                          'Resend OTP',
-                          style: AppTypography.bodyMedium.copyWith(
-                            color: context.appColors.primary,
-                            fontWeight: FontWeight.w600,
-                          ),
+                        child: const Text(
+                          'Resend Code',
+                          style: TextStyle(fontWeight: FontWeight.w700, color: AppColors.primaryBlue),
                         ),
                       ),
                     ),
-                    85.verticalSpace,
                   ],
                 ),
               ),

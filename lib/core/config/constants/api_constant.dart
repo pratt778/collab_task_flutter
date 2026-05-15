@@ -1,3 +1,5 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 /// Generic API endpoint registry.
 ///
 /// The starter uses `jsonplaceholder.typicode.com` so `flutter run` works out
@@ -31,7 +33,7 @@ class ApiConstants {
   // ── WebSockets ───────────────────────────────────────────────────────
   static const String ws = 'ws';
 
-  // ── Supabase (Optional: Use if not using REST API Helper) ────────────
-  static const String supabaseUrl = 'YOUR_SUPABASE_URL';
-  static const String supabaseAnonKey = 'YOUR_SUPABASE_ANON_KEY';
+  // ── Supabase ─────────────────────────────────────────────────────────
+  static String get supabaseUrl => dotenv.get('SUPABASE_URL', fallback: '');
+  static String get supabaseAnonKey => dotenv.get('SUPABASE_ANON_KEY', fallback: '');
 }
