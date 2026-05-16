@@ -67,7 +67,8 @@ class SecureStorageHelper {
   }
 
   bool isUserLoggedIn() {
-    return _cache.containsKey('token') && _cache.containsKey('userCode');
+    // return _cache.containsKey('token') && _cache.containsKey('userCode');
+    return _cache.containsKey('userCode');
   }
 
   bool isAppPreviouslyUsed() {

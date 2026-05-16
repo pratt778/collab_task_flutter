@@ -41,9 +41,7 @@ class TaskCard extends StatelessWidget {
               Wrap(
                 spacing: 6.w,
                 runSpacing: 6.h,
-                children: task.labels
-                    .map(_buildLabel)
-                    .toList(),
+                children: task.labels.map(_buildLabel).toList(),
               ),
               SizedBox(height: 12.h),
             ],
@@ -87,9 +85,7 @@ class TaskCard extends StatelessWidget {
                         minHeight: 6.h,
                         backgroundColor: AppColors.surfaceSubtle,
                         valueColor: AlwaysStoppedAnimation<Color>(
-                          progress == 1.0
-                              ? AppColors.successGreen
-                              : AppColors.primaryBlue,
+                          progress == 1.0 ? AppColors.successGreen : AppColors.primaryBlue,
                         ),
                       ),
                     ),
@@ -133,9 +129,7 @@ class TaskCard extends StatelessWidget {
                       Icon(
                         Icons.access_time_rounded,
                         size: 16.sp,
-                        color: _isOverdue(task.dueDate!)
-                            ? AppColors.errorRed
-                            : AppColors.textTertiary,
+                        color: _isOverdue(task.dueDate!) ? AppColors.errorRed : AppColors.textTertiary,
                       ),
                       SizedBox(width: 4.w),
                       Text(
@@ -143,9 +137,7 @@ class TaskCard extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 12.sp,
                           fontWeight: FontWeight.w600,
-                          color: _isOverdue(task.dueDate!)
-                              ? AppColors.errorRed
-                              : AppColors.textSecondary,
+                          color: _isOverdue(task.dueDate!) ? AppColors.errorRed : AppColors.textSecondary,
                         ),
                       ),
                     ],
@@ -171,14 +163,13 @@ class TaskCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                ],
-                ),
-                ],
-                ),
-                ),
-                );
-                }
-
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   Widget _buildLabel(String label) {
     Color labelColor;
@@ -273,9 +264,7 @@ class TaskCard extends StatelessWidget {
 
   String _formatDate(DateTime date) {
     final now = DateTime.now();
-    if (date.year == now.year &&
-        date.month == now.month &&
-        date.day == now.day) {
+    if (date.year == now.year && date.month == now.month && date.day == now.day) {
       return 'Today';
     }
     return '${date.day} ${_getMonth(date.month)}';
@@ -289,20 +278,7 @@ class TaskCard extends StatelessWidget {
   }
 
   String _getMonth(int month) {
-    const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     return months[month - 1];
   }
 }

@@ -61,6 +61,18 @@ import 'package:collab_task/features/tasks/presentation/cubit/task_list_cubit.da
     as _i885;
 import 'package:collab_task/features/theme/presentation/cubit/theme_cubit.dart'
     as _i544;
+import 'package:collab_task/features/workspaces/data/datasources/workspace_remote_datasource.dart'
+    as _i625;
+import 'package:collab_task/features/workspaces/data/repositories/workspace_repository_impl.dart'
+    as _i786;
+import 'package:collab_task/features/workspaces/domain/repositories/workspace_repository.dart'
+    as _i400;
+import 'package:collab_task/features/workspaces/domain/usecases/create_workspace_usecase.dart'
+    as _i382;
+import 'package:collab_task/features/workspaces/domain/usecases/get_my_workspaces_usecase.dart'
+    as _i45;
+import 'package:collab_task/features/workspaces/presentation/cubit/workspace_cubit.dart'
+    as _i349;
 import 'package:dio/dio.dart' as _i361;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
@@ -81,6 +93,7 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i445.SecureStorageHelper(),
     );
     gh.lazySingleton<_i889.NetworkCubit>(() => _i889.NetworkCubit());
+    gh.lazySingleton<_i423.TaskDatasource>(() => _i423.TaskDatasourceImpl());
     gh.factory<_i881.LocaleCubit>(
       () => _i881.LocaleCubit(gh<_i445.SecureStorageHelper>()),
     );
@@ -92,22 +105,44 @@ extension GetItInjectableX on _i174.GetIt {
         secureStorage: gh<_i445.SecureStorageHelper>(),
       ),
     );
+    gh.lazySingleton<_i123.TaskRepository>(
+      () => _i4.TaskRepositoryImpl(gh<_i423.TaskDatasource>()),
+    );
     gh.lazySingleton<_i867.AuthRemoteDatasource>(
       () => _i867.AuthRemoteDatasourceImpl(),
+    );
+    gh.lazySingleton<_i647.CreateTaskUseCase>(
+      () => _i647.CreateTaskUseCase(gh<_i123.TaskRepository>()),
+    );
+    gh.lazySingleton<_i532.DeleteTaskUseCase>(
+      () => _i532.DeleteTaskUseCase(gh<_i123.TaskRepository>()),
+    );
+    gh.lazySingleton<_i121.GetTaskDetailUseCase>(
+      () => _i121.GetTaskDetailUseCase(gh<_i123.TaskRepository>()),
+    );
+    gh.lazySingleton<_i130.GetTasksUseCase>(
+      () => _i130.GetTasksUseCase(gh<_i123.TaskRepository>()),
+    );
+    gh.lazySingleton<_i522.UpdateTaskUseCase>(
+      () => _i522.UpdateTaskUseCase(gh<_i123.TaskRepository>()),
     );
     gh.lazySingleton<_i29.ApiHelper>(
       () => registerModule.apiHelper(gh<_i361.Dio>()),
     );
-    gh.lazySingleton<_i423.TaskDatasource>(
-      () => _i423.TaskDatasourceImpl(gh<_i29.ApiHelper>()),
+    gh.lazySingleton<_i625.WorkspaceRemoteDatasource>(
+      () => _i625.WorkspaceRemoteDatasourceImpl(),
+    );
+    gh.factory<_i223.TaskDetailCubit>(
+      () => _i223.TaskDetailCubit(
+        gh<_i121.GetTaskDetailUseCase>(),
+        gh<_i522.UpdateTaskUseCase>(),
+        gh<_i532.DeleteTaskUseCase>(),
+      ),
     );
     gh.lazySingleton<_i835.AuthRepository>(
       () => _i227.AuthRepositoryImpl(
         remoteDatasource: gh<_i867.AuthRemoteDatasource>(),
       ),
-    );
-    gh.lazySingleton<_i123.TaskRepository>(
-      () => _i4.TaskRepositoryImpl(gh<_i423.TaskDatasource>()),
     );
     gh.lazySingleton<_i55.LoginUseCase>(
       () => _i55.LoginUseCase(gh<_i835.AuthRepository>()),
@@ -127,26 +162,16 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i93.VerifyOtpUseCase>(
       () => _i93.VerifyOtpUseCase(gh<_i835.AuthRepository>()),
     );
-    gh.lazySingleton<_i647.CreateTaskUseCase>(
-      () => _i647.CreateTaskUseCase(gh<_i123.TaskRepository>()),
+    gh.lazySingleton<_i400.WorkspaceRepository>(
+      () => _i786.WorkspaceRepositoryImpl(
+        remoteDatasource: gh<_i625.WorkspaceRemoteDatasource>(),
+      ),
     );
-    gh.lazySingleton<_i532.DeleteTaskUseCase>(
-      () => _i532.DeleteTaskUseCase(gh<_i123.TaskRepository>()),
-    );
-    gh.lazySingleton<_i121.GetTaskDetailUseCase>(
-      () => _i121.GetTaskDetailUseCase(gh<_i123.TaskRepository>()),
-    );
-    gh.lazySingleton<_i130.GetTasksUseCase>(
-      () => _i130.GetTasksUseCase(gh<_i123.TaskRepository>()),
-    );
-    gh.lazySingleton<_i522.UpdateTaskUseCase>(
-      () => _i522.UpdateTaskUseCase(gh<_i123.TaskRepository>()),
-    );
-    gh.factory<_i223.TaskDetailCubit>(
-      () => _i223.TaskDetailCubit(
-        gh<_i121.GetTaskDetailUseCase>(),
+    gh.factory<_i885.TaskListCubit>(
+      () => _i885.TaskListCubit(
+        gh<_i130.GetTasksUseCase>(),
+        gh<_i647.CreateTaskUseCase>(),
         gh<_i522.UpdateTaskUseCase>(),
-        gh<_i532.DeleteTaskUseCase>(),
       ),
     );
     gh.lazySingleton<_i981.AuthCubit>(
@@ -160,11 +185,16 @@ extension GetItInjectableX on _i174.GetIt {
         sessionWriter: gh<_i1007.AuthSessionWriter>(),
       ),
     );
-    gh.factory<_i885.TaskListCubit>(
-      () => _i885.TaskListCubit(
-        gh<_i130.GetTasksUseCase>(),
-        gh<_i647.CreateTaskUseCase>(),
-        gh<_i196.WebSocketService>(),
+    gh.lazySingleton<_i382.CreateWorkspaceUseCase>(
+      () => _i382.CreateWorkspaceUseCase(gh<_i400.WorkspaceRepository>()),
+    );
+    gh.lazySingleton<_i45.GetMyWorkspacesUseCase>(
+      () => _i45.GetMyWorkspacesUseCase(gh<_i400.WorkspaceRepository>()),
+    );
+    gh.lazySingleton<_i349.WorkspaceCubit>(
+      () => _i349.WorkspaceCubit(
+        getMyWorkspacesUseCase: gh<_i45.GetMyWorkspacesUseCase>(),
+        createWorkspaceUseCase: gh<_i382.CreateWorkspaceUseCase>(),
       ),
     );
     return this;

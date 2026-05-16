@@ -189,6 +189,10 @@ Shell shortcuts for the recurring chores. All exit non-zero on failure so they'r
 
 | Script | What it does | When to run |
 |---|---|---|
+| `./scripts/build.sh` | Run `build_runner` once | When you add/change code-gen files (freezed, injectable) |
+| `./scripts/watch.sh` | Run `build_runner` in watch mode | Auto-generate files on save during development |
+| `./scripts/fix.sh` | Apply automated dart fixes | To quickly resolve lint issues and deprecations |
+| `./scripts/feature.sh <name>` | Create clean-architecture folders | Starting a new feature (e.g., `./scripts/feature.sh projects`) |
 | `./scripts/fix_ios.sh` | `pod deintegrate` + nuke `Pods/` and `Podfile.lock` + `pod install --repo-update` | "pod install failed", linker errors, module-not-found, after switching branches with iOS dep changes |
 | `./scripts/clean.sh` | `flutter clean` + remove `.dart_tool/` and `pubspec.lock` + `pub get` + `build_runner` | Freezed gen drifted, dep changes flaky, "this should work but doesn't" after a branch switch. Doesn't touch iOS Pods — use `fix_ios.sh` for that |
 | `./scripts/check.sh` | `flutter analyze` + `flutter test` | Before pushing a branch or opening a PR. Pre-CI guard |

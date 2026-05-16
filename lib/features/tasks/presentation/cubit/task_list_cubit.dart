@@ -1,34 +1,34 @@
 import 'dart:async';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-import 'package:collab_task/core/network/websocket_service.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:collab_task/features/tasks/domain/entities/task_entity.dart';
 import 'package:collab_task/features/tasks/domain/usecases/get_tasks_usecase.dart';
 import 'package:collab_task/features/tasks/domain/usecases/create_task_usecase.dart';
+import 'package:collab_task/features/tasks/domain/usecases/update_task_usecase.dart';
 import 'package:collab_task/features/tasks/presentation/cubit/task_list_state.dart';
 
 @injectable
 class TaskListCubit extends Cubit<TaskListState> {
   final GetTasksUseCase getTasksUseCase;
   final CreateTaskUseCase createTaskUseCase;
-  final WebSocketService webSocketService;
-  StreamSubscription? _wsSubscription;
+  final UpdateTaskUseCase updateTaskUseCase;
+  RealtimeChannel? _channel;
 
   TaskListCubit(
     this.getTasksUseCase,
     this.createTaskUseCase,
-    this.webSocketService,
+    this.updateTaskUseCase,
   ) : super(const TaskListState.initial());
 
-  Future<void> getTasks() async {
+  Future<void> getTasks(String workspaceId) async {
     emit(const TaskListState.loading());
-    final result = await getTasksUseCase();
+    final result = await getTasksUseCase(workspaceId);
     result.fold(
       (failure) => emit(TaskListState.error(failure)),
       (tasks) {
         emit(TaskListState.loaded(tasks));
-        _subscribeToWebSocket();
+        _subscribeToChanges(workspaceId);
       },
     );
   }
@@ -37,26 +37,46 @@ class TaskListCubit extends Cubit<TaskListState> {
     final result = await createTaskUseCase(task);
     result.fold(
       (failure) => emit(TaskListState.error(failure)),
-      (_) => getTasks(), // Refresh list on success
+      (_) {
+        // The real-time listener will catch this
+      },
     );
   }
 
-  void _subscribeToWebSocket() {
-    _wsSubscription?.cancel();
-    _wsSubscription = webSocketService.dataStream.listen((data) {
-      final type = data['type'] as String?;
-      if (type == 'task_created' ||
-          type == 'task_updated' ||
-          type == 'task_deleted') {
-        // For MVP, we can just re-fetch, but ideally we'd update local list
-        getTasks();
-      }
-    });
+  Future<void> updateTask(TaskEntity task) async {
+    final result = await updateTaskUseCase(task);
+    result.fold(
+      (failure) => emit(TaskListState.error(failure)),
+      (_) {
+        // The real-time listener will catch this
+      },
+    );
+  }
+
+  void _subscribeToChanges(String workspaceId) {
+    _channel?.unsubscribe();
+    
+    _channel = Supabase.instance.client
+        .channel('public:tasks:workspace=$workspaceId')
+        .onPostgresChanges(
+          event: PostgresChangeEvent.all,
+          schema: 'public',
+          table: 'tasks',
+          filter: PostgresChangeFilter(
+            type: PostgresChangeFilterType.eq,
+            column: 'workspace_id',
+            value: workspaceId,
+          ),
+          callback: (payload) {
+            getTasks(workspaceId);
+          },
+        )
+        .subscribe();
   }
 
   @override
   Future<void> close() {
-    _wsSubscription?.cancel();
+    _channel?.unsubscribe();
     return super.close();
   }
 }

@@ -9,6 +9,7 @@ import 'package:collab_task/features/auth/presentation/cubit/auth_state.dart';
 import 'package:collab_task/features/locale/presentation/cubit/locale_cubit.dart';
 import 'package:collab_task/features/shared/widget/global_recovery_listener_widget.dart';
 import 'package:collab_task/features/theme/presentation/cubit/theme_cubit.dart';
+import 'package:collab_task/features/workspaces/presentation/cubit/workspace_cubit.dart';
 import 'package:collab_task/l10n/gen/app_localizations.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -33,10 +34,9 @@ class _MyAppState extends State<MyApp> {
             return BlocSelector<ThemeCubit, ThemeMode, ThemeMode>(
               selector: (state) => state,
               builder: (context, themeMode) {
-                debugPrint('locale is $locale');
                 return MaterialApp.router(
                   debugShowCheckedModeBanner: false,
-                  title: 'Flutter Clean Starter',
+                  title: 'CollabTask',
                   routerConfig: MainRoutes.router,
                   theme: AppTheme.light,
                   darkTheme: AppTheme.dark,
@@ -49,6 +49,11 @@ class _MyAppState extends State<MyApp> {
                     return BlocListener<AuthCubit, AuthState>(
                       listener: (context, state) {
                         state.whenOrNull(
+                          authenticated: (_) {
+                            debugPrint('🔑 AuthCubit: User is authenticated. Loading workspaces...');
+                            context.read<WorkspaceCubit>().loadWorkspaces();
+                            MainRoutes.router.goNamed(MainRoutes.taskBoardName);
+                          },
                           unauthenticated: () {
                             MainRoutes.router.goNamed(MainRoutes.authName);
                             final snackCtx = navigatorKey.currentContext;

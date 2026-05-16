@@ -13,9 +13,9 @@ class TaskRepositoryImpl implements TaskRepository {
   TaskRepositoryImpl(this.datasource);
 
   @override
-  Future<Either<Failure, List<TaskEntity>>> getTasks() async {
+  Future<Either<Failure, List<TaskEntity>>> getTasks(String workspaceId) async {
     try {
-      final result = await datasource.getTasks();
+      final result = await datasource.getTasks(workspaceId);
       return Right(result.map((m) => m.toEntity()).toList());
     } on Failure catch (e) {
       return Left(e);

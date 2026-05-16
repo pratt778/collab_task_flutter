@@ -4,9 +4,10 @@ import 'package:collab_task/core/config/constants/color_constant.dart';
 import 'package:collab_task/features/tasks/domain/entities/task_entity.dart';
 
 class CreateTaskModal extends StatefulWidget {
+  final String userId;
   final Function(TaskEntity) onCreated;
 
-  const CreateTaskModal({super.key, required this.onCreated});
+  const CreateTaskModal({super.key, required this.onCreated, required this.userId});
 
   @override
   State<CreateTaskModal> createState() => _CreateTaskModalState();
@@ -54,16 +55,16 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Center(
-              child: Container(
-                width: 40.w,
-                height: 4.h,
-                decoration: BoxDecoration(
-                  color: AppColors.borderSubtle,
-                  borderRadius: BorderRadius.circular(2.r),
-                ),
+          Center(
+            child: Container(
+              width: 40.w,
+              height: 4.h,
+              decoration: BoxDecoration(
+                color: AppColors.borderSubtle,
+                borderRadius: BorderRadius.circular(2.r),
               ),
             ),
+          ),
 
             SizedBox(height: 24.h),
             Text(
@@ -128,10 +129,12 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
                 onPressed: () {
                   if (_titleController.text.isEmpty) return;
                   widget.onCreated(TaskEntity(
-                    id: DateTime.now().millisecondsSinceEpoch.toString(),
+                    id: '', // Supabase will generate this
+                    workspaceId: '', // Will be replaced by copyWith in board screen
                     title: _titleController.text,
                     description: _descController.text,
                     status: TaskStatus.todo,
+                    createdBy: widget.userId,
                     assignees: const [],
                     dueDate: DateTime.now(),
                     createdAt: DateTime.now(),
@@ -146,7 +149,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
                   padding: EdgeInsets.symmetric(vertical: 16.h),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
                 ),
-                child: Text(
+                child:  Text(
                   'Create Task',
                   style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w700, color: Colors.white),
                 ),

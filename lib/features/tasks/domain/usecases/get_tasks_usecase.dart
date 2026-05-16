@@ -10,7 +10,7 @@ class GetTasksUseCase {
 
   GetTasksUseCase(this.repository);
 
-  Future<Either<Failure, List<TaskEntity>>> call() {
-    return repository.getTasks();
+  Future<Either<Failure, List<TaskEntity>>> call(String workspaceId) {
+    return repository.getTasks(workspaceId);
   }
 }

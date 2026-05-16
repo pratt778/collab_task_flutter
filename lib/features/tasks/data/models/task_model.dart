@@ -4,12 +4,15 @@ import 'package:collab_task/features/tasks/domain/entities/task_entity.dart';
 
 part 'task_model.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class TaskModel {
   final String id;
+  final String workspaceId;
   final String title;
   final String description;
   final TaskStatus status;
+  final String createdBy;
+  @JsonKey(includeToJson: false)
   final List<String> assignees;
   final DateTime? dueDate;
   final DateTime createdAt;
@@ -19,10 +22,12 @@ class TaskModel {
 
   const TaskModel({
     required this.id,
+    required this.workspaceId,
     required this.title,
     required this.description,
     required this.status,
-    required this.assignees,
+    required this.createdBy,
+    this.assignees = const [],
     this.dueDate,
     required this.createdAt,
     required this.updatedAt,
@@ -37,9 +42,11 @@ class TaskModel {
 
   TaskEntity toEntity() => TaskEntity(
         id: id,
+        workspaceId: workspaceId,
         title: title,
         description: description,
         status: status,
+        createdBy: createdBy,
         assignees: assignees,
         dueDate: dueDate,
         createdAt: createdAt,
@@ -50,9 +57,11 @@ class TaskModel {
 
   factory TaskModel.fromEntity(TaskEntity entity) => TaskModel(
         id: entity.id,
+        workspaceId: entity.workspaceId,
         title: entity.title,
         description: entity.description,
         status: entity.status,
+        createdBy: entity.createdBy,
         assignees: entity.assignees,
         dueDate: entity.dueDate,
         createdAt: entity.createdAt,
