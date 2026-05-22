@@ -128,12 +128,12 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( List<WorkspaceEntity> workspaces,  WorkspaceEntity? selectedWorkspace)?  loaded,TResult Function( Failure failure)?  error,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( List<WorkspaceEntity> workspaces,  WorkspaceEntity? selectedWorkspace,  List<UserEntity> allUsers,  List<Map<String, dynamic>> currentMembers)?  loaded,TResult Function( Failure failure)?  error,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial();case _Loading() when loading != null:
 return loading();case _Loaded() when loaded != null:
-return loaded(_that.workspaces,_that.selectedWorkspace);case _Error() when error != null:
+return loaded(_that.workspaces,_that.selectedWorkspace,_that.allUsers,_that.currentMembers);case _Error() when error != null:
 return error(_that.failure);case _:
   return orElse();
 
@@ -152,12 +152,12 @@ return error(_that.failure);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( List<WorkspaceEntity> workspaces,  WorkspaceEntity? selectedWorkspace)  loaded,required TResult Function( Failure failure)  error,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( List<WorkspaceEntity> workspaces,  WorkspaceEntity? selectedWorkspace,  List<UserEntity> allUsers,  List<Map<String, dynamic>> currentMembers)  loaded,required TResult Function( Failure failure)  error,}) {final _that = this;
 switch (_that) {
 case _Initial():
 return initial();case _Loading():
 return loading();case _Loaded():
-return loaded(_that.workspaces,_that.selectedWorkspace);case _Error():
+return loaded(_that.workspaces,_that.selectedWorkspace,_that.allUsers,_that.currentMembers);case _Error():
 return error(_that.failure);case _:
   throw StateError('Unexpected subclass');
 
@@ -175,12 +175,12 @@ return error(_that.failure);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( List<WorkspaceEntity> workspaces,  WorkspaceEntity? selectedWorkspace)?  loaded,TResult? Function( Failure failure)?  error,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( List<WorkspaceEntity> workspaces,  WorkspaceEntity? selectedWorkspace,  List<UserEntity> allUsers,  List<Map<String, dynamic>> currentMembers)?  loaded,TResult? Function( Failure failure)?  error,}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial();case _Loading() when loading != null:
 return loading();case _Loaded() when loaded != null:
-return loaded(_that.workspaces,_that.selectedWorkspace);case _Error() when error != null:
+return loaded(_that.workspaces,_that.selectedWorkspace,_that.allUsers,_that.currentMembers);case _Error() when error != null:
 return error(_that.failure);case _:
   return null;
 
@@ -257,7 +257,7 @@ String toString() {
 
 
 class _Loaded implements WorkspaceState {
-  const _Loaded({required final  List<WorkspaceEntity> workspaces, this.selectedWorkspace}): _workspaces = workspaces;
+  const _Loaded({required final  List<WorkspaceEntity> workspaces, this.selectedWorkspace, final  List<UserEntity> allUsers = const [], final  List<Map<String, dynamic>> currentMembers = const []}): _workspaces = workspaces,_allUsers = allUsers,_currentMembers = currentMembers;
   
 
  final  List<WorkspaceEntity> _workspaces;
@@ -268,6 +268,20 @@ class _Loaded implements WorkspaceState {
 }
 
  final  WorkspaceEntity? selectedWorkspace;
+ final  List<UserEntity> _allUsers;
+@JsonKey() List<UserEntity> get allUsers {
+  if (_allUsers is EqualUnmodifiableListView) return _allUsers;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_allUsers);
+}
+
+ final  List<Map<String, dynamic>> _currentMembers;
+@JsonKey() List<Map<String, dynamic>> get currentMembers {
+  if (_currentMembers is EqualUnmodifiableListView) return _currentMembers;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_currentMembers);
+}
+
 
 /// Create a copy of WorkspaceState
 /// with the given fields replaced by the non-null parameter values.
@@ -279,16 +293,16 @@ _$LoadedCopyWith<_Loaded> get copyWith => __$LoadedCopyWithImpl<_Loaded>(this, _
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Loaded&&const DeepCollectionEquality().equals(other._workspaces, _workspaces)&&(identical(other.selectedWorkspace, selectedWorkspace) || other.selectedWorkspace == selectedWorkspace));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Loaded&&const DeepCollectionEquality().equals(other._workspaces, _workspaces)&&(identical(other.selectedWorkspace, selectedWorkspace) || other.selectedWorkspace == selectedWorkspace)&&const DeepCollectionEquality().equals(other._allUsers, _allUsers)&&const DeepCollectionEquality().equals(other._currentMembers, _currentMembers));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_workspaces),selectedWorkspace);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_workspaces),selectedWorkspace,const DeepCollectionEquality().hash(_allUsers),const DeepCollectionEquality().hash(_currentMembers));
 
 @override
 String toString() {
-  return 'WorkspaceState.loaded(workspaces: $workspaces, selectedWorkspace: $selectedWorkspace)';
+  return 'WorkspaceState.loaded(workspaces: $workspaces, selectedWorkspace: $selectedWorkspace, allUsers: $allUsers, currentMembers: $currentMembers)';
 }
 
 
@@ -299,7 +313,7 @@ abstract mixin class _$LoadedCopyWith<$Res> implements $WorkspaceStateCopyWith<$
   factory _$LoadedCopyWith(_Loaded value, $Res Function(_Loaded) _then) = __$LoadedCopyWithImpl;
 @useResult
 $Res call({
- List<WorkspaceEntity> workspaces, WorkspaceEntity? selectedWorkspace
+ List<WorkspaceEntity> workspaces, WorkspaceEntity? selectedWorkspace, List<UserEntity> allUsers, List<Map<String, dynamic>> currentMembers
 });
 
 
@@ -316,11 +330,13 @@ class __$LoadedCopyWithImpl<$Res>
 
 /// Create a copy of WorkspaceState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? workspaces = null,Object? selectedWorkspace = freezed,}) {
+@pragma('vm:prefer-inline') $Res call({Object? workspaces = null,Object? selectedWorkspace = freezed,Object? allUsers = null,Object? currentMembers = null,}) {
   return _then(_Loaded(
 workspaces: null == workspaces ? _self._workspaces : workspaces // ignore: cast_nullable_to_non_nullable
 as List<WorkspaceEntity>,selectedWorkspace: freezed == selectedWorkspace ? _self.selectedWorkspace : selectedWorkspace // ignore: cast_nullable_to_non_nullable
-as WorkspaceEntity?,
+as WorkspaceEntity?,allUsers: null == allUsers ? _self._allUsers : allUsers // ignore: cast_nullable_to_non_nullable
+as List<UserEntity>,currentMembers: null == currentMembers ? _self._currentMembers : currentMembers // ignore: cast_nullable_to_non_nullable
+as List<Map<String, dynamic>>,
   ));
 }
 

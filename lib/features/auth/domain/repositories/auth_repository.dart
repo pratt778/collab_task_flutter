@@ -24,4 +24,6 @@ abstract class AuthRepository {
   });
 
   Future<Either<Failure, void>> updatePassword(String newPassword);
+
+  Future<Either<Failure, List<UserEntity>>> getAllUsers();
 }

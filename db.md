@@ -151,7 +151,7 @@ supabase db push
    SUPABASE_URL=https://xxxx.supabase.co
    SUPABASE_ANON_KEY=eyJhbGciOiJ...
    ```
-2. **Initialize** in `main_common.dart`:
+2. **Initialize** in `main.dart`:
    ```dart
    await Supabase.initialize(
      url: dotenv.env['SUPABASE_URL']!,

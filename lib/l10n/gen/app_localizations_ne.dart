@@ -126,4 +126,56 @@ class AppLocalizationsNe extends AppLocalizations {
 
   @override
   String get a11yBack => 'Back';
+
+  @override
+  String get members => 'Members';
+
+  @override
+  String get taskBoard => 'Task Board';
+
+  @override
+  String get notifications => 'Notifications';
+
+  @override
+  String get settings => 'Settings';
+
+  @override
+  String get logout => 'Logout';
+
+  @override
+  String get delete => 'Delete';
+
+  @override
+  String get create => 'Create';
+
+  @override
+  String get inviteMember => 'Invite Member';
+
+  @override
+  String get selectUser => 'Select User';
+
+  @override
+  String get deleteWorkspace => 'Delete Workspace';
+
+  @override
+  String get areYouSureDeleteWorkspace =>
+      'This will permanently remove the workspace and all its tasks. This action cannot be undone.';
+
+  @override
+  String get workspaceDeleted => 'Workspace deleted';
+
+  @override
+  String get noTasksHere => 'No tasks here';
+
+  @override
+  String get today => 'Today';
+
+  @override
+  String get todo => 'To Do';
+
+  @override
+  String get inProgress => 'In Progress';
+
+  @override
+  String get done => 'Done';
 }

@@ -12,4 +12,5 @@ class TaskDetailState with _$TaskDetailState {
   const factory TaskDetailState.error(Failure failure) = _Error;
   const factory TaskDetailState.submitting(TaskEntity task) = _Submitting;
   const factory TaskDetailState.success(TaskEntity task) = _Success;
+  const factory TaskDetailState.deleted() = _Deleted;
 }

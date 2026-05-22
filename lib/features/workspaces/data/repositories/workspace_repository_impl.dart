@@ -36,4 +36,42 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
       return Left(e);
     }
   }
+
+  @override
+  Future<Either<Failure, void>> addMember({
+    required String workspaceId,
+    required String email,
+  }) async {
+    try {
+      await remoteDatasource.addMemberByEmail(
+        workspaceId: workspaceId,
+        email: email,
+      );
+      return const Right(null);
+    } on Failure catch (e) {
+      return Left(e);
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> deleteWorkspace(String workspaceId) async {
+    try {
+      await remoteDatasource.deleteWorkspace(workspaceId);
+      return const Right(null);
+    } on Failure catch (e) {
+      return Left(e);
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<Map<String, dynamic>>>> getWorkspaceMembers(
+    String workspaceId,
+  ) async {
+    try {
+      final members = await remoteDatasource.getWorkspaceMembers(workspaceId);
+      return Right(members);
+    } on Failure catch (e) {
+      return Left(e);
+    }
+  }
 }

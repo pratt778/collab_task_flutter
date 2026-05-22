@@ -19,11 +19,20 @@ abstract class AuthRemoteDatasource {
     required sb.OtpType type,
   });
   Future<void> updatePassword(String newPassword);
+  Future<List<UserModel>> getAllUsers();
 }
 
 @LazySingleton(as: AuthRemoteDatasource)
 class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
   sb.SupabaseClient get _client => sb.Supabase.instance.client;
+
+  @override
+  Future<List<UserModel>> getAllUsers() {
+    return SafeRequest.call(() async {
+      final response = await _client.from('profiles').select();
+      return (response as List).map((e) => UserModel.fromJson(e)).toList();
+    });
+  }
 
   @override
   Future<UserModel> login({required String email, required String password}) {

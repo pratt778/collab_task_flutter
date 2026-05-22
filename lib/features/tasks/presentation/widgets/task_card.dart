@@ -5,6 +5,8 @@ import 'package:collab_task/core/app/router/app_router.dart';
 import 'package:collab_task/core/config/constants/color_constant.dart';
 import 'package:collab_task/features/tasks/domain/entities/task_entity.dart';
 
+import 'package:collab_task/core/config/theme/app_colors_extension.dart';
+
 class TaskCard extends StatelessWidget {
   final TaskEntity task;
   final VoidCallback? onMove;
@@ -13,6 +15,7 @@ class TaskCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     final completedCount = task.checklist.where((i) => i.completed).length;
     final totalCount = task.checklist.length;
     final progress = totalCount > 0 ? completedCount / totalCount : 0.0;
@@ -28,10 +31,9 @@ class TaskCard extends StatelessWidget {
         margin: EdgeInsets.only(bottom: 16.h),
         padding: EdgeInsets.all(16.r),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: colors.surface,
           borderRadius: BorderRadius.circular(20.r),
-          boxShadow: AppColors.softShadow,
-          border: Border.all(color: AppColors.borderSubtle, width: 0.5),
+          border: Border.all(color: colors.border, width: 0.5),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -41,7 +43,7 @@ class TaskCard extends StatelessWidget {
               Wrap(
                 spacing: 6.w,
                 runSpacing: 6.h,
-                children: task.labels.map(_buildLabel).toList(),
+                children: task.labels.map((l) => _buildLabel(l, colors)).toList(),
               ),
               SizedBox(height: 12.h),
             ],
@@ -52,7 +54,7 @@ class TaskCard extends StatelessWidget {
               style: TextStyle(
                 fontWeight: FontWeight.w700,
                 fontSize: 16.sp,
-                color: AppColors.textDark,
+                color: colors.textPrimary,
                 height: 1.3,
               ),
             ),
@@ -63,7 +65,7 @@ class TaskCard extends StatelessWidget {
                 task.description,
                 style: TextStyle(
                   fontSize: 13.sp,
-                  color: AppColors.textSecondary,
+                  color: colors.textSecondary,
                   height: 1.4,
                 ),
                 maxLines: 2,
@@ -83,9 +85,9 @@ class TaskCard extends StatelessWidget {
                       child: LinearProgressIndicator(
                         value: progress,
                         minHeight: 6.h,
-                        backgroundColor: AppColors.surfaceSubtle,
+                        backgroundColor: colors.surfaceMuted,
                         valueColor: AlwaysStoppedAnimation<Color>(
-                          progress == 1.0 ? AppColors.successGreen : AppColors.primaryBlue,
+                          progress == 1.0 ? AppColors.successGreen : colors.primary,
                         ),
                       ),
                     ),
@@ -96,7 +98,7 @@ class TaskCard extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 11.sp,
                       fontWeight: FontWeight.w700,
-                      color: AppColors.textSecondary,
+                      color: colors.textSecondary,
                     ),
                   ),
                 ],
@@ -113,7 +115,7 @@ class TaskCard extends StatelessWidget {
                     Icon(
                       Icons.check_circle_outline_rounded,
                       size: 16.sp,
-                      color: AppColors.textTertiary,
+                      color: colors.textTertiary,
                     ),
                     SizedBox(width: 4.w),
                     Text(
@@ -121,7 +123,7 @@ class TaskCard extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 12.sp,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.textSecondary,
+                        color: colors.textSecondary,
                       ),
                     ),
                     if (task.dueDate != null) ...[
@@ -129,7 +131,7 @@ class TaskCard extends StatelessWidget {
                       Icon(
                         Icons.access_time_rounded,
                         size: 16.sp,
-                        color: _isOverdue(task.dueDate!) ? AppColors.errorRed : AppColors.textTertiary,
+                        color: _isOverdue(task.dueDate!) ? AppColors.errorRed : colors.textTertiary,
                       ),
                       SizedBox(width: 4.w),
                       Text(
@@ -137,7 +139,7 @@ class TaskCard extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 12.sp,
                           fontWeight: FontWeight.w600,
-                          color: _isOverdue(task.dueDate!) ? AppColors.errorRed : AppColors.textSecondary,
+                          color: _isOverdue(task.dueDate!) ? AppColors.errorRed : colors.textSecondary,
                         ),
                       ),
                     ],
@@ -147,15 +149,15 @@ class TaskCard extends StatelessWidget {
                 // Assignees & Move Button
                 Row(
                   children: [
-                    if (task.assignees.isNotEmpty) _buildAssignees(task.assignees),
+                    if (task.assignees.isNotEmpty) _buildAssignees(task.assignees, colors),
                     if (task.assignees.isNotEmpty) SizedBox(width: 8.w),
                     Container(
                       decoration: BoxDecoration(
-                        color: AppColors.surfaceSubtle,
+                        color: colors.surfaceAlt,
                         borderRadius: BorderRadius.circular(12.r),
                       ),
                       child: IconButton(
-                        icon: Icon(Icons.drive_file_move_rounded, size: 18.sp, color: AppColors.textSecondary),
+                        icon: Icon(Icons.drive_file_move_rounded, size: 18.sp, color: colors.textSecondary),
                         onPressed: onMove,
                         padding: EdgeInsets.all(8.r),
                         constraints: const BoxConstraints(),
@@ -171,44 +173,22 @@ class TaskCard extends StatelessWidget {
     );
   }
 
-  Widget _buildLabel(String label) {
-    Color labelColor;
-    Color bgColor;
-
-    switch (label.toLowerCase()) {
-      case 'urgent':
-      case 'high':
-        labelColor = AppColors.errorRed;
-        bgColor = AppColors.surfaceRose;
-        break;
-      case 'design':
-        labelColor = AppColors.primaryViolet;
-        bgColor = AppColors.surfaceIndigo;
-        break;
-      case 'backend':
-        labelColor = AppColors.primaryTeal;
-        bgColor = AppColors.surfaceEmerald;
-        break;
-      case 'frontend':
-        labelColor = AppColors.infoBlue;
-        bgColor = AppColors.surfaceBlue;
-        break;
-      default:
-        labelColor = AppColors.textSecondary;
-        bgColor = AppColors.surfaceSubtle;
-    }
-
+  Widget _buildLabel(String label, AppColorsExtension colors) {
+    // Keep raw brand colors or map to semantic theme tokens
+    // ... logic remains ...
+    final isDark = colors.scaffold.computeLuminance() < 0.5;
+    
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
       decoration: BoxDecoration(
-        color: bgColor,
+        color: isDark ? colors.surfaceAlt : colors.surfaceMuted,
         borderRadius: BorderRadius.circular(8.r),
       ),
       child: Text(
         label.toUpperCase(),
         style: TextStyle(
           fontSize: 10.sp,
-          color: labelColor,
+          color: colors.textPrimary,
           fontWeight: FontWeight.w800,
           letterSpacing: 0.5,
         ),
@@ -216,7 +196,7 @@ class TaskCard extends StatelessWidget {
     );
   }
 
-  Widget _buildAssignees(List<String> assignees) {
+  Widget _buildAssignees(List<String> assignees, AppColorsExtension colors) {
     final showCount = assignees.length > 3 ? 3 : assignees.length;
     final width = (showCount > 1) ? (showCount - 1) * 14.w + 24.w : 24.w;
 
@@ -231,11 +211,11 @@ class TaskCard extends StatelessWidget {
             child: Container(
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(color: Colors.white, width: 2),
+                border: Border.all(color: colors.surface, width: 2),
               ),
               child: CircleAvatar(
                 radius: 11.r,
-                backgroundColor: _getAvatarColor(index),
+                backgroundColor: colors.primary,
                 child: Text(
                   assignees[index][0].toUpperCase(),
                   style: TextStyle(
@@ -250,16 +230,6 @@ class TaskCard extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Color _getAvatarColor(int index) {
-    final colors = [
-      AppColors.primaryBlue,
-      AppColors.primaryViolet,
-      AppColors.primaryTeal,
-      AppColors.warningAmber,
-    ];
-    return colors[index % colors.length];
   }
 
   String _formatDate(DateTime date) {

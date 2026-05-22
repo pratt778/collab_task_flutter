@@ -89,9 +89,7 @@ class TaskDetailCubit extends Cubit<TaskDetailState> {
       title: title,
       completed: false,
     );
-    final updatedTask = task.copyWith(
-      checklist: [...task.checklist, newItem],
-    );
+    final updatedTask = task.copyWith(checklist: [...task.checklist, newItem]);
     await updateTask(updatedTask);
   }
 
@@ -115,7 +113,7 @@ class TaskDetailCubit extends Cubit<TaskDetailState> {
     final result = await deleteTaskUseCase(id);
     result.fold(
       (failure) => emit(TaskDetailState.error(failure)),
-      (_) => emit(const TaskDetailState.initial()), // Or a deleted state
+      (_) => emit(const TaskDetailState.deleted()),
     );
   }
 }

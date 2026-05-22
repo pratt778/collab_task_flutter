@@ -5,7 +5,10 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
+import 'app_localizations_de.dart';
 import 'app_localizations_en.dart';
+import 'app_localizations_es.dart';
+import 'app_localizations_fr.dart';
 import 'app_localizations_ne.dart';
 
 // ignore_for_file: type=lint
@@ -94,7 +97,10 @@ abstract class AppLocalizations {
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
+    Locale('de'),
     Locale('en'),
+    Locale('es'),
+    Locale('fr'),
     Locale('ne'),
   ];
 
@@ -319,6 +325,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Back'**
   String get a11yBack;
+
+  /// No description provided for @members.
+  ///
+  /// In en, this message translates to:
+  /// **'Members'**
+  String get members;
+
+  /// No description provided for @taskBoard.
+  ///
+  /// In en, this message translates to:
+  /// **'Task Board'**
+  String get taskBoard;
+
+  /// No description provided for @notifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notifications;
+
+  /// No description provided for @settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settings;
+
+  /// No description provided for @logout.
+  ///
+  /// In en, this message translates to:
+  /// **'Logout'**
+  String get logout;
+
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
+  /// No description provided for @create.
+  ///
+  /// In en, this message translates to:
+  /// **'Create'**
+  String get create;
+
+  /// No description provided for @inviteMember.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite Member'**
+  String get inviteMember;
+
+  /// No description provided for @selectUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Select User'**
+  String get selectUser;
+
+  /// No description provided for @deleteWorkspace.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Workspace'**
+  String get deleteWorkspace;
+
+  /// No description provided for @areYouSureDeleteWorkspace.
+  ///
+  /// In en, this message translates to:
+  /// **'This will permanently remove the workspace and all its tasks. This action cannot be undone.'**
+  String get areYouSureDeleteWorkspace;
+
+  /// No description provided for @workspaceDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Workspace deleted'**
+  String get workspaceDeleted;
+
+  /// No description provided for @noTasksHere.
+  ///
+  /// In en, this message translates to:
+  /// **'No tasks here'**
+  String get noTasksHere;
+
+  /// No description provided for @today.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get today;
+
+  /// No description provided for @todo.
+  ///
+  /// In en, this message translates to:
+  /// **'To Do'**
+  String get todo;
+
+  /// No description provided for @inProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'In Progress'**
+  String get inProgress;
+
+  /// No description provided for @done.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get done;
 }
 
 class _AppLocalizationsDelegate
@@ -332,7 +440,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['en', 'ne'].contains(locale.languageCode);
+      <String>['de', 'en', 'es', 'fr', 'ne'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -341,8 +449,14 @@ class _AppLocalizationsDelegate
 AppLocalizations lookupAppLocalizations(Locale locale) {
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
+    case 'de':
+      return AppLocalizationsDe();
     case 'en':
       return AppLocalizationsEn();
+    case 'es':
+      return AppLocalizationsEs();
+    case 'fr':
+      return AppLocalizationsFr();
     case 'ne':
       return AppLocalizationsNe();
   }

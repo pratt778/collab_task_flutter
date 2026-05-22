@@ -43,5 +43,23 @@
   "accessDenied": "Access Denied",
   "unauthorizedMessage": "You are not authorized to access this page. Please log in again.",
 
-  "a11yBack": "Back"
+  "a11yBack": "Back",
+  "members": "Members",
+  "taskBoard": "Task Board",
+  "notifications": "Notifications",
+  "settings": "Settings",
+  "logout": "Logout",
+  "delete": "Delete",
+  "create": "Create",
+  "cancel": "Cancel",
+  "inviteMember": "Invite Member",
+  "selectUser": "Select User",
+  "deleteWorkspace": "Delete Workspace",
+  "areYouSureDeleteWorkspace": "This will permanently remove the workspace and all its tasks. This action cannot be undone.",
+  "workspaceDeleted": "Workspace deleted",
+  "noTasksHere": "No tasks here",
+  "today": "Today",
+  "todo": "To Do",
+  "inProgress": "In Progress",
+  "done": "Done"
 }

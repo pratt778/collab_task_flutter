@@ -2,7 +2,7 @@
 
 **Date**: 2026-04-30  
 **User**: Pratham Sharma  
-**Status**: ✅ Starter validated, ready for Phase 1  
+**Status**: Supabase-backed task MVP in progress  
 
 ---
 
@@ -24,10 +24,10 @@ flutter analyze
 flutter test
 
 # 5. Run app (dev flavor)
-flutter run -t lib/main_development.dart
+flutter run -t lib/main.dart
 ```
 
-**Expected outcome**: App launches → Auth splash → IP config (dev only) → Login screen → Demo list (jsonplaceholder)
+**Expected outcome**: App launches → splash → IP config in debug → login screen → task board.
 
 If all ✅, proceed to Phase 1.
 
@@ -41,10 +41,10 @@ If all ✅, proceed to Phase 1.
 - **Upgrade path**: Can evolve to Operational Transforms (OT) / CRDT later if concurrent editing becomes critical
 - **Decision**: ✅ Proceed with simple WebSocket
 
-### API Approach: **Mock Endpoints (No Real Backend)**
-- Use `jsonplaceholder.typicode.com` or local mock server for starter
-- Define API contract in Phase 1, implement mock endpoints
-- Backend team can swap real URLs later without code changes (baseUrl is configurable at runtime)
+### API Approach: **Supabase**
+- Current app uses Supabase for auth, workspaces, and task CRUD.
+- The old mock endpoint plan below is retained as historical context only.
+- Add real migrations under `supabase/migrations/` before treating the backend as production-managed.
 
 ### Testing: **Minimal for MVP**
 - Manual testing primary
@@ -275,7 +275,7 @@ flutter analyze
 dart run build_runner build --delete-conflicting-outputs
 
 # Start app
-flutter run -t lib/main_development.dart
+flutter run -t lib/main.dart
 
 # Manually test in app:
 # 1. Login (any credentials)
@@ -659,7 +659,7 @@ Tap notification → navigate via deep link
 ```
 
 ### FCM Setup (If Needed)
-Uncomment in `lib/main_common.dart`:
+Uncomment in `lib/main.dart`:
 ```dart
 // Import firebase_core, firebase_messaging
 // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -695,7 +695,7 @@ await fcm.subscribeToTopic('workspace_${workspace.id}');
 - [ ] `flutter pub get` succeeds
 - [ ] `dart run build_runner build --delete-conflicting-outputs` succeeds
 - [ ] `flutter analyze` clean
-- [ ] `flutter run -t lib/main_development.dart` launches app
+- [ ] `flutter run -t lib/main.dart` launches app
 - [ ] IP config screen accessible (dev only)
 - [ ] Chucker showing API calls
 

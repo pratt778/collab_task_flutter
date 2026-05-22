@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - **Dart SDK**: ^3.11.0
 - **Features**: Auth, Task Board (Kanban), Real-time Chat (WebSockets), Notifications.
-- **Status**: Transitioning from starter to Phase 1 (WebSocket + Mock API).
+- **Status**: Supabase-backed auth, workspaces, and task CRUD are implemented. Realtime sync, notifications, route hardening, and broader tests are the main remaining work.
 
 
 ## Architecture Rules
@@ -57,7 +57,7 @@ Base rule set: `package:flutter_lints/flutter.yaml`. Custom rules in `analysis_o
 ## State Management
 
 - Use Cubit (from flutter_bloc) for feature state management.
-- **All state classes use `@freezed` sealed unions** following the `initial / loading / loaded(data) / error(Failure)` pattern (mutation cubits use `submitting / success / error`). See `AuthState` and `DemoState` for canonical examples. Run `dart run build_runner build --delete-conflicting-outputs` after creating/changing a state.
+- **All state classes use `@freezed` sealed unions** following the `initial / loading / loaded(data) / error(Failure)` pattern (mutation cubits use `submitting / success / error`). See `AuthState`, `TaskListState`, and `TaskDetailState` for canonical examples. Run `dart run build_runner build --delete-conflicting-outputs` after creating/changing a state.
 - UI consumes states via `state.when(...)` / `state.maybeWhen(...)`, not field reads.
 - Parallel flows (e.g. list + add + types in one feature) → split into separate cubits, each with its own freezed state. Don't stuff multiple status fields into one state.
 - Cubits consume use case results via `.fold()`.
@@ -109,7 +109,7 @@ Base rule set: `package:flutter_lints/flutter.yaml`. Custom rules in `analysis_o
 ## Push Notifications (FCM)
 
 - `FcmNotificationService` (`lib/core/services/fcm_notification_service.dart`) — singleton handling all FCM: permission request, background handler, foreground display via `flutter_local_notifications`, tap handling.
-- Wire it via `FcmNotificationService().init()` in `main_common.dart` after Firebase init when your project needs push notifications. If you don't, delete the file and remove its DI registration.
+- Wire it via `FcmNotificationService().init()` in `main.dart` after Firebase init when your project needs push notifications. If you don't, delete the file and remove its DI registration.
 - Background handler must remain a top-level function (Firebase requirement).
 
 ## Storage
@@ -118,7 +118,7 @@ Base rule set: `package:flutter_lints/flutter.yaml`. Custom rules in `analysis_o
 
 ## Network Recovery & Error Pages
 
-- **Auto-refetch on reconnect.** List screens that fetch data should mix in `NetworkAutoRefreshMixin` (`lib/features/shared/widget/network_auto_refresh_mixin.dart`) on their `State<...>` and implement `onNetworkRestored()` to re-trigger their fetches. The mixin subscribes to `NetworkCubit.onRecoveryStream` and calls the override when connectivity comes back. Canonical example: `DemoScreen`.
+- **Auto-refetch on reconnect.** List screens that fetch data should mix in `NetworkAutoRefreshMixin` (`lib/features/shared/widget/network_auto_refresh_mixin.dart`) on their `State<...>` and implement `onNetworkRestored()` to re-trigger their fetches. The mixin subscribes to `NetworkCubit.onRecoveryStream` and calls the override when connectivity comes back.
 - **Global "back online" banner.** `GlobalNetworkRecoveryListener` (`lib/features/shared/widget/global_recovery_listener_widget.dart`) wraps the app inside `MaterialApp.router`'s `builder:` and shows a single snackbar via `navigatorKey.currentContext` on recovery. Already wired — don't add per-screen banners.
 - **Full-screen error pages.** When a load fails in a way that makes the screen unusable, swap the whole scaffold for a shared page instead of rendering an inline error:
   - `AppErrorPage` (`lib/core/app/pages/app_error_page.dart`) — takes `title?`, `message?`, `onRetry?`. Title/message default to localized `somethingWentWrong` / `errUnexpected` when null.

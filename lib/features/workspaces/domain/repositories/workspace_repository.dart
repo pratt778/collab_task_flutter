@@ -8,4 +8,10 @@ abstract class WorkspaceRepository {
     required String name,
     String? description,
   });
+  Future<Either<Failure, void>> addMember({
+    required String workspaceId,
+    required String email,
+  });
+  Future<Either<Failure, void>> deleteWorkspace(String workspaceId);
+  Future<Either<Failure, List<Map<String, dynamic>>>> getWorkspaceMembers(String workspaceId);
 }

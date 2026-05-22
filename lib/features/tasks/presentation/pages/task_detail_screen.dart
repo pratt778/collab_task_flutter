@@ -4,9 +4,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:collab_task/core/app/router/app_router.dart';
 import 'package:collab_task/core/config/constants/color_constant.dart';
+import 'package:collab_task/core/error/failure_messages.dart';
 import 'package:collab_task/features/tasks/domain/entities/task_entity.dart';
 import 'package:collab_task/features/tasks/presentation/cubit/task_detail_cubit.dart';
 import 'package:collab_task/features/tasks/presentation/cubit/task_detail_state.dart';
+import 'package:collab_task/features/tasks/presentation/cubit/task_list_cubit.dart';
 
 class TaskDetailScreen extends StatefulWidget {
   final String taskId;
@@ -34,21 +36,82 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TaskDetailCubit, TaskDetailState>(
+    return BlocConsumer<TaskDetailCubit, TaskDetailState>(
+      listener: (context, state) {
+        state.whenOrNull(
+          deleted: () {
+            context.read<TaskListCubit>().removeTask(widget.taskId);
+            context.pop();
+          },
+        );
+      },
       builder: (context, state) {
         return state.maybeWhen(
-          loading: () => const Scaffold(body: Center(child: CircularProgressIndicator())),
-          error: (failure) => Scaffold(body: Center(child: Text(failure.toString()))),
+          loading: () =>
+              const Scaffold(body: Center(child: CircularProgressIndicator())),
+          error: (failure) => _buildErrorScaffold(
+            context,
+            message: localizedFailureMessage(context, failure),
+          ),
           loaded: (task) => _buildScaffold(context, task),
           success: (task) => _buildScaffold(context, task),
-          submitting: (task) => _buildScaffold(context, task, isSubmitting: true),
-          orElse: () => const Scaffold(body: Center(child: Text('Initializing...'))),
+          submitting: (task) =>
+              _buildScaffold(context, task, isSubmitting: true),
+          orElse: () =>
+              const Scaffold(body: Center(child: Text('Initializing...'))),
         );
       },
     );
   }
 
-  Widget _buildScaffold(BuildContext context, TaskEntity task, {bool isSubmitting = false}) {
+  Widget _buildErrorScaffold(BuildContext context, {required String message}) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        foregroundColor: AppColors.textDark,
+        elevation: 0,
+      ),
+      body: Center(
+        child: Padding(
+          padding: EdgeInsets.all(24.r),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.error_outline_rounded,
+                color: AppColors.errorRed,
+                size: 40.r,
+              ),
+              SizedBox(height: 12.h),
+              Text(
+                message,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: AppColors.textSecondary,
+                  fontSize: 15.sp,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              SizedBox(height: 16.h),
+              FilledButton.icon(
+                onPressed: () => context.read<TaskDetailCubit>().getTaskDetail(
+                  widget.taskId,
+                ),
+                icon: const Icon(Icons.refresh_rounded),
+                label: const Text('Retry'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildScaffold(
+    BuildContext context,
+    TaskEntity task, {
+    bool isSubmitting = false,
+  }) {
     return Scaffold(
       backgroundColor: AppColors.scaffoldBackground,
       appBar: AppBar(
@@ -61,12 +124,13 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.delete_outline_rounded, color: AppColors.errorRed),
-            onPressed: () {
-              // TODO: Add delete confirmation
-              context.read<TaskDetailCubit>().deleteTask(task.id);
-              context.pop();
-            },
+            icon: const Icon(
+              Icons.delete_outline_rounded,
+              color: AppColors.errorRed,
+            ),
+            onPressed: isSubmitting
+                ? null
+                : () => _confirmDelete(context, task),
           ),
           SizedBox(width: 8.w),
         ],
@@ -92,6 +156,30 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _confirmDelete(BuildContext context, TaskEntity task) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Delete task?'),
+        content: Text('This will permanently delete "${task.title}".'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            style: FilledButton.styleFrom(backgroundColor: AppColors.errorRed),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true || !context.mounted) return;
+    await context.read<TaskDetailCubit>().deleteTask(task.id);
   }
 
   Widget _buildDetail(TaskEntity task) {
@@ -121,7 +209,10 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 12.w,
+                        vertical: 6.h,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.white.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(12.r),
@@ -136,7 +227,11 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                         ),
                       ),
                     ),
-                    Icon(Icons.edit_note_rounded, color: Colors.white70, size: 24.sp),
+                    Icon(
+                      Icons.edit_note_rounded,
+                      color: Colors.white70,
+                      size: 24.sp,
+                    ),
                   ],
                 ),
                 SizedBox(height: 20.h),
@@ -182,7 +277,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
             ],
           ),
           SizedBox(height: 12.h),
-          
+
           // Progress Bar
           ClipRRect(
             borderRadius: BorderRadius.circular(10.r),
@@ -190,10 +285,12 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
               value: progress,
               minHeight: 10.h,
               backgroundColor: AppColors.surfaceSubtle,
-              valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primaryBlue),
+              valueColor: const AlwaysStoppedAnimation<Color>(
+                AppColors.primaryBlue,
+              ),
             ),
           ),
-          
+
           SizedBox(height: 24.h),
 
           // Checklist Items
@@ -214,15 +311,19 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                     return _buildChecklistItem(
                       title: item.title,
                       completed: item.completed,
-                      onToggle: () => context.read<TaskDetailCubit>().toggleChecklistItem(task.id, item.id),
-                      onDelete: () => context.read<TaskDetailCubit>().deleteChecklistItem(item.id),
+                      onToggle: () => context
+                          .read<TaskDetailCubit>()
+                          .toggleChecklistItem(task.id, item.id),
+                      onDelete: () => context
+                          .read<TaskDetailCubit>()
+                          .deleteChecklistItem(item.id),
                       isLast: isLast,
                     );
                   }),
                 ],
               ),
             ),
-          
+
           SizedBox(height: 24.h),
 
           // Add New Item
@@ -255,9 +356,9 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
       color: Colors.transparent,
       child: InkWell(
         onTap: onToggle,
-        borderRadius: isLast 
-          ? BorderRadius.vertical(bottom: Radius.circular(24.r))
-          : BorderRadius.zero,
+        borderRadius: isLast
+            ? BorderRadius.vertical(bottom: Radius.circular(24.r))
+            : BorderRadius.zero,
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
           child: Row(
@@ -267,16 +368,20 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                 width: 24.r,
                 height: 24.r,
                 decoration: BoxDecoration(
-                  color: completed ? AppColors.successGreen : Colors.transparent,
+                  color: completed
+                      ? AppColors.successGreen
+                      : Colors.transparent,
                   borderRadius: BorderRadius.circular(8.r),
                   border: Border.all(
-                    color: completed ? AppColors.successGreen : AppColors.borderMedium,
+                    color: completed
+                        ? AppColors.successGreen
+                        : AppColors.borderMedium,
                     width: 2,
                   ),
                 ),
-                child: completed 
-                  ? Icon(Icons.check, size: 16.sp, color: Colors.white)
-                  : null,
+                child: completed
+                    ? Icon(Icons.check, size: 16.sp, color: Colors.white)
+                    : null,
               ),
               SizedBox(width: 16.w),
               Expanded(
@@ -285,13 +390,19 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                   style: TextStyle(
                     fontSize: 15.sp,
                     fontWeight: FontWeight.w600,
-                    color: completed ? AppColors.textTertiary : AppColors.textDark,
+                    color: completed
+                        ? AppColors.textTertiary
+                        : AppColors.textDark,
                     decoration: completed ? TextDecoration.lineThrough : null,
                   ),
                 ),
               ),
               IconButton(
-                icon: Icon(Icons.delete_outline_rounded, size: 20.sp, color: AppColors.textTertiary),
+                icon: Icon(
+                  Icons.delete_outline_rounded,
+                  size: 20.sp,
+                  color: AppColors.textTertiary,
+                ),
                 onPressed: onDelete,
               ),
             ],
@@ -312,7 +423,11 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
       ),
       child: Row(
         children: [
-          Icon(Icons.add_circle_outline_rounded, color: AppColors.primaryBlue, size: 24.sp),
+          Icon(
+            Icons.add_circle_outline_rounded,
+            color: AppColors.primaryBlue,
+            size: 24.sp,
+          ),
           SizedBox(width: 12.w),
           Expanded(
             child: TextField(
@@ -334,10 +449,16 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
             ),
           ),
           IconButton(
-            icon: Icon(Icons.send_rounded, color: AppColors.primaryBlue, size: 20.sp),
+            icon: Icon(
+              Icons.send_rounded,
+              color: AppColors.primaryBlue,
+              size: 20.sp,
+            ),
             onPressed: () {
               if (_checklistController.text.isNotEmpty) {
-                context.read<TaskDetailCubit>().addChecklistItem(_checklistController.text.trim());
+                context.read<TaskDetailCubit>().addChecklistItem(
+                  _checklistController.text.trim(),
+                );
                 _checklistController.clear();
               }
             },

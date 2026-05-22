@@ -58,4 +58,4 @@ Provide the code snippets for:
 3.  **App Config**:
     - Get your `SUPABASE_URL` and `SUPABASE_ANON_KEY` from settings.
     - In your Flutter app, add the `supabase_flutter` package.
-    - Initialize it in `main_common.dart`.
+    - Initialize it in `main.dart`.

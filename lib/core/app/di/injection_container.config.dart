@@ -35,6 +35,18 @@ import 'package:collab_task/features/auth/domain/usecases/verify_otp_usecase.dar
     as _i93;
 import 'package:collab_task/features/auth/presentation/cubit/auth_cubit.dart'
     as _i981;
+import 'package:collab_task/features/chat/data/datasources/chat_remote_datasource.dart'
+    as _i824;
+import 'package:collab_task/features/chat/data/repositories/chat_repository_impl.dart'
+    as _i357;
+import 'package:collab_task/features/chat/domain/repositories/chat_repository.dart'
+    as _i7;
+import 'package:collab_task/features/chat/domain/usecases/get_task_messages_usecase.dart'
+    as _i40;
+import 'package:collab_task/features/chat/domain/usecases/send_task_message_usecase.dart'
+    as _i867;
+import 'package:collab_task/features/chat/presentation/cubit/task_chat_cubit.dart'
+    as _i719;
 import 'package:collab_task/features/locale/presentation/cubit/locale_cubit.dart'
     as _i881;
 import 'package:collab_task/features/shared/cubits/network_cubits.dart'
@@ -67,6 +79,8 @@ import 'package:collab_task/features/workspaces/data/repositories/workspace_repo
     as _i786;
 import 'package:collab_task/features/workspaces/domain/repositories/workspace_repository.dart'
     as _i400;
+import 'package:collab_task/features/workspaces/domain/usecases/add_workspace_member_usecase.dart'
+    as _i15;
 import 'package:collab_task/features/workspaces/domain/usecases/create_workspace_usecase.dart'
     as _i382;
 import 'package:collab_task/features/workspaces/domain/usecases/get_my_workspaces_usecase.dart'
@@ -129,6 +143,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i29.ApiHelper>(
       () => registerModule.apiHelper(gh<_i361.Dio>()),
     );
+    gh.lazySingleton<_i824.ChatRemoteDatasource>(
+      () => _i824.ChatRemoteDatasourceImpl(),
+    );
     gh.lazySingleton<_i625.WorkspaceRemoteDatasource>(
       () => _i625.WorkspaceRemoteDatasourceImpl(),
     );
@@ -143,6 +160,25 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i227.AuthRepositoryImpl(
         remoteDatasource: gh<_i867.AuthRemoteDatasource>(),
       ),
+    );
+    gh.factory<_i885.TaskListCubit>(
+      () => _i885.TaskListCubit(
+        gh<_i130.GetTasksUseCase>(),
+        gh<_i647.CreateTaskUseCase>(),
+        gh<_i522.UpdateTaskUseCase>(),
+        gh<_i532.DeleteTaskUseCase>(),
+      ),
+    );
+    gh.lazySingleton<_i7.ChatRepository>(
+      () => _i357.ChatRepositoryImpl(
+        remoteDatasource: gh<_i824.ChatRemoteDatasource>(),
+      ),
+    );
+    gh.lazySingleton<_i40.GetTaskMessagesUseCase>(
+      () => _i40.GetTaskMessagesUseCase(gh<_i7.ChatRepository>()),
+    );
+    gh.lazySingleton<_i867.SendTaskMessageUseCase>(
+      () => _i867.SendTaskMessageUseCase(gh<_i7.ChatRepository>()),
     );
     gh.lazySingleton<_i55.LoginUseCase>(
       () => _i55.LoginUseCase(gh<_i835.AuthRepository>()),
@@ -167,13 +203,6 @@ extension GetItInjectableX on _i174.GetIt {
         remoteDatasource: gh<_i625.WorkspaceRemoteDatasource>(),
       ),
     );
-    gh.factory<_i885.TaskListCubit>(
-      () => _i885.TaskListCubit(
-        gh<_i130.GetTasksUseCase>(),
-        gh<_i647.CreateTaskUseCase>(),
-        gh<_i522.UpdateTaskUseCase>(),
-      ),
-    );
     gh.lazySingleton<_i981.AuthCubit>(
       () => _i981.AuthCubit(
         loginUseCase: gh<_i55.LoginUseCase>(),
@@ -185,6 +214,15 @@ extension GetItInjectableX on _i174.GetIt {
         sessionWriter: gh<_i1007.AuthSessionWriter>(),
       ),
     );
+    gh.factory<_i719.TaskChatCubit>(
+      () => _i719.TaskChatCubit(
+        gh<_i40.GetTaskMessagesUseCase>(),
+        gh<_i867.SendTaskMessageUseCase>(),
+      ),
+    );
+    gh.lazySingleton<_i15.AddWorkspaceMemberUseCase>(
+      () => _i15.AddWorkspaceMemberUseCase(gh<_i400.WorkspaceRepository>()),
+    );
     gh.lazySingleton<_i382.CreateWorkspaceUseCase>(
       () => _i382.CreateWorkspaceUseCase(gh<_i400.WorkspaceRepository>()),
     );
@@ -195,6 +233,9 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i349.WorkspaceCubit(
         getMyWorkspacesUseCase: gh<_i45.GetMyWorkspacesUseCase>(),
         createWorkspaceUseCase: gh<_i382.CreateWorkspaceUseCase>(),
+        addWorkspaceMemberUseCase: gh<_i15.AddWorkspaceMemberUseCase>(),
+        workspaceRepository: gh<_i400.WorkspaceRepository>(),
+        authRepository: gh<_i835.AuthRepository>(),
       ),
     );
     return this;

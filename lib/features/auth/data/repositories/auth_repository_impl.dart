@@ -85,4 +85,14 @@ class AuthRepositoryImpl implements AuthRepository {
       return Left(failure);
     }
   }
+
+  @override
+  Future<Either<Failure, List<UserEntity>>> getAllUsers() async {
+    try {
+      final models = await remoteDatasource.getAllUsers();
+      return Right(models.map((e) => e.toEntity()).toList());
+    } on Failure catch (failure) {
+      return Left(failure);
+    }
+  }
 }

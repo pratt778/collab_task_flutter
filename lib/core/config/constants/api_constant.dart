@@ -1,10 +1,9 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-/// Generic API endpoint registry.
+/// Generic API endpoint registry for optional REST/WebSocket services.
 ///
-/// The starter uses `jsonplaceholder.typicode.com` so `flutter run` works out
-/// of the box with no backend setup. Replace the hosts and endpoints when
-/// you wire up your real API.
+/// Supabase-backed features use `Supabase.instance.client` directly. These
+/// values are kept for dev tooling, Chucker, and any future REST endpoints.
 class ApiConstants {
   // ── Hosts ────────────────────────────────────────────────────────────
   static const String localIp = 'http://10.0.2.2:8080';
@@ -21,9 +20,6 @@ class ApiConstants {
   static const String login = 'auth/login';
   static const String logout = 'auth/logout';
 
-  // Demo (jsonplaceholder placeholder list)
-  static const String demos = 'posts';
-
   // ── Tasks ────────────────────────────────────────────────────────────
   static const String tasks = 'tasks';
   static const String taskDetail = 'tasks/:id';
@@ -35,5 +31,6 @@ class ApiConstants {
 
   // ── Supabase ─────────────────────────────────────────────────────────
   static String get supabaseUrl => dotenv.get('SUPABASE_URL', fallback: '');
-  static String get supabaseAnonKey => dotenv.get('SUPABASE_ANON_KEY', fallback: '');
+  static String get supabaseAnonKey =>
+      dotenv.get('SUPABASE_ANON_KEY', fallback: '');
 }

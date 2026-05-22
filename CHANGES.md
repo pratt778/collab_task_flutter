@@ -11,6 +11,13 @@ Group entries under one date heading per day. Newest date at the top.
 
 ---
 
+## 2026-05-22
+- **Fixed** analyzer cleanup in settings and task detail. Replaced deprecated radio-list usage with selectable list rows and made the task delete icon const.
+- **Removed** the legacy demo route and screen. Protected app routes now redirect unauthenticated users to login, while authenticated users are redirected away from auth-only screens to the task board.
+- **Updated** task board reliability. Deduplicated workspace task loads, made realtime task refreshes quiet, applied create/update responses locally, and replaced raw failure text with localized retry states.
+- **Fixed** task deletion flow. Detail deletes now wait for backend success, show a confirmation dialog, expose localized retry errors, and remove the deleted task from the board list without issuing a duplicate delete request.
+- **Updated** project docs to match the current app shape. Replaced stale `main_development.dart` / `main_common.dart` references with `lib/main.dart` and clarified that Supabase-backed auth, workspaces, and task CRUD are now the active implementation path.
+
 ## 2026-05-01
 - **Project Renaming**: Renamed package from `flutter_clean_starter` to `collab_task` globally. Updated Android and iOS display names and package identifiers.
 - **Phase 1 (Foundation)**: Registered `WebSocketService` in DI, added task/ws endpoints to `ApiConstants`, and created `MockDataGenerator`.
