@@ -236,6 +236,7 @@ extension GetItInjectableX on _i174.GetIt {
         addWorkspaceMemberUseCase: gh<_i15.AddWorkspaceMemberUseCase>(),
         workspaceRepository: gh<_i400.WorkspaceRepository>(),
         authRepository: gh<_i835.AuthRepository>(),
+        secureStorage: gh<_i445.SecureStorageHelper>(),
       ),
     );
     return this;

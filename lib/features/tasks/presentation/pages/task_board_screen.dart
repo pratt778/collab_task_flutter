@@ -54,7 +54,7 @@ class _TaskBoardScreenState extends State<TaskBoardScreen> {
   @override
   Widget build(BuildContext context) {
     final colors = context.appColors;
-    final l = AppLocalizations.of(context)!;
+    final l = AppLocalizations.of(context);
     return BlocListener<WorkspaceCubit, WorkspaceState>(
       listener: (context, state) {
         state.maybeWhen(
@@ -446,7 +446,7 @@ class _TaskBoardScreenState extends State<TaskBoardScreen> {
                       );
                     }),
 
-                    Divider(height: 16, color: Colors.transparent),
+                    const Divider(height: 16, color: Colors.transparent),
 
                     _buildDrawerItem(
                       context,

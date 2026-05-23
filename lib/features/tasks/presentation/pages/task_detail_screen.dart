@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:collab_task/core/app/router/app_router.dart';
-import 'package:collab_task/core/config/constants/color_constant.dart';
+import 'package:collab_task/core/config/theme/app_colors_extension.dart';
 import 'package:collab_task/core/error/failure_messages.dart';
 import 'package:collab_task/features/tasks/domain/entities/task_entity.dart';
 import 'package:collab_task/features/tasks/presentation/cubit/task_detail_cubit.dart';
@@ -36,6 +36,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return BlocConsumer<TaskDetailCubit, TaskDetailState>(
       listener: (context, state) {
         state.whenOrNull(
@@ -47,28 +48,37 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
       },
       builder: (context, state) {
         return state.maybeWhen(
-          loading: () =>
-              const Scaffold(body: Center(child: CircularProgressIndicator())),
+          loading: () => Scaffold(
+            backgroundColor: colors.scaffold,
+            body: Center(child: CircularProgressIndicator(color: colors.primary)),
+          ),
           error: (failure) => _buildErrorScaffold(
             context,
+            colors: colors,
             message: localizedFailureMessage(context, failure),
           ),
-          loaded: (task) => _buildScaffold(context, task),
-          success: (task) => _buildScaffold(context, task),
+          loaded: (task) => _buildScaffold(context, task, colors),
+          success: (task) => _buildScaffold(context, task, colors),
           submitting: (task) =>
-              _buildScaffold(context, task, isSubmitting: true),
-          orElse: () =>
-              const Scaffold(body: Center(child: Text('Initializing...'))),
+              _buildScaffold(context, task, colors, isSubmitting: true),
+          orElse: () => Scaffold(
+            backgroundColor: colors.scaffold,
+            body: Center(
+              child: Text('Initializing...', style: TextStyle(color: colors.textPrimary)),
+            ),
+          ),
         );
       },
     );
   }
 
-  Widget _buildErrorScaffold(BuildContext context, {required String message}) {
+  Widget _buildErrorScaffold(BuildContext context,
+      {required AppColorsExtension colors, required String message}) {
     return Scaffold(
+      backgroundColor: colors.scaffold,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        foregroundColor: AppColors.textDark,
+        foregroundColor: colors.textPrimary,
         elevation: 0,
       ),
       body: Center(
@@ -77,28 +87,24 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
-                Icons.error_outline_rounded,
-                color: AppColors.errorRed,
-                size: 40.r,
-              ),
+              Icon(Icons.error_outline_rounded, color: Colors.red, size: 40.r),
               SizedBox(height: 12.h),
               Text(
                 message,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: AppColors.textSecondary,
+                  color: colors.textSecondary,
                   fontSize: 15.sp,
                   fontWeight: FontWeight.w600,
                 ),
               ),
               SizedBox(height: 16.h),
               FilledButton.icon(
-                onPressed: () => context.read<TaskDetailCubit>().getTaskDetail(
-                  widget.taskId,
-                ),
-                icon: const Icon(Icons.refresh_rounded),
-                label: const Text('Retry'),
+                onPressed: () =>
+                    context.read<TaskDetailCubit>().getTaskDetail(widget.taskId),
+                style: FilledButton.styleFrom(backgroundColor: colors.primary),
+                icon: const Icon(Icons.refresh_rounded, color: Colors.white),
+                label: const Text('Retry', style: TextStyle(color: Colors.white)),
               ),
             ],
           ),
@@ -109,38 +115,35 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
 
   Widget _buildScaffold(
     BuildContext context,
-    TaskEntity task, {
+    TaskEntity task,
+    AppColorsExtension colors, {
     bool isSubmitting = false,
   }) {
     return Scaffold(
-      backgroundColor: AppColors.scaffoldBackground,
+      backgroundColor: colors.scaffold,
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
-        foregroundColor: AppColors.textDark,
+        foregroundColor: colors.textPrimary,
         title: Text(
           'Task Details',
           style: TextStyle(fontWeight: FontWeight.w800, fontSize: 20.sp),
         ),
         actions: [
           IconButton(
-            icon: const Icon(
-              Icons.delete_outline_rounded,
-              color: AppColors.errorRed,
-            ),
+            icon: const Icon(Icons.delete_outline_rounded, color: Colors.red),
             onPressed: isSubmitting
                 ? null
-                : () => _confirmDelete(context, task),
+                : () => _confirmDelete(context, task, colors),
           ),
           SizedBox(width: 8.w),
         ],
       ),
-      body: _buildDetail(task),
+      body: _buildDetail(task, colors),
       floatingActionButton: Container(
         decoration: BoxDecoration(
-          gradient: AppColors.primaryGradient,
+          color: colors.primary,
           borderRadius: BorderRadius.circular(20.r),
-          boxShadow: AppColors.mediumShadow,
         ),
         child: FloatingActionButton(
           onPressed: () {
@@ -158,21 +161,27 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
     );
   }
 
-  Future<void> _confirmDelete(BuildContext context, TaskEntity task) async {
+  Future<void> _confirmDelete(
+    BuildContext context,
+    TaskEntity task,
+    AppColorsExtension colors,
+  ) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Delete task?'),
-        content: Text('This will permanently delete "${task.title}".'),
+        backgroundColor: colors.surface,
+        title: Text('Delete task?', style: TextStyle(color: colors.textPrimary)),
+        content: Text('This will permanently delete "${task.title}".',
+            style: TextStyle(color: colors.textSecondary)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, false),
-            child: const Text('Cancel'),
+            child: Text('Cancel', style: TextStyle(color: colors.textSecondary)),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(dialogContext, true),
-            style: FilledButton.styleFrom(backgroundColor: AppColors.errorRed),
-            child: const Text('Delete'),
+            style: FilledButton.styleFrom(backgroundColor: Colors.red),
+            child: const Text('Delete', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -182,7 +191,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
     await context.read<TaskDetailCubit>().deleteTask(task.id);
   }
 
-  Widget _buildDetail(TaskEntity task) {
+  Widget _buildDetail(TaskEntity task, AppColorsExtension colors) {
     final completedCount = task.checklist.where((e) => e.completed).length;
     final totalCount = task.checklist.length;
     final progress = totalCount > 0 ? completedCount / totalCount : 0.0;
@@ -193,14 +202,12 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(height: 10.h),
-          // Hero Header Section
           Container(
             width: double.infinity,
             padding: EdgeInsets.all(24.r),
             decoration: BoxDecoration(
-              gradient: AppColors.primaryGradient,
+              color: colors.primary,
               borderRadius: BorderRadius.circular(30.r),
-              boxShadow: AppColors.mediumShadow,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -210,9 +217,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                   children: [
                     Container(
                       padding: EdgeInsets.symmetric(
-                        horizontal: 12.w,
-                        vertical: 6.h,
-                      ),
+                          horizontal: 12.w, vertical: 6.h),
                       decoration: BoxDecoration(
                         color: Colors.white.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(12.r),
@@ -220,127 +225,143 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                       child: Text(
                         task.status.name.toUpperCase(),
                         style: TextStyle(
-                          fontSize: 10.sp,
-                          fontWeight: FontWeight.w900,
-                          color: Colors.white,
-                          letterSpacing: 1,
-                        ),
+                            fontSize: 10.sp,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.white,
+                            letterSpacing: 1),
                       ),
                     ),
-                    Icon(
-                      Icons.edit_note_rounded,
-                      color: Colors.white70,
-                      size: 24.sp,
-                    ),
+                    Icon(Icons.edit_note_rounded,
+                        color: Colors.white70, size: 24.sp),
                   ],
                 ),
                 SizedBox(height: 20.h),
                 Text(
                   task.title,
                   style: TextStyle(
-                    fontSize: 26.sp,
-                    fontWeight: FontWeight.w800,
-                    color: Colors.white,
-                    height: 1.2,
-                  ),
+                      fontSize: 26.sp,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.white,
+                      height: 1.2),
                 ),
                 if (task.description.isNotEmpty) ...[
                   SizedBox(height: 12.h),
                   Text(
                     task.description,
                     style: TextStyle(
-                      fontSize: 14.sp,
-                      color: Colors.white.withValues(alpha: 0.8),
-                      height: 1.5,
-                    ),
+                        fontSize: 14.sp,
+                        color: Colors.white.withValues(alpha: 0.8),
+                        height: 1.5),
                   ),
                 ],
               ],
             ),
           ),
-
           SizedBox(height: 32.h),
-
-          // Checklist Section
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildSectionHeader('Subtasks'),
-              Text(
-                '$completedCount/$totalCount',
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.primaryBlue,
-                ),
-              ),
+              Text('Subtasks',
+                  style: TextStyle(
+                      fontSize: 20.sp,
+                      fontWeight: FontWeight.w800,
+                      color: colors.textPrimary)),
+              Text('$completedCount/$totalCount',
+                  style: TextStyle(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w700,
+                      color: colors.primary)),
             ],
           ),
           SizedBox(height: 12.h),
-
-          // Progress Bar
           ClipRRect(
             borderRadius: BorderRadius.circular(10.r),
             child: LinearProgressIndicator(
               value: progress,
               minHeight: 10.h,
-              backgroundColor: AppColors.surfaceSubtle,
-              valueColor: const AlwaysStoppedAnimation<Color>(
-                AppColors.primaryBlue,
-              ),
+              backgroundColor: colors.surfaceMuted,
+              valueColor: AlwaysStoppedAnimation<Color>(colors.primary),
             ),
           ),
-
           SizedBox(height: 24.h),
-
-          // Checklist Items
           if (task.checklist.isNotEmpty)
             Container(
               decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(24.r),
-                boxShadow: AppColors.softShadow,
-              ),
+                  color: colors.surface,
+                  borderRadius: BorderRadius.circular(24.r),
+                  border: Border.all(color: colors.border)),
               child: Column(
                 children: [
                   ...task.checklist.asMap().entries.map<Widget>((entry) {
                     final index = entry.key;
                     final item = entry.value;
                     final isLast = index == task.checklist.length - 1;
-
                     return _buildChecklistItem(
-                      title: item.title,
-                      completed: item.completed,
-                      onToggle: () => context
-                          .read<TaskDetailCubit>()
-                          .toggleChecklistItem(task.id, item.id),
-                      onDelete: () => context
-                          .read<TaskDetailCubit>()
-                          .deleteChecklistItem(item.id),
-                      isLast: isLast,
-                    );
+                        title: item.title,
+                        completed: item.completed,
+                        onToggle: () => context
+                            .read<TaskDetailCubit>()
+                            .toggleChecklistItem(task.id, item.id),
+                        onDelete: () => context
+                            .read<TaskDetailCubit>()
+                            .deleteChecklistItem(item.id),
+                        isLast: isLast,
+                        colors: colors);
                   }),
                 ],
               ),
             ),
-
           SizedBox(height: 24.h),
-
-          // Add New Item
-          _buildAddChecklistItem(),
-          SizedBox(height: 100.h), // Space for FAB
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 16.w),
+            decoration: BoxDecoration(
+                color: colors.surface,
+                borderRadius: BorderRadius.circular(20.r),
+                border: Border.all(color: colors.border)),
+            child: Row(
+              children: [
+                Icon(Icons.add_circle_outline_rounded,
+                    color: colors.primary, size: 24.sp),
+                SizedBox(width: 12.w),
+                Expanded(
+                  child: TextField(
+                    controller: _checklistController,
+                    style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w600,
+                        color: colors.textPrimary),
+                    decoration: InputDecoration(
+                        hintText: 'Add a new subtask...',
+                        hintStyle: TextStyle(color: colors.textTertiary),
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.symmetric(vertical: 16.h)),
+                    onSubmitted: (val) {
+                      if (val.isNotEmpty) {
+                        context
+                            .read<TaskDetailCubit>()
+                            .addChecklistItem(val.trim());
+                        _checklistController.clear();
+                      }
+                    },
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(Icons.send_rounded,
+                      color: colors.primary, size: 20.sp),
+                  onPressed: () {
+                    if (_checklistController.text.isNotEmpty) {
+                      context
+                          .read<TaskDetailCubit>()
+                          .addChecklistItem(_checklistController.text.trim());
+                      _checklistController.clear();
+                    }
+                  },
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: 100.h),
         ],
-      ),
-    );
-  }
-
-  Widget _buildSectionHeader(String title) {
-    return Text(
-      title,
-      style: TextStyle(
-        fontSize: 20.sp,
-        fontWeight: FontWeight.w800,
-        color: AppColors.textDark,
       ),
     );
   }
@@ -351,6 +372,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
     required VoidCallback onToggle,
     required VoidCallback onDelete,
     required bool isLast,
+    required AppColorsExtension colors,
   }) {
     return Material(
       color: Colors.transparent,
@@ -368,14 +390,10 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                 width: 24.r,
                 height: 24.r,
                 decoration: BoxDecoration(
-                  color: completed
-                      ? AppColors.successGreen
-                      : Colors.transparent,
+                  color: completed ? Colors.green : Colors.transparent,
                   borderRadius: BorderRadius.circular(8.r),
                   border: Border.all(
-                    color: completed
-                        ? AppColors.successGreen
-                        : AppColors.borderMedium,
+                    color: completed ? Colors.green : colors.border,
                     width: 2,
                   ),
                 ),
@@ -390,80 +408,20 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                   style: TextStyle(
                     fontSize: 15.sp,
                     fontWeight: FontWeight.w600,
-                    color: completed
-                        ? AppColors.textTertiary
-                        : AppColors.textDark,
+                    color:
+                        completed ? colors.textTertiary : colors.textPrimary,
                     decoration: completed ? TextDecoration.lineThrough : null,
                   ),
                 ),
               ),
               IconButton(
-                icon: Icon(
-                  Icons.delete_outline_rounded,
-                  size: 20.sp,
-                  color: AppColors.textTertiary,
-                ),
+                icon: Icon(Icons.delete_outline_rounded,
+                    size: 20.sp, color: colors.textTertiary),
                 onPressed: onDelete,
               ),
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildAddChecklistItem() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20.r),
-        boxShadow: AppColors.softShadow,
-        border: Border.all(color: AppColors.borderSubtle),
-      ),
-      child: Row(
-        children: [
-          Icon(
-            Icons.add_circle_outline_rounded,
-            color: AppColors.primaryBlue,
-            size: 24.sp,
-          ),
-          SizedBox(width: 12.w),
-          Expanded(
-            child: TextField(
-              controller: _checklistController,
-              style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600),
-              decoration: InputDecoration(
-                hintText: 'Add a new subtask...',
-                border: InputBorder.none,
-                enabledBorder: InputBorder.none,
-                focusedBorder: InputBorder.none,
-                contentPadding: EdgeInsets.symmetric(vertical: 16.h),
-              ),
-              onSubmitted: (val) {
-                if (val.isNotEmpty) {
-                  context.read<TaskDetailCubit>().addChecklistItem(val.trim());
-                  _checklistController.clear();
-                }
-              },
-            ),
-          ),
-          IconButton(
-            icon: Icon(
-              Icons.send_rounded,
-              color: AppColors.primaryBlue,
-              size: 20.sp,
-            ),
-            onPressed: () {
-              if (_checklistController.text.isNotEmpty) {
-                context.read<TaskDetailCubit>().addChecklistItem(
-                  _checklistController.text.trim(),
-                );
-                _checklistController.clear();
-              }
-            },
-          ),
-        ],
       ),
     );
   }

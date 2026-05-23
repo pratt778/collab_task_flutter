@@ -404,11 +404,143 @@ abstract class AppLocalizations {
   /// **'No tasks here'**
   String get noTasksHere;
 
-  /// No description provided for @today.
+  /// No description provided for @account.
   ///
   /// In en, this message translates to:
-  /// **'Today'**
-  String get today;
+  /// **'Account'**
+  String get account;
+
+  /// No description provided for @profile.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get profile;
+
+  /// No description provided for @updatePersonalInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Update your personal info'**
+  String get updatePersonalInfo;
+
+  /// No description provided for @security.
+  ///
+  /// In en, this message translates to:
+  /// **'Security'**
+  String get security;
+
+  /// No description provided for @passwordAndBiometric.
+  ///
+  /// In en, this message translates to:
+  /// **'Password and biometric'**
+  String get passwordAndBiometric;
+
+  /// No description provided for @preferences.
+  ///
+  /// In en, this message translates to:
+  /// **'Preferences'**
+  String get preferences;
+
+  /// No description provided for @theme.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme'**
+  String get theme;
+
+  /// No description provided for @lightMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Light Mode'**
+  String get lightMode;
+
+  /// No description provided for @darkMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark Mode'**
+  String get darkMode;
+
+  /// No description provided for @systemDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'System Default'**
+  String get systemDefault;
+
+  /// No description provided for @language.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get language;
+
+  /// No description provided for @english.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get english;
+
+  /// No description provided for @nepali.
+  ///
+  /// In en, this message translates to:
+  /// **'Nepali (नेपाली)'**
+  String get nepali;
+
+  /// No description provided for @german.
+  ///
+  /// In en, this message translates to:
+  /// **'German (Deutsch)'**
+  String get german;
+
+  /// No description provided for @french.
+  ///
+  /// In en, this message translates to:
+  /// **'French (Français)'**
+  String get french;
+
+  /// No description provided for @spanish.
+  ///
+  /// In en, this message translates to:
+  /// **'Spanish (Español)'**
+  String get spanish;
+
+  /// No description provided for @appSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'App Settings'**
+  String get appSettings;
+
+  /// No description provided for @autoSync.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-sync'**
+  String get autoSync;
+
+  /// No description provided for @keepDataUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep data updated in real-time'**
+  String get keepDataUpdated;
+
+  /// No description provided for @hapticFeedback.
+  ///
+  /// In en, this message translates to:
+  /// **'Haptic Feedback'**
+  String get hapticFeedback;
+
+  /// No description provided for @softVibrations.
+  ///
+  /// In en, this message translates to:
+  /// **'Soft vibrations on interactions'**
+  String get softVibrations;
+
+  /// No description provided for @logoutAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Logout Account'**
+  String get logoutAccount;
+
+  /// No description provided for @appearance.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get appearance;
 
   /// No description provided for @todo.
   ///

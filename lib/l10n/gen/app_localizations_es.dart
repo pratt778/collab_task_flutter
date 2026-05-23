@@ -171,7 +171,73 @@ class AppLocalizationsEs extends AppLocalizations {
   String get noTasksHere => 'No hay tareas aquí';
 
   @override
-  String get today => 'Hoy';
+  String get account => 'Account';
+
+  @override
+  String get profile => 'Profile';
+
+  @override
+  String get updatePersonalInfo => 'Update your personal info';
+
+  @override
+  String get security => 'Security';
+
+  @override
+  String get passwordAndBiometric => 'Password and biometric';
+
+  @override
+  String get preferences => 'Preferences';
+
+  @override
+  String get theme => 'Theme';
+
+  @override
+  String get lightMode => 'Light Mode';
+
+  @override
+  String get darkMode => 'Dark Mode';
+
+  @override
+  String get systemDefault => 'System Default';
+
+  @override
+  String get language => 'Language';
+
+  @override
+  String get english => 'English';
+
+  @override
+  String get nepali => 'Nepali (नेपाली)';
+
+  @override
+  String get german => 'German (Deutsch)';
+
+  @override
+  String get french => 'French (Français)';
+
+  @override
+  String get spanish => 'Spanish (Español)';
+
+  @override
+  String get appSettings => 'App Settings';
+
+  @override
+  String get autoSync => 'Auto-sync';
+
+  @override
+  String get keepDataUpdated => 'Keep data updated in real-time';
+
+  @override
+  String get hapticFeedback => 'Haptic Feedback';
+
+  @override
+  String get softVibrations => 'Soft vibrations on interactions';
+
+  @override
+  String get logoutAccount => 'Logout Account';
+
+  @override
+  String get appearance => 'Appearance';
 
   @override
   String get todo => 'Por hacer';

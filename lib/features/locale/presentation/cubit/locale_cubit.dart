@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
@@ -17,6 +18,7 @@ class LocaleCubit extends Cubit<Locale> {
 
   void setLocale(Locale locale) {
     _storage.saveLocale(locale.languageCode);
+    log('🌍 LocaleCubit: New locale set to ${locale.languageCode}');
     emit(locale);
   }
 

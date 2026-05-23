@@ -6,6 +6,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:collab_task/core/error/failures.dart';
 import 'package:collab_task/features/workspaces/domain/entities/workspace_entity.dart';
+import 'package:collab_task/core/helper/secure_storage_helper.dart';
 import 'package:collab_task/features/workspaces/domain/usecases/get_my_workspaces_usecase.dart';
 import 'package:collab_task/features/workspaces/domain/usecases/create_workspace_usecase.dart';
 import 'package:collab_task/features/workspaces/domain/usecases/add_workspace_member_usecase.dart';
@@ -35,6 +36,7 @@ class WorkspaceCubit extends Cubit<WorkspaceState> {
   final AddWorkspaceMemberUseCase addWorkspaceMemberUseCase;
   final WorkspaceRepository workspaceRepository;
   final AuthRepository authRepository;
+  final SecureStorageHelper secureStorage;
 
   WorkspaceCubit({
     required this.getMyWorkspacesUseCase,
@@ -42,6 +44,7 @@ class WorkspaceCubit extends Cubit<WorkspaceState> {
     required this.addWorkspaceMemberUseCase,
     required this.workspaceRepository,
     required this.authRepository,
+    required this.secureStorage,
   }) : super(const WorkspaceState.initial());
 
   Future<void> loadWorkspaces() async {
@@ -65,18 +68,22 @@ class WorkspaceCubit extends Cubit<WorkspaceState> {
             return <UserEntity>[];
           },
           (users) {
-            log('👥 WorkspaceCubit: Fetched ${users.length} total users for discovery');
+            log(
+              '👥 WorkspaceCubit: Fetched ${users.length} total users for discovery',
+            );
             return users;
           },
         );
 
         if (workspaces.isEmpty) {
-          log('ℹ️ WorkspaceCubit: No workspaces found, auto-creating default...');
+          log(
+            'ℹ️ WorkspaceCubit: No workspaces found, auto-creating default...',
+          );
           await createDefaultWorkspace();
         } else {
           // If we were already in a workspace, try to stay in it
           final currentSelectedId = state.maybeWhen(
-            loaded: (_, selected, __, ___) => selected?.id,
+            loaded: (_, selected, _, _) => selected?.id,
             orElse: () => null,
           );
 
@@ -85,11 +92,21 @@ class WorkspaceCubit extends Cubit<WorkspaceState> {
             orElse: () => workspaces.first,
           );
 
-          log('✅ WorkspaceCubit: Selecting workspace: ${workspaceToSelect.name}');
-          
+          log(
+            '✅ WorkspaceCubit: Selecting workspace: ${workspaceToSelect.name}',
+          );
+
           // Fetch members for the selected workspace
-          final membersResult = await workspaceRepository.getWorkspaceMembers(workspaceToSelect.id);
-          final members = membersResult.fold((_) => <Map<String, dynamic>>[], (m) => m);
+          final membersResult = await workspaceRepository.getWorkspaceMembers(
+            workspaceToSelect.id,
+          );
+          final members = membersResult.fold(
+            (_) => <Map<String, dynamic>>[],
+            (m) => m,
+          );
+          log(
+            '👥 WorkspaceCubit: Workspace ${workspaceToSelect.name} has ${members.length} members',
+          );
 
           emit(
             WorkspaceState.loaded(
@@ -117,11 +134,16 @@ class WorkspaceCubit extends Cubit<WorkspaceState> {
     result.fold((failure) => emit(WorkspaceState.error(failure)), (
       newWorkspace,
     ) async {
-      final membersResult = await workspaceRepository.getWorkspaceMembers(newWorkspace.id);
-      final members = membersResult.fold((_) => <Map<String, dynamic>>[], (m) => m);
+      final membersResult = await workspaceRepository.getWorkspaceMembers(
+        newWorkspace.id,
+      );
+      final members = membersResult.fold(
+        (_) => <Map<String, dynamic>>[],
+        (m) => m,
+      );
 
       state.maybeWhen(
-        loaded: (workspaces, _, allUsers, __) {
+        loaded: (workspaces, _, allUsers, _) {
           final updatedList = List<WorkspaceEntity>.from(workspaces)
             ..add(newWorkspace);
           emit(
@@ -160,9 +182,14 @@ class WorkspaceCubit extends Cubit<WorkspaceState> {
         emit(WorkspaceState.error(failure));
       },
       (newWorkspace) async {
-        final membersResult = await workspaceRepository.getWorkspaceMembers(newWorkspace.id);
-        final members = membersResult.fold((_) => <Map<String, dynamic>>[], (m) => m);
-        
+        final membersResult = await workspaceRepository.getWorkspaceMembers(
+          newWorkspace.id,
+        );
+        final members = membersResult.fold(
+          (_) => <Map<String, dynamic>>[],
+          (m) => m,
+        );
+
         emit(
           WorkspaceState.loaded(
             workspaces: [newWorkspace],
@@ -177,7 +204,7 @@ class WorkspaceCubit extends Cubit<WorkspaceState> {
 
   Future<void> addMember(String email) async {
     final activeWorkspace = state.maybeWhen(
-      loaded: (_, selected, __, ___) => selected,
+      loaded: (_, selected, _, _) => selected,
       orElse: () => null,
     );
 
@@ -200,16 +227,53 @@ class WorkspaceCubit extends Cubit<WorkspaceState> {
   }
 
   Future<void> deleteWorkspace(String workspaceId) async {
+    log('⏳ WorkspaceCubit: Deleting workspace: $workspaceId');
+
+    // Clear selection if we are deleting the currently selected workspace
+    final currentSelected = state.maybeWhen(
+      loaded: (_, selected, _, _) => selected,
+      orElse: () => null,
+    );
+
     final result = await workspaceRepository.deleteWorkspace(workspaceId);
+
     result.fold(
-      (failure) => emit(WorkspaceState.error(failure)),
-      (_) => loadWorkspaces(),
+      (failure) {
+        log('❌ WorkspaceCubit: Delete failed: $failure');
+        emit(WorkspaceState.error(failure));
+      },
+      (_) {
+        log('✅ WorkspaceCubit: Delete successful');
+        if (currentSelected?.id == workspaceId) {
+          // If we deleted the selected one, we'll force a reload
+          // which will trigger the new logic to pick the first available one
+          loadWorkspaces();
+        } else {
+          loadWorkspaces();
+        }
+      },
     );
   }
 
   Future<void> selectWorkspace(WorkspaceEntity workspace) async {
-    final membersResult = await workspaceRepository.getWorkspaceMembers(workspace.id);
-    final members = membersResult.fold((_) => <Map<String, dynamic>>[], (m) => m);
+    log(
+      '⏳ WorkspaceCubit: Selecting workspace and refreshing members: ${workspace.name}',
+    );
+
+    // 1. Persist selection
+    secureStorage.saveActiveWorkspaceId(workspace.id);
+
+    // 2. FORCE fetch members from server (no local cache)
+    final membersResult = await workspaceRepository.getWorkspaceMembers(
+      workspace.id,
+    );
+    final members = membersResult.fold(
+      (_) => <Map<String, dynamic>>[],
+      (m) => m,
+    );
+    log(
+      '👥 WorkspaceCubit: Fresh member count for ${workspace.name}: ${members.length}',
+    );
 
     state.maybeWhen(
       loaded: (workspaces, _, allUsers, __) {
@@ -218,7 +282,7 @@ class WorkspaceCubit extends Cubit<WorkspaceState> {
             workspaces: workspaces,
             selectedWorkspace: workspace,
             allUsers: allUsers,
-            currentMembers: members,
+            currentMembers: members, // Now contains the fresh count
           ),
         );
       },
