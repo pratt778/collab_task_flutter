@@ -44,7 +44,10 @@
   "unauthorizedMessage": "You are not authorized to access this page. Please log in again.",
 
   "a11yBack": "Back",
+  "user": "User",
+  "member": "Member",
   "members": "Members",
+  "workspaces": "Workspaces",
   "taskBoard": "Task Board",
   "notifications": "Notifications",
   "settings": "Settings",
@@ -52,17 +55,42 @@
   "delete": "Delete",
   "create": "Create",
   "cancel": "Cancel",
-  "inviteMember": "Invite Member",
+  "addMember": "Add Member",
+  "addMembers": "Add Members",
+  "viewMembers": "View Members",
   "selectUser": "Select User",
+  "newWorkspace": "New Workspace",
+  "workspaceName": "Workspace Name",
+  "moveTaskTo": "Move task to...",
+  "inviteMemberDescription": "Select a user to invite to this workspace.",
+  "waitForWorkspacesToLoad": "Wait for workspaces to load...",
+  "pleaseWaitForLoginToComplete": "Please wait for login to complete...",
+  "stillSettingUpWorkspace": "Still setting up your workspace. Please try in a second.",
+  "deleteWorkspaceTitle": "Delete \"{name}\"?",
+  "@deleteWorkspaceTitle": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "invitingUser": "Inviting {email}...",
+  "@invitingUser": {
+    "placeholders": {
+      "email": {}
+    }
+  },
   "deleteWorkspace": "Delete Workspace",
   "areYouSureDeleteWorkspace": "This will permanently remove the workspace and all its tasks. This action cannot be undone.",
   "workspaceDeleted": "Workspace deleted",
   "noTasksHere": "No tasks here",
+  "noMembersHere": "No members yet",
+  "noUsersAvailable": "No users available",
+  "memberAdded": "Member added",
   "account": "Account",
   "profile": "Profile",
   "updatePersonalInfo": "Update your personal info",
   "security": "Security",
   "passwordAndBiometric": "Password and biometric",
+  "notificationsPreferencesAndAlerts": "Preferences and alerts",
   "preferences": "Preferences",
   "theme": "Theme",
   "lightMode": "Light Mode",

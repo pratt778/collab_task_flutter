@@ -34,7 +34,8 @@ class _TaskBoardScreenState extends State<TaskBoardScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final workspaceCubit = context.read<WorkspaceCubit>();
       workspaceCubit.state.maybeWhen(
-        loaded: (workspaces, selected, allUsers, currentMembers) => _loadTasksForWorkspace(selected),
+        loaded: (workspaces, selected, allUsers, currentMembers) =>
+            _loadTasksForWorkspace(selected),
         orElse: workspaceCubit.loadWorkspaces,
       );
     });
@@ -58,7 +59,8 @@ class _TaskBoardScreenState extends State<TaskBoardScreen> {
     return BlocListener<WorkspaceCubit, WorkspaceState>(
       listener: (context, state) {
         state.maybeWhen(
-          loaded: (workspaces, selected, allUsers, currentMembers) => _loadTasksForWorkspace(selected),
+          loaded: (workspaces, selected, allUsers, currentMembers) =>
+              _loadTasksForWorkspace(selected),
           orElse: () {},
         );
       },
@@ -72,76 +74,114 @@ class _TaskBoardScreenState extends State<TaskBoardScreen> {
             title: BlocBuilder<WorkspaceCubit, WorkspaceState>(
               builder: (context, state) {
                 return state.maybeWhen(
-                  loaded: (workspaces, selected, allUsers, currentMembers) => Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        selected?.name ?? l.appName,
-                        style: TextStyle(
-                          fontSize: 18.sp,
-                          fontWeight: FontWeight.w800,
-                          color: colors.textPrimary,
-                        ),
-                      ),
-                      if (currentMembers.isNotEmpty)
-                        Padding(
-                          padding: EdgeInsets.only(top: 4.h),
-                          child: Row(
-                            children: [
-                              ...currentMembers.take(4).map((member) {
-                                final profile = member['profiles'] as Map<String, dynamic>;
-                                final name = profile['display_name'] as String? ?? 'U';
-                                return Padding(
-                                  padding: EdgeInsets.only(right: 4.w),
-                                  child: CircleAvatar(
-                                    radius: 8.r,
-                                    backgroundColor: colors.secondary,
-                                    child: Text(
-                                      name[0].toUpperCase(),
-                                      style: TextStyle(
-                                        fontSize: 8.sp,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              }),
-                              if (currentMembers.length > 4)
-                                Text(
-                                  '+${currentMembers.length - 4}',
-                                  style: TextStyle(
-                                    fontSize: 10.sp,
-                                    color: colors.textTertiary,
-                                  ),
+                  loaded: (workspaces, selected, allUsers, currentMembers) =>
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            selected?.name ?? l.appName,
+                            style: TextStyle(
+                              fontSize: 18.sp,
+                              fontWeight: FontWeight.w800,
+                              color: colors.textPrimary,
+                            ),
+                          ),
+                          if (currentMembers.isNotEmpty)
+                            Padding(
+                              padding: EdgeInsets.only(top: 4.h),
+                              child: InkWell(
+                                borderRadius: BorderRadius.circular(20.r),
+                                onTap: () => _showMembersSheet(
+                                  context,
+                                  currentMembers,
                                 ),
-                              SizedBox(width: 4.w),
-                              Text(
-                                '${currentMembers.length} ${l.members.toLowerCase()}',
-                                style: TextStyle(
-                                  fontSize: 11.sp,
-                                  color: colors.textTertiary,
-                                  fontWeight: FontWeight.normal,
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: 4.h,
+                                    horizontal: 2.w,
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      ...currentMembers.take(4).map((member) {
+                                        final profile =
+                                            member['profiles']
+                                                as Map<String, dynamic>;
+                                        final name =
+                                            profile['display_name'] as String? ??
+                                            profile['email'] as String? ??
+                                            'U';
+                                        return Padding(
+                                          padding: EdgeInsets.only(right: 4.w),
+                                          child: CircleAvatar(
+                                            radius: 8.r,
+                                            backgroundColor: colors.secondary,
+                                            child: Text(
+                                              name[0].toUpperCase(),
+                                              style: TextStyle(
+                                                fontSize: 8.sp,
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      }),
+                                      if (currentMembers.length > 4)
+                                        Text(
+                                          '+${currentMembers.length - 4}',
+                                          style: TextStyle(
+                                            fontSize: 10.sp,
+                                            color: colors.textTertiary,
+                                          ),
+                                        ),
+                                      SizedBox(width: 4.w),
+                                      Text(
+                                        _memberCountLabel(
+                                          l,
+                                          currentMembers.length,
+                                        ),
+                                        style: TextStyle(
+                                          fontSize: 11.sp,
+                                          color: colors.textTertiary,
+                                          fontWeight: FontWeight.normal,
+                                        ),
+                                      ),
+                                      SizedBox(width: 4.w),
+                                      Icon(
+                                        Icons.keyboard_arrow_down_rounded,
+                                        size: 16.sp,
+                                        color: colors.textTertiary,
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ],
-                          ),
-                        ),
-                    ],
+                            ),
+                        ],
+                      ),
+                  orElse: () => Text(
+                    l.taskBoard,
+                    style: TextStyle(color: colors.textPrimary),
                   ),
-                  orElse: () => Text(l.appName, style: TextStyle(color: colors.textPrimary)),
                 );
               },
             ),
             actions: [
               IconButton(
-                onPressed: () => _showInviteMemberDialog(context),
-                icon: Icon(Icons.person_add_alt_1_outlined, color: colors.textPrimary),
-                tooltip: l.inviteMember,
+                onPressed: () => _showAddMemberDialog(context),
+                icon: Icon(
+                  Icons.person_add_alt_1_outlined,
+                  color: colors.textPrimary,
+                ),
+                tooltip: l.addMember,
               ),
               IconButton(
                 onPressed: () => context.pushNamed(MainRoutes.notificationName),
-                icon: Icon(Icons.notifications_outlined, color: colors.textPrimary),
+                icon: Icon(
+                  Icons.notifications_outlined,
+                  color: colors.textPrimary,
+                ),
               ),
               IconButton(
                 onPressed: () {
@@ -149,7 +189,9 @@ class _TaskBoardScreenState extends State<TaskBoardScreen> {
                       .read<WorkspaceCubit>()
                       .state
                       .maybeWhen(
-                        loaded: (workspaces, selected, allUsers, currentMembers) => selected,
+                        loaded:
+                            (workspaces, selected, allUsers, currentMembers) =>
+                                selected,
                         orElse: () => null,
                       );
                   _loadTasksForWorkspace(workspace, force: true);
@@ -185,17 +227,20 @@ class _TaskBoardScreenState extends State<TaskBoardScreen> {
     return BlocBuilder<TaskListCubit, TaskListState>(
       builder: (context, state) {
         return state.when(
-          initial: () => Center(child: CircularProgressIndicator(color: colors.primary)),
-          loading: () => Center(child: CircularProgressIndicator(color: colors.primary)),
+          initial: () =>
+              Center(child: CircularProgressIndicator(color: colors.primary)),
+          loading: () =>
+              Center(child: CircularProgressIndicator(color: colors.primary)),
           error: (failure) => _buildErrorState(
             context,
             colors: colors,
             message: localizedFailureMessage(context, failure),
             onRetry: () {
               final workspace = context.read<WorkspaceCubit>().state.maybeWhen(
-                    loaded: (workspaces, selected, allUsers, currentMembers) => selected,
-                    orElse: () => null,
-                  );
+                loaded: (workspaces, selected, allUsers, currentMembers) =>
+                    selected,
+                orElse: () => null,
+              );
               _loadTasksForWorkspace(workspace, force: true);
             },
           ),
@@ -217,6 +262,7 @@ class _TaskBoardScreenState extends State<TaskBoardScreen> {
     required String message,
     required VoidCallback onRetry,
   }) {
+    final l = AppLocalizations.of(context);
     return Center(
       child: Padding(
         padding: EdgeInsets.all(24.r),
@@ -243,7 +289,10 @@ class _TaskBoardScreenState extends State<TaskBoardScreen> {
               onPressed: onRetry,
               style: FilledButton.styleFrom(backgroundColor: colors.primary),
               icon: const Icon(Icons.refresh_rounded, color: Colors.white),
-              label: const Text('Retry', style: TextStyle(color: Colors.white)),
+              label: Text(
+                l.retry,
+                style: const TextStyle(color: Colors.white),
+              ),
             ),
           ],
         ),
@@ -252,12 +301,13 @@ class _TaskBoardScreenState extends State<TaskBoardScreen> {
   }
 
   Widget _buildDrawer(BuildContext context, AppColorsExtension colors) {
+    final l = AppLocalizations.of(context);
     final userState = context.watch<AuthCubit>().state;
     final workspaceState = context.watch<WorkspaceCubit>().state;
 
     final userName = userState.maybeWhen(
       authenticated: (user) => user.displayName,
-      orElse: () => 'User',
+      orElse: () => l.user,
     );
     final email = userState.maybeWhen(
       authenticated: (user) => user.email,
@@ -290,7 +340,7 @@ class _TaskBoardScreenState extends State<TaskBoardScreen> {
                 ),
                 SizedBox(height: 16.h),
                 Text(
-                  userName ?? 'User',
+                  userName ?? l.user,
                   style: TextStyle(
                     color: colors.textPrimary,
                     fontSize: 18.sp,
@@ -315,7 +365,7 @@ class _TaskBoardScreenState extends State<TaskBoardScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'WORKSPACES',
+                  l.workspaces.toUpperCase(),
                   style: TextStyle(
                     fontSize: 11.sp,
                     fontWeight: FontWeight.w900,
@@ -339,9 +389,9 @@ class _TaskBoardScreenState extends State<TaskBoardScreen> {
           workspaceState.maybeWhen(
             loaded: (workspaces, selected, allUsers, currentMembers) {
               final currentUserId = context.read<AuthCubit>().state.maybeWhen(
-                    authenticated: (u) => u.id,
-                    orElse: () => '',
-                  );
+                authenticated: (u) => u.id,
+                orElse: () => '',
+              );
 
               return Expanded(
                 child: ListView(
@@ -364,8 +414,9 @@ class _TaskBoardScreenState extends State<TaskBoardScreen> {
                           w.name,
                           style: TextStyle(
                             fontSize: 14.sp,
-                            fontWeight:
-                                isSelected ? FontWeight.w800 : FontWeight.w600,
+                            fontWeight: isSelected
+                                ? FontWeight.w800
+                                : FontWeight.w600,
                             color: isSelected
                                 ? colors.primary
                                 : colors.textPrimary,
@@ -402,10 +453,12 @@ class _TaskBoardScreenState extends State<TaskBoardScreen> {
 
                     // Team Members Section
                     Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16.w,
+                        vertical: 8.h,
+                      ),
                       child: Text(
-                        'MEMBERS',
+                        l.members.toUpperCase(),
                         style: TextStyle(
                           fontSize: 11.sp,
                           fontWeight: FontWeight.w900,
@@ -416,7 +469,8 @@ class _TaskBoardScreenState extends State<TaskBoardScreen> {
                     ),
 
                     ...currentMembers.map((member) {
-                      final profile = member['profiles'] as Map<String, dynamic>;
+                      final profile =
+                          member['profiles'] as Map<String, dynamic>;
                       final name = profile['display_name'] as String? ?? 'User';
                       final role = member['role'] as String? ?? 'member';
 
@@ -428,20 +482,25 @@ class _TaskBoardScreenState extends State<TaskBoardScreen> {
                           child: Text(
                             name[0].toUpperCase(),
                             style: TextStyle(
-                                fontSize: 10.sp, fontWeight: FontWeight.bold),
+                              fontSize: 10.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                         title: Text(
                           name,
                           style: TextStyle(
-                              fontSize: 13.sp,
-                              fontWeight: FontWeight.w600,
-                              color: colors.textPrimary),
+                            fontSize: 13.sp,
+                            fontWeight: FontWeight.w600,
+                            color: colors.textPrimary,
+                          ),
                         ),
                         subtitle: Text(
                           role.toUpperCase(),
                           style: TextStyle(
-                              fontSize: 9.sp, color: colors.textTertiary),
+                            fontSize: 9.sp,
+                            color: colors.textTertiary,
+                          ),
                         ),
                       );
                     }),
@@ -452,14 +511,14 @@ class _TaskBoardScreenState extends State<TaskBoardScreen> {
                       context,
                       colors,
                       Icons.dashboard_outlined,
-                      'Task Board',
+                      l.taskBoard,
                       () => Navigator.pop(context),
                     ),
                     _buildDrawerItem(
                       context,
                       colors,
                       Icons.notifications_outlined,
-                      'Notifications',
+                      l.notifications,
                       () {
                         Navigator.pop(context);
                         context.pushNamed(MainRoutes.notificationName);
@@ -469,7 +528,7 @@ class _TaskBoardScreenState extends State<TaskBoardScreen> {
                       context,
                       colors,
                       Icons.settings_outlined,
-                      'Settings',
+                      l.settings,
                       () {
                         Navigator.pop(context);
                         context.pushNamed(MainRoutes.settingsName);
@@ -481,7 +540,8 @@ class _TaskBoardScreenState extends State<TaskBoardScreen> {
             },
             orElse: () => Expanded(
               child: Center(
-                  child: CircularProgressIndicator(color: colors.primary)),
+                child: CircularProgressIndicator(color: colors.primary),
+              ),
             ),
           ),
 
@@ -489,7 +549,7 @@ class _TaskBoardScreenState extends State<TaskBoardScreen> {
           ListTile(
             leading: Icon(Icons.logout, color: Colors.red.shade400),
             title: Text(
-              'Logout',
+              l.logout,
               style: TextStyle(
                 color: Colors.red.shade400,
                 fontWeight: FontWeight.w600,
@@ -536,11 +596,12 @@ class _TaskBoardScreenState extends State<TaskBoardScreen> {
     TaskStatus status,
     AppColorsExtension colors,
   ) {
+    final l = AppLocalizations.of(context);
     final filteredTasks = tasks.where((t) => t.status == status).toList();
     if (filteredTasks.isEmpty) {
       return Center(
         child: Text(
-          'No tasks here',
+          l.noTasksHere,
           style: TextStyle(color: colors.textTertiary, fontSize: 16.sp),
         ),
       );
@@ -559,6 +620,7 @@ class _TaskBoardScreenState extends State<TaskBoardScreen> {
   }
 
   void _showCreateTask(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final user = context.read<AuthCubit>().state.maybeWhen(
       authenticated: (user) => user,
       orElse: () {
@@ -576,18 +638,14 @@ class _TaskBoardScreenState extends State<TaskBoardScreen> {
 
     if (user == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please wait for login to complete...')),
+        SnackBar(content: Text(l.pleaseWaitForLoginToComplete)),
       );
       return;
     }
 
     if (workspace == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Still setting up your workspace. Please try in a second.',
-          ),
-        ),
+        SnackBar(content: Text(l.stillSettingUpWorkspace)),
       );
       return;
     }
@@ -607,6 +665,7 @@ class _TaskBoardScreenState extends State<TaskBoardScreen> {
   }
 
   void _showMoveBottomSheet(BuildContext context, TaskEntity task) {
+    final l = AppLocalizations.of(context);
     showModalBottomSheet(
       context: context,
       shape: RoundedRectangleBorder(
@@ -618,7 +677,7 @@ class _TaskBoardScreenState extends State<TaskBoardScreen> {
           Padding(
             padding: EdgeInsets.all(20.r),
             child: Text(
-              'Move task to...',
+              l.moveTaskTo,
               style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w800),
             ),
           ),
@@ -645,6 +704,7 @@ class _TaskBoardScreenState extends State<TaskBoardScreen> {
   }
 
   void _showCreateWorkspaceDialog(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final controller = TextEditingController();
     showDialog(
       context: context,
@@ -652,22 +712,22 @@ class _TaskBoardScreenState extends State<TaskBoardScreen> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(24.r),
         ),
-        title: const Text(
-          'New Workspace',
-          style: TextStyle(fontWeight: FontWeight.w800),
+        title: Text(
+          l.newWorkspace,
+          style: const TextStyle(fontWeight: FontWeight.w800),
         ),
         content: TextField(
           controller: controller,
-          decoration: const InputDecoration(
-            hintText: 'Workspace Name',
-            border: OutlineInputBorder(),
+          decoration: InputDecoration(
+            hintText: l.workspaceName,
+            border: const OutlineInputBorder(),
           ),
           autofocus: true,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(l.cancel),
           ),
           ElevatedButton(
             onPressed: () {
@@ -682,111 +742,208 @@ class _TaskBoardScreenState extends State<TaskBoardScreen> {
               backgroundColor: AppColors.primaryBlue,
               foregroundColor: Colors.white,
             ),
-            child: const Text('Create'),
+            child: Text(l.create),
           ),
         ],
       ),
     );
   }
 
-  void _showDeleteWorkspaceDialog(BuildContext context, WorkspaceEntity workspace) {
+  void _showDeleteWorkspaceDialog(
+    BuildContext context,
+    WorkspaceEntity workspace,
+  ) {
+    final l = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.r)),
-        title: Text('Delete "${workspace.name}"?'),
-        content: const Text(
-          'This will permanently remove the workspace and all its tasks. This action cannot be undone.',
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24.r),
         ),
+        title: Text(l.deleteWorkspaceTitle(workspace.name)),
+        content: Text(l.areYouSureDeleteWorkspace),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(l.cancel),
           ),
           ElevatedButton(
             onPressed: () {
               context.read<WorkspaceCubit>().deleteWorkspace(workspace.id);
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Workspace deleted')),
+                SnackBar(content: Text(l.workspaceDeleted)),
               );
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.errorRed,
               foregroundColor: Colors.white,
             ),
-            child: const Text('Delete'),
+            child: Text(l.delete),
           ),
         ],
       ),
     );
   }
 
-  void _showInviteMemberDialog(BuildContext context) {
+  void _showMembersSheet(
+    BuildContext context,
+    List<Map<String, dynamic>> currentMembers,
+  ) {
+    final l = AppLocalizations.of(context);
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: context.appColors.surface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+      ),
+      builder: (context) {
+        final memberTiles = currentMembers.map((member) {
+          final profile = member['profiles'] as Map<String, dynamic>? ?? {};
+          final name = profile['display_name'] as String? ??
+              profile['email'] as String? ??
+              l.user;
+          final email = profile['email'] as String? ?? '';
+          final role = member['role'] as String? ?? 'member';
+
+          return ListTile(
+            leading: CircleAvatar(
+              backgroundColor: AppColors.primaryBlue,
+              child: Text(
+                name[0].toUpperCase(),
+                style: const TextStyle(color: Colors.white),
+              ),
+            ),
+            title: Text(name),
+            subtitle: Text(email),
+            trailing: Text(
+              role.toUpperCase(),
+              style: TextStyle(color: context.appColors.textTertiary),
+            ),
+          );
+        }).toList();
+
+        return SafeArea(
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 24.h),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l.members,
+                  style: TextStyle(
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.w800,
+                    color: context.appColors.textPrimary,
+                  ),
+                ),
+                SizedBox(height: 12.h),
+                if (memberTiles.isEmpty)
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 16.h),
+                    child: Text(
+                      l.noMembersHere,
+                      style: TextStyle(color: context.appColors.textTertiary),
+                    ),
+                  )
+                else
+                  Flexible(
+                    child: ListView.separated(
+                      shrinkWrap: true,
+                      itemCount: memberTiles.length,
+                      separatorBuilder: (_, __) => Divider(
+                        color: context.appColors.divider,
+                        height: 1,
+                      ),
+                      itemBuilder: (context, index) => memberTiles[index],
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showAddMemberDialog(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final pageContext = context;
     final workspaceCubit = context.read<WorkspaceCubit>();
     final state = workspaceCubit.state;
 
     state.maybeWhen(
       loaded: (workspaces, selected, allUsers, currentMembers) {
+        final existingEmails = _currentMemberEmails(currentMembers);
+        final availableUsers = allUsers
+            .where((user) => !existingEmails.contains(user.email))
+            .toList();
         String? selectedEmail;
 
         showDialog(
           context: context,
-          builder: (context) => StatefulBuilder(
+          builder: (dialogContext) => StatefulBuilder(
             builder: (context, setState) {
               return AlertDialog(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(24.r),
                 ),
-                title: const Text(
-                  'Invite Member',
-                  style: TextStyle(fontWeight: FontWeight.w800),
+                title: Text(
+                  l.addMember,
+                  style: const TextStyle(fontWeight: FontWeight.w800),
                 ),
                 content: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Text(
-                      'Select a user to invite to this workspace.',
-                      style: TextStyle(color: AppColors.textSecondary),
+                    Text(
+                      l.selectUser,
+                      style: const TextStyle(color: AppColors.textSecondary),
                     ),
                     SizedBox(height: 20.h),
-                    DropdownButtonFormField<String>(
-                      isExpanded: true,
-                      decoration: const InputDecoration(
-                        labelText: 'Select User',
-                        border: OutlineInputBorder(),
-                        prefixIcon: Icon(Icons.person_search),
+                    if (availableUsers.isEmpty)
+                      Text(
+                        l.noUsersAvailable,
+                        style: TextStyle(color: context.appColors.textTertiary),
+                      )
+                    else
+                      DropdownButtonFormField<String>(
+                        isExpanded: true,
+                        decoration: InputDecoration(
+                          labelText: l.selectUser,
+                          border: const OutlineInputBorder(),
+                          prefixIcon: const Icon(Icons.person_search),
+                        ),
+                        initialValue: selectedEmail,
+                        items: availableUsers.map((user) {
+                          return DropdownMenuItem<String>(
+                            value: user.email,
+                            child: Text(
+                              user.displayName ?? user.email,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setState(() => selectedEmail = value);
+                        },
                       ),
-                      initialValue: selectedEmail,
-                      items: allUsers.map((user) {
-                        return DropdownMenuItem<String>(
-                          value: user.email,
-                          child: Text(
-                            user.displayName ?? user.email,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        );
-                      }).toList(),
-                      onChanged: (value) {
-                        setState(() => selectedEmail = value);
-                      },
-                    ),
                   ],
                 ),
                 actions: [
                   TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text('Cancel'),
+                    onPressed: () => Navigator.pop(dialogContext),
+                    child: Text(l.cancel),
                   ),
                   ElevatedButton(
-                    onPressed: selectedEmail == null
+                    onPressed: selectedEmail == null || availableUsers.isEmpty
                         ? null
                         : () {
                             workspaceCubit.addMember(selectedEmail!);
-                            Navigator.pop(context);
-                            ScaffoldMessenger.of(context).showSnackBar(
+                            Navigator.pop(dialogContext);
+                            ScaffoldMessenger.of(pageContext).showSnackBar(
                               SnackBar(
-                                content: Text('Inviting $selectedEmail...'),
+                                content: Text(l.memberAdded),
                               ),
                             );
                           },
@@ -794,7 +951,7 @@ class _TaskBoardScreenState extends State<TaskBoardScreen> {
                       backgroundColor: AppColors.primaryBlue,
                       foregroundColor: Colors.white,
                     ),
-                    child: const Text('Invite'),
+                    child: Text(l.addMember),
                   ),
                 ],
               );
@@ -804,7 +961,7 @@ class _TaskBoardScreenState extends State<TaskBoardScreen> {
       },
       orElse: () {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Wait for workspaces to load...')),
+          SnackBar(content: Text(l.waitForWorkspacesToLoad)),
         );
       },
     );
@@ -835,11 +992,23 @@ class _TaskBoardScreenState extends State<TaskBoardScreen> {
   String _getStatusName(TaskStatus status) {
     switch (status) {
       case TaskStatus.todo:
-        return 'To Do';
+        return AppLocalizations.of(context).todo;
       case TaskStatus.inProgress:
-        return 'In Progress';
+        return AppLocalizations.of(context).inProgress;
       case TaskStatus.done:
-        return 'Done';
+        return AppLocalizations.of(context).done;
     }
+  }
+
+  String _memberCountLabel(AppLocalizations l, int count) {
+    return count == 1 ? '1 ${l.member}' : '$count ${l.members}';
+  }
+
+  Set<String> _currentMemberEmails(List<Map<String, dynamic>> members) {
+    return members.map((member) {
+      final profile = member['profiles'] as Map<String, dynamic>?;
+      return (profile?['email'] as String? ?? member['email'] as String? ?? '')
+          .toLowerCase();
+    }).where((email) => email.isNotEmpty).toSet();
   }
 }

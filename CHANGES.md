@@ -11,6 +11,12 @@ Group entries under one date heading per day. Newest date at the top.
 
 ---
 
+## 2026-08-10
+- **Fixed** `TaskChatCubit` crashing with "Bad state: Cannot emit new states after calling close". A stale Supabase realtime subscription from a screen that had been popped could still fire `refreshTaskMessages` on the closed cubit when another user posted a message, so `emit` was called after `close()`. Added `isClosed` guards after every awaited call and in the realtime callback (`task_chat_cubit.dart:44,70,93`).
+- **Fixed** workspace selection resetting to the first workspace on reload. `loadWorkspaces()` read the previously-selected id from state after emitting `loading`, so it was always null and the cubit fell back to `workspaces.first` after adding a member or deleting another workspace. The selected id is now captured before the `loading` emit (`workspace_cubit.dart:52`), so members and tasks stay on the workspace you were in.
+- **Fixed** task board localization coverage. Moved static board strings, workspace dialogs, drawer labels, and empty/error states onto `AppLocalizations`, while leaving runtime values like workspace names, user names, and task data dynamic. Added the missing ARB keys and regenerated localization code so the board no longer mixes localized and hard-coded text.
+- **Fixed** settings language updates. Replaced the hard-coded `_selectedLanguage` value with the active `LocaleCubit` state, localized the settings screen labels, and made the language row refresh when the user changes locale so English no longer stays stuck on screen.
+
 ## 2026-05-22
 - **Fixed** analyzer cleanup in settings and task detail. Replaced deprecated radio-list usage with selectable list rows and made the task delete icon const.
 - **Removed** the legacy demo route and screen. Protected app routes now redirect unauthenticated users to login, while authenticated users are redirected away from auth-only screens to the task board.

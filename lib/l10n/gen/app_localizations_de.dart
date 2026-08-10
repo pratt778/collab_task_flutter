@@ -132,7 +132,16 @@ class AppLocalizationsDe extends AppLocalizations {
   String get a11yBack => 'Zurück';
 
   @override
+  String get user => 'Benutzer';
+
+  @override
+  String get member => 'Mitglied';
+
+  @override
   String get members => 'Mitglieder';
+
+  @override
+  String get workspaces => 'Arbeitsbereiche';
 
   @override
   String get taskBoard => 'Aufgaben-Board';
@@ -153,10 +162,51 @@ class AppLocalizationsDe extends AppLocalizations {
   String get create => 'Erstellen';
 
   @override
-  String get inviteMember => 'Mitglied einladen';
+  String get addMember => 'Mitglied hinzufügen';
+
+  @override
+  String get addMembers => 'Mitglieder hinzufügen';
+
+  @override
+  String get viewMembers => 'Mitglieder anzeigen';
 
   @override
   String get selectUser => 'Benutzer auswählen';
+
+  @override
+  String get newWorkspace => 'Neuer Arbeitsbereich';
+
+  @override
+  String get workspaceName => 'Name des Arbeitsbereichs';
+
+  @override
+  String get moveTaskTo => 'Aufgabe verschieben zu...';
+
+  @override
+  String get inviteMemberDescription =>
+      'Wählen Sie einen Benutzer aus, den Sie zu diesem Arbeitsbereich einladen möchten.';
+
+  @override
+  String get waitForWorkspacesToLoad =>
+      'Warten Sie, bis die Arbeitsbereiche geladen sind...';
+
+  @override
+  String get pleaseWaitForLoginToComplete =>
+      'Bitte warten Sie, bis die Anmeldung abgeschlossen ist...';
+
+  @override
+  String get stillSettingUpWorkspace =>
+      'Ihr Arbeitsbereich wird noch eingerichtet. Bitte versuchen Sie es in einer Sekunde erneut.';
+
+  @override
+  String deleteWorkspaceTitle(Object name) {
+    return '\"$name\" löschen?';
+  }
+
+  @override
+  String invitingUser(Object email) {
+    return 'Lade $email ein...';
+  }
 
   @override
   String get deleteWorkspace => 'Arbeitsbereich löschen';
@@ -172,6 +222,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get noTasksHere => 'Keine Aufgaben hier';
 
   @override
+  String get noMembersHere => 'Noch keine Mitglieder';
+
+  @override
+  String get noUsersAvailable => 'Keine Benutzer verfügbar';
+
+  @override
+  String get memberAdded => 'Mitglied hinzugefügt';
+
+  @override
   String get account => 'Account';
 
   @override
@@ -185,6 +244,10 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get passwordAndBiometric => 'Password and biometric';
+
+  @override
+  String get notificationsPreferencesAndAlerts =>
+      'Einstellungen und Benachrichtigungen';
 
   @override
   String get preferences => 'Preferences';

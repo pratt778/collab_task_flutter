@@ -2,7 +2,7 @@
 
 **Date**: 2026-04-30  
 **User**: Pratham Sharma  
-**Status**: Supabase-backed task MVP in progress  
+**Status**: Supabase-backed MVP largely complete. ✅ Auth, workspaces, task CRUD, board UI, realtime chat. ⏳ Remaining: task-board realtime sync, **access/refresh token handling at the app layer**, notifications/FCM, route hardening, broader tests. Track progress with the checkbox trackers below.
 
 ---
 
@@ -64,31 +64,20 @@ If all ✅, proceed to Phase 1.
 
 ```
 ┌─ Phase 0: Pre-Phase Checks ✅
-└─ Phase 1: WebSocket + Mock API
-   ├─ WebSocketService (core/network/)
-   ├─ Mock endpoints (API contract)
-   └─ Readiness check
-      └─ Phase 2: Task Board Core
-         ├─ Task entities, models, datasource
-         ├─ Task repository + usecases
-         └─ TaskListCubit + TaskDetailCubit
-            └─ Phase 3: Kanban Board UI
-               ├─ TaskBoardScreen (3 columns)
-               ├─ TaskCard widget
-               ├─ Drag/reorder logic
-               └─ Deep link navigation
-                  └─ Phase 4: Real-Time Sync (WebSocket Integration)
-                     ├─ WebSocket event subscription in TaskCubit
-                     ├─ Optimistic updates
-                     └─ Offline graceful handling
-                        └─ Phase 5: Task Detail + Chat
-                           ├─ TaskDetailScreen
-                           ├─ ChatCubit + ChatWidget
-                           └─ Real-time chat via WebSocket
-                              └─ Phase 6: Notifications & Polish
-                                 ├─ In-app notification feed
-                                 ├─ FCM (optional)
-                                 └─ Manual testing & bugfixes
+├─ Phase 1: WebSocket + Mock API ✅ (built, later superseded by Supabase Realtime)
+│  └─ Phase 1.5: Auth & Token Management (Access + Refresh) ⏳
+│     ├─ Supabase SDK auto-refresh ✅ (managed internally)
+│     ├─ App-layer 401 → refresh-and-retry ❌
+│     ├─ Persist access + refresh token pair ❌
+│     └─ Session-expired force logout on refresh failure ⏳
+├─ Phase 2: Task Board Core ✅
+├─ Phase 3: Kanban Board UI ✅
+├─ Phase 4: Real-Time Sync ⏳
+│  ├─ Realtime chat ✅ (via Supabase Realtime websockets)
+│  ├─ Task board realtime sync ❌
+│  └─ Optimistic updates ⏳ (chat done, board pending)
+└─ Phase 5: Task Detail + Chat ✅
+   └─ Phase 6: Notifications & Polish ❌
 ```
 
 **Critical Path**: Phase 1 → 2 → 3 → 4 → 5 (6 is optional for MVP)
@@ -194,10 +183,14 @@ Maps to one of 9 Failure types in `lib/core/error/failures.dart`.
 ## 🔧 PHASE 1: WebSocket + Mock API Setup
 
 **Deliverables**:
-- ✅ `WebSocketService` in core/network with full reconnect logic
+- ✅ `WebSocketService` in core/network with full reconnect logic (legacy — realtime now uses Supabase channels)
 - ✅ Mock API endpoints (local or jsonplaceholder proxy)
 - ✅ API contract docs
 - ✅ Readiness check: App starts, routes work, no crashes
+- ⏳ `AuthInterceptor` attempts access-token refresh and retries once before force-logout on 401
+- ⏳ Persist the access + refresh token pair in `SecureStorageHelper` (today it stores a legacy single `token` / `userCode`)
+- ⏳ Cold-start session restore via the refresh token (no re-login on relaunch)
+- ⏳ `RefreshTokenExpiredFailure` → global session-expired logout
 
 ### Step 1.1: Create WebSocketService
 
@@ -283,6 +276,28 @@ flutter run -t lib/main.dart
 # 3. Make API call → verify in Chucker
 # 4. Check WebSocket connection logs in console (debugPrintWs or similar)
 ```
+
+---
+
+## 🔐 PHASE 1.5: Auth & Token Management (Access + Refresh)
+
+**Goal**: Use Supabase's access-token + refresh-token session model everywhere, so requests never die on an expired token and cold starts restore the session without re-login.
+
+**Current state**: The Supabase SDK already stores and auto-refreshes the token pair internally — `AuthCubit.checkLoginStatus()` reads `Supabase.instance.client.auth.currentSession` (`auth_cubit.dart:37`). What's missing is the app-layer wiring: `AuthInterceptor` (`core/network/auth_interceptor.dart`) force-logs-out on any 401 instead of refreshing, and `SecureStorageHelper` persists a legacy single `token` / `userCode` rather than the pair.
+
+**Deliverables**:
+- [ ] `SecureStorageHelper` stores access token + refresh token as a pair (keep `userCode` only as a legacy alias or drop it)
+- [ ] `AuthInterceptor` on 401 → call `auth.refreshSession()` once, retry the original request with the fresh token, and only force-logout if the refresh itself fails
+- [ ] Refresh token is never sent to business APIs — only the access token is (Supabase REST/PostgREST already does this via its JWT)
+- [ ] Cold start / splash restores the session from the persisted pair (or Supabase storage) instead of relying on `userCode`
+- [ ] `RefreshTokenExpiredFailure` (already defined in `core/error/failures.dart`) surfaces `errSessionExpired` + the global force-logout — no per-screen handling
+- [ ] Logout clears the full token pair from secure storage
+- [ ] Realtime websocket channel reconnects with the refreshed access token after a 401-refresh
+
+**Verification**:
+- [ ] Wait for access-token expiry → next API call auto-refreshes and succeeds (no logout, no error snackbar)
+- [ ] Kill the app mid-session → cold start lands on the task board without re-login
+- [ ] Revoke the refresh token (or wait past expiry) → app logs out with the session-expired message
 
 ---
 
@@ -676,61 +691,72 @@ await fcm.subscribeToTopic('workspace_${workspace.id}');
 
 ## 📝 SUMMARY TABLE
 
-| Phase | Focus | Duration | Blocker | Files Created |
-|-------|-------|----------|---------|---|
-| 0 | Pre-checks | 5 min | None | None |
-| 1 | WebSocket + API | 2–3 hrs | None | websocket_service.dart, api_contract.md |
-| 2 | Task CRUD layer | 4–5 hrs | Phase 1 | 15–20 files (entities, models, datasources, repos, cubits) |
-| 3 | Kanban UI | 3–4 hrs | Phase 2 | task_board_screen, task_card, task_detail_screen |
-| 4 | Real-time sync | 2–3 hrs | Phase 1 + 2 | Modifications to TaskListCubit subscription logic |
-| 5 | Chat + Detail | 3–4 hrs | Phase 4 | ChatCubit, ChatWidget, ChatState |
-| 6 | Notifications | 2–3 hrs | Phase 5 | NotificationCubit, NotificationScreen, FCM init |
-| **Total** | **MVP Complete** | **17–22 hrs** | — | ~30 files |
+| Phase | Focus | Duration | Blocker | Files Created | Status |
+|-------|-------|----------|---------|---|--------|
+| 0 | Pre-checks | 5 min | None | None | ✅ |
+| 1 | WebSocket + API | 2–3 hrs | None | websocket_service.dart, api_contract.md | ✅ (superseded by Supabase) |
+| 1.5 | Access + Refresh tokens | 2–3 hrs | None | auth_interceptor.dart, secure_storage_helper.dart | ⏳ |
+| 2 | Task CRUD layer | 4–5 hrs | Phase 1 | 15–20 files (entities, models, datasources, repos, cubits) | ✅ |
+| 3 | Kanban UI | 3–4 hrs | Phase 2 | task_board_screen, task_card, task_detail_screen | ✅ |
+| 4 | Real-time sync | 2–3 hrs | Phase 1 + 2 | TaskListCubit subscription, chat cubit | ⏳ (chat done, board pending) |
+| 5 | Chat + Detail | 3–4 hrs | Phase 4 | ChatCubit, ChatWidget, ChatState | ✅ |
+| 6 | Notifications | 2–3 hrs | Phase 5 | NotificationCubit, NotificationScreen, FCM init | ❌ |
+| **Total** | **MVP Complete** | **19–25 hrs** | — | ~30 files | ✅ ⏳ ❌ |
 
 ---
 
 ## ✅ VERIFICATION CHECKLIST (End of Each Phase)
 
-### Phase 0
-- [ ] `flutter pub get` succeeds
-- [ ] `dart run build_runner build --delete-conflicting-outputs` succeeds
-- [ ] `flutter analyze` clean
-- [ ] `flutter run -t lib/main.dart` launches app
-- [ ] IP config screen accessible (dev only)
-- [ ] Chucker showing API calls
+### Phase 0 ✅
+- [x] `flutter pub get` succeeds
+- [x] `dart run build_runner build --delete-conflicting-outputs` succeeds
+- [x] `flutter analyze` clean
+- [x] `flutter run -t lib/main.dart` launches app
+- [x] IP config screen accessible (dev only)
+- [x] Chucker showing API calls
 
-### Phase 1
-- [ ] WebSocketService compiles & injectable annotations correct
-- [ ] Manual WebSocket connection test: send message → receive in stream
-- [ ] Mock endpoint accessible via curl/browser
-- [ ] DI registration picked up (no build errors)
+### Phase 1 ✅ (realtime later moved to Supabase channels)
+- [x] WebSocketService compiles & injectable annotations correct
+- [x] Manual WebSocket connection test: send message → receive in stream
+- [x] Mock endpoint accessible via curl/browser
+- [x] DI registration picked up (no build errors)
 
-### Phase 2
-- [ ] `dart run build_runner build` regenerates task models/cubits
-- [ ] `flutter analyze` passes with new files
-- [ ] TaskListCubit emits states correctly (test in console logs)
-- [ ] TaskDetailCubit optimistic update works locally
+### Phase 1.5 ⏳ (Auth & Token Management)
+- [ ] App-layer 401 → `auth.refreshSession()` + retry once before logout
+- [ ] Access + refresh token pair persisted in `SecureStorageHelper`
+- [ ] Cold start restores session via refresh token (no re-login)
+- [ ] Refresh token never sent to business APIs
+- [ ] `RefreshTokenExpiredFailure` → `errSessionExpired` + global logout
+- [ ] Logout clears the full token pair
+- [ ] Realtime channel reconnects with refreshed access token
 
-### Phase 3
-- [ ] TaskBoardScreen renders without crash
-- [ ] Tap card → navigate to detail page
-- [ ] FAB → task creation modal opens
-- [ ] Column layout responsive (portrait + landscape)
+### Phase 2 ✅
+- [x] `dart run build_runner build` regenerates task models/cubits
+- [x] `flutter analyze` passes with new files
+- [x] TaskListCubit emits states correctly (test in console logs)
+- [x] TaskDetailCubit optimistic update works locally
 
-### Phase 4
-- [ ] WebSocket subscription in TaskListCubit working (check console)
+### Phase 3 ✅
+- [x] TaskBoardScreen renders without crash
+- [x] Tap card → navigate to detail page
+- [x] FAB → task creation modal opens
+- [x] Column layout responsive (portrait + landscape)
+
+### Phase 4 ⏳
+- [ ] Task board realtime: `TaskListCubit` reacts to Supabase `tasks` channel (chat already does)
 - [ ] Optimistic: create task → see in list immediately
 - [ ] WS event arrives → UI updates without refetch
+- [x] Realtime chat via Supabase channels (message appears live on other devices)
 - [ ] Manual offline test: disconnect network → queue actions → reconnect → auto-sync
 
-### Phase 5
-- [ ] TaskDetailScreen loads single task
-- [ ] ChatWidget renders message list
-- [ ] Send message → appears in list + sent via API
-- [ ] WS chat event → appears in chat
+### Phase 5 ✅
+- [x] TaskDetailScreen loads single task
+- [x] ChatWidget renders message list
+- [x] Send message → appears in list + sent via API
+- [x] WS chat event → appears in chat
 - [ ] Deep link `/tasks/task_1?scroll=chat` → opens detail + scrolls to chat
 
-### Phase 6
+### Phase 6 ❌
 - [ ] In-app notification appears on WS event
 - [ ] Tap notification → navigate to task
 - [ ] (Optional) FCM: push received on device when app backgrounded
@@ -739,11 +765,11 @@ await fcm.subscribeToTopic('workspace_${workspace.id}');
 
 ## 🎯 NEXT STEPS
 
-When ready, implement:
-1. **Phase 1 Code**: WebSocketService + API contract + mock setup
-2. **Phase 2 Code**: Full Task feature scaffold + DI wiring
-3. **Phase 3 Code**: Screens + UI components
-4. Continue through Phase 6
+When ready, implement (in this order):
+1. **Phase 1.5**: Access + refresh token flow — refresh-and-retry in `AuthInterceptor`, persist the token pair, session restore on cold start
+2. **Phase 4**: Task board realtime via a Supabase `tasks` channel subscription in `TaskListCubit` (mirror the chat pattern)
+3. **Phase 5 leftover**: Notification-tap deep link with `?scroll=chat` auto-scroll
+4. **Phase 6**: In-app notification feed + optional FCM
 
 ---
 

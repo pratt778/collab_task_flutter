@@ -6,6 +6,7 @@ import 'package:collab_task/features/locale/presentation/cubit/locale_cubit.dart
 import 'package:collab_task/features/theme/presentation/cubit/theme_cubit.dart';
 import 'package:collab_task/features/shared/widget/logout_dialog.dart';
 import 'package:collab_task/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:collab_task/l10n/gen/app_localizations.dart';
 
 import 'package:collab_task/core/config/theme/app_colors_extension.dart';
 
@@ -19,11 +20,13 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   bool _notificationsEnabled = true;
   bool _pushNotifications = true;
-  final String _selectedLanguage = 'english';
 
   @override
   Widget build(BuildContext context) {
     final colors = context.appColors;
+    final l = AppLocalizations.of(context);
+    final themeMode = context.watch<ThemeCubit>().state;
+    final localeCode = context.watch<LocaleCubit>().state.languageCode;
     return Scaffold(
       backgroundColor: colors.scaffold,
       appBar: AppBar(
@@ -31,33 +34,33 @@ class _SettingsScreenState extends State<SettingsScreen> {
         backgroundColor: Colors.transparent,
         foregroundColor: colors.textPrimary,
         title: Text(
-          'Settings',
+          l.settings,
           style: TextStyle(fontWeight: FontWeight.w800, fontSize: 20.sp),
         ),
       ),
       body: ListView(
         padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
         children: [
-          _buildSectionHeader('ACCOUNT', colors),
+          _buildSectionHeader(l.account.toUpperCase(), colors),
           _buildGroupedContainer([
             _buildSettingsTile(
               icon: Icons.person_rounded,
-              title: 'Profile',
-              subtitle: 'Update your personal info',
+              title: l.profile,
+              subtitle: l.updatePersonalInfo,
               colors: colors,
               onTap: () {},
             ),
             _buildSettingsTile(
               icon: Icons.lock_rounded,
-              title: 'Security',
-              subtitle: 'Password and biometric',
+              title: l.security,
+              subtitle: l.passwordAndBiometric,
               colors: colors,
               onTap: () {},
             ),
             _buildSettingsTile(
               icon: Icons.notifications_rounded,
-              title: 'Notifications',
-              subtitle: 'Preferences and alerts',
+              title: l.notifications,
+              subtitle: l.notificationsPreferencesAndAlerts,
               colors: colors,
               onTap: () {},
             ),
@@ -65,19 +68,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
           SizedBox(height: 32.h),
 
-          _buildSectionHeader('PREFERENCES', colors),
+          _buildSectionHeader(l.preferences.toUpperCase(), colors),
           _buildGroupedContainer([
             _buildSettingsTile(
               icon: Icons.palette_rounded,
-              title: 'Theme',
-              subtitle: _getThemeLabel(context.watch<ThemeCubit>().state),
+              title: l.theme,
+              subtitle: _getThemeLabel(l, themeMode),
               colors: colors,
               onTap: () => _showThemeBottomSheet(colors),
             ),
             _buildSettingsTile(
               icon: Icons.translate_rounded,
-              title: 'Language',
-              subtitle: _getLanguageLabel(_selectedLanguage),
+              title: l.language,
+              subtitle: _getLanguageLabel(l, localeCode),
               colors: colors,
               onTap: () => _showLanguageBottomSheet(colors),
             ),
@@ -85,20 +88,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
           SizedBox(height: 32.h),
 
-          _buildSectionHeader('APP SETTINGS', colors),
+          _buildSectionHeader(l.appSettings.toUpperCase(), colors),
           _buildGroupedContainer([
             _buildSwitchTile(
               icon: Icons.cloud_done_rounded,
-              title: 'Auto-sync',
-              subtitle: 'Keep data updated in real-time',
+              title: l.autoSync,
+              subtitle: l.keepDataUpdated,
               value: _notificationsEnabled,
               colors: colors,
               onChanged: (v) => setState(() => _notificationsEnabled = v),
             ),
             _buildSwitchTile(
               icon: Icons.vibration_rounded,
-              title: 'Haptic Feedback',
-              subtitle: 'Soft vibrations on interactions',
+              title: l.hapticFeedback,
+              subtitle: l.softVibrations,
               value: _pushNotifications,
               colors: colors,
               onChanged: (v) => setState(() => _pushNotifications = v),
@@ -117,7 +120,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               icon: const Icon(Icons.logout_rounded, color: Colors.white),
               label: Text(
-                'Logout Account',
+                l.logoutAccount,
                 style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w700),
               ),
               style: ElevatedButton.styleFrom(
@@ -284,6 +287,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _showThemeBottomSheet(AppColorsExtension colors) {
+    final l = AppLocalizations.of(context);
     showModalBottomSheet(
       context: context,
       backgroundColor: colors.surface,
@@ -297,7 +301,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Appearance',
+              l.appearance,
               style: TextStyle(
                 fontSize: 20.sp,
                 fontWeight: FontWeight.w800,
@@ -306,9 +310,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             SizedBox(height: 16.h),
             ...[
-              (ThemeMode.light, 'Light Mode'),
-              (ThemeMode.dark, 'Dark Mode'),
-              (ThemeMode.system, 'System Default'),
+              (ThemeMode.light, l.lightMode),
+              (ThemeMode.dark, l.darkMode),
+              (ThemeMode.system, l.systemDefault),
             ].map((t) {
               final selected = context.watch<ThemeCubit>().state == t.$1;
               return ListTile(
@@ -342,6 +346,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _showLanguageBottomSheet(AppColorsExtension colors) {
+    final l = AppLocalizations.of(context);
+    final currentLocale = context.read<LocaleCubit>().state.languageCode;
     showModalBottomSheet(
       context: context,
       backgroundColor: colors.surface,
@@ -355,7 +361,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Language',
+              l.language,
               style: TextStyle(
                 fontSize: 20.sp,
                 fontWeight: FontWeight.w800,
@@ -364,19 +370,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             SizedBox(height: 16.h),
             ...[
-              ('en', 'English'),
-              ('ne', 'Nepali (नेपाली)'),
-              ('de', 'German (Deutsch)'),
-              ('fr', 'French (Français)'),
-              ('es', 'Spanish (Español)')
-            ].map((l) {
-              final selected = context.watch<LocaleCubit>().state.languageCode == l.$1;
+              ('en', l.english),
+              ('ne', l.nepali),
+              ('de', l.german),
+              ('fr', l.french),
+              ('es', l.spanish),
+            ].map((option) {
+              final selected = currentLocale == option.$1;
               return ListTile(
                 selected: selected,
                 selectedColor: colors.primary,
                 contentPadding: EdgeInsets.zero,
                 title: Text(
-                  l.$2,
+                  option.$2,
                   style: TextStyle(
                     fontSize: 15.sp,
                     fontWeight: FontWeight.w600,
@@ -390,7 +396,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       )
                     : Icon(Icons.circle_outlined, color: colors.textTertiary),
                 onTap: () {
-                  context.read<LocaleCubit>().setLocale(Locale(l.$1));
+                  context.read<LocaleCubit>().setLocale(Locale(option.$1));
                   Navigator.pop(context);
                 },
               );
@@ -401,25 +407,31 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  String _getThemeLabel(ThemeMode mode) {
+  String _getThemeLabel(AppLocalizations l, ThemeMode mode) {
     switch (mode) {
       case ThemeMode.light:
-        return 'Light Mode';
+        return l.lightMode;
       case ThemeMode.dark:
-        return 'Dark Mode';
+        return l.darkMode;
       case ThemeMode.system:
-        return 'System Default';
+        return l.systemDefault;
     }
   }
 
-  String _getLanguageLabel(String l) {
-    switch (l) {
-      case 'en': return 'English';
-      case 'ne': return 'Nepali (नेपाली)';
-      case 'de': return 'German (Deutsch)';
-      case 'fr': return 'French (Français)';
-      case 'es': return 'Spanish (Español)';
-      default: return 'English';
+  String _getLanguageLabel(AppLocalizations l, String localeCode) {
+    switch (localeCode) {
+      case 'en':
+        return l.english;
+      case 'ne':
+        return l.nepali;
+      case 'de':
+        return l.german;
+      case 'fr':
+        return l.french;
+      case 'es':
+        return l.spanish;
+      default:
+        return l.english;
     }
   }
 }

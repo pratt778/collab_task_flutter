@@ -71,7 +71,9 @@ class _IpConfigScreenState extends State<IpConfigScreen> {
     sl<Dio>().options.baseUrl = ApiConstants.baseUrl;
 
     final isLoggedIn = SecureStorageHelper().isUserLoggedIn();
-    context.goNamed(isLoggedIn ? MainRoutes.taskBoardName : MainRoutes.authName);
+    context.goNamed(
+      isLoggedIn ? MainRoutes.taskBoardName : MainRoutes.authName,
+    );
   }
 
   @override
@@ -88,7 +90,9 @@ class _IpConfigScreenState extends State<IpConfigScreen> {
             return SingleChildScrollView(
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
               child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: constraints.maxHeight - 40.h),
+                constraints: BoxConstraints(
+                  minHeight: constraints.maxHeight - 40.h,
+                ),
                 child: IntrinsicHeight(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -119,14 +123,16 @@ class _IpConfigScreenState extends State<IpConfigScreen> {
                         label: 'Local',
                         subtitle: ApiConstants.localIp,
                         selected: _selected == _IpPreset.local,
-                        onTap: () => setState(() => _selected = _IpPreset.local),
+                        onTap: () =>
+                            setState(() => _selected = _IpPreset.local),
                       ),
                       12.verticalSpace,
                       _PresetTile(
                         label: 'Custom',
                         subtitle: 'Enter your own host',
                         selected: _selected == _IpPreset.custom,
-                        onTap: () => setState(() => _selected = _IpPreset.custom),
+                        onTap: () =>
+                            setState(() => _selected = _IpPreset.custom),
                       ),
                       if (_selected == _IpPreset.custom) ...[
                         12.verticalSpace,
@@ -146,19 +152,25 @@ class _IpConfigScreenState extends State<IpConfigScreen> {
                             filled: true,
                             fillColor: context.appColors.surfaceAlt,
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(AppSizes.radiusM),
+                              borderRadius: BorderRadius.circular(
+                                AppSizes.radiusM,
+                              ),
                               borderSide: BorderSide(
                                 color: context.appColors.dividerLight,
                               ),
                             ),
                             enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(AppSizes.radiusM),
+                              borderRadius: BorderRadius.circular(
+                                AppSizes.radiusM,
+                              ),
                               borderSide: BorderSide(
                                 color: context.appColors.dividerLight,
                               ),
                             ),
                             focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(AppSizes.radiusM),
+                              borderRadius: BorderRadius.circular(
+                                AppSizes.radiusM,
+                              ),
                               borderSide: const BorderSide(
                                 color: AppColors.primaryBlue,
                               ),

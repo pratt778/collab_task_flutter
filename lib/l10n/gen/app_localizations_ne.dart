@@ -128,44 +128,103 @@ class AppLocalizationsNe extends AppLocalizations {
   String get a11yBack => 'Back';
 
   @override
-  String get members => 'Members';
+  String get user => 'प्रयोगकर्ता';
 
   @override
-  String get taskBoard => 'Task Board';
+  String get member => 'सदस्य';
 
   @override
-  String get notifications => 'Notifications';
+  String get members => 'सदस्यहरू';
 
   @override
-  String get settings => 'Settings';
+  String get workspaces => 'कार्यस्थानहरू';
 
   @override
-  String get logout => 'Logout';
+  String get taskBoard => 'कार्य बोर्ड';
 
   @override
-  String get delete => 'Delete';
+  String get notifications => 'सूचनाहरू';
 
   @override
-  String get create => 'Create';
+  String get settings => 'सेटिङहरू';
 
   @override
-  String get inviteMember => 'Invite Member';
+  String get logout => 'लगआउट';
 
   @override
-  String get selectUser => 'Select User';
+  String get delete => 'मेटाउनुहोस्';
 
   @override
-  String get deleteWorkspace => 'Delete Workspace';
+  String get create => 'सिर्जना गर्नुहोस्';
+
+  @override
+  String get addMember => 'सदस्य थप्नुहोस्';
+
+  @override
+  String get addMembers => 'सदस्यहरू थप्नुहोस्';
+
+  @override
+  String get viewMembers => 'सदस्यहरू हेर्नुहोस्';
+
+  @override
+  String get selectUser => 'प्रयोगकर्ता छान्नुहोस्';
+
+  @override
+  String get newWorkspace => 'नयाँ कार्यस्थान';
+
+  @override
+  String get workspaceName => 'कार्यस्थानको नाम';
+
+  @override
+  String get moveTaskTo => 'कार्य सार्नुहोस्...';
+
+  @override
+  String get inviteMemberDescription =>
+      'यस कार्यस्थानमा आमन्त्रित गर्न प्रयोगकर्ता छान्नुहोस्।';
+
+  @override
+  String get waitForWorkspacesToLoad =>
+      'कार्यस्थानहरू लोड हुन प्रतीक्षा गर्नुहोस्...';
+
+  @override
+  String get pleaseWaitForLoginToComplete =>
+      'कृपया लगइन पूरा हुन प्रतीक्षा गर्नुहोस्...';
+
+  @override
+  String get stillSettingUpWorkspace =>
+      'तपाईंको कार्यस्थान अझै सेटअप भइरहेको छ। कृपया एकछिनपछि फेरि प्रयास गर्नुहोस्।';
+
+  @override
+  String deleteWorkspaceTitle(Object name) {
+    return '\"$name\" मेटाउने?';
+  }
+
+  @override
+  String invitingUser(Object email) {
+    return 'प्रयोगकर्ता $email लाई आमन्त्रित गर्दै...';
+  }
+
+  @override
+  String get deleteWorkspace => 'कार्यस्थान मेटाउनुहोस्';
 
   @override
   String get areYouSureDeleteWorkspace =>
-      'This will permanently remove the workspace and all its tasks. This action cannot be undone.';
+      'यसले कार्यस्थान र यसका सबै कार्यहरू स्थायी रूपमा हटाउनेछ। यो कार्य फिर्ता गर्न सकिँदैन।';
 
   @override
-  String get workspaceDeleted => 'Workspace deleted';
+  String get workspaceDeleted => 'कार्यस्थान मेटाइयो';
 
   @override
-  String get noTasksHere => 'No tasks here';
+  String get noTasksHere => 'यहाँ कुनै कार्य छैन';
+
+  @override
+  String get noMembersHere => 'अहिलेसम्म कुनै सदस्य छैन';
+
+  @override
+  String get noUsersAvailable => 'प्रयोगकर्ता उपलब्ध छैनन्';
+
+  @override
+  String get memberAdded => 'सदस्य थपियो';
 
   @override
   String get account => 'Account';
@@ -181,6 +240,9 @@ class AppLocalizationsNe extends AppLocalizations {
 
   @override
   String get passwordAndBiometric => 'Password and biometric';
+
+  @override
+  String get notificationsPreferencesAndAlerts => 'Preferences and alerts';
 
   @override
   String get preferences => 'Preferences';
@@ -237,11 +299,11 @@ class AppLocalizationsNe extends AppLocalizations {
   String get appearance => 'Appearance';
 
   @override
-  String get todo => 'To Do';
+  String get todo => 'गर्नु पर्ने';
 
   @override
-  String get inProgress => 'In Progress';
+  String get inProgress => 'प्रगतिमा';
 
   @override
-  String get done => 'Done';
+  String get done => 'समाप्त';
 }

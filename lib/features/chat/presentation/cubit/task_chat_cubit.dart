@@ -42,6 +42,8 @@ class TaskChatCubit extends Cubit<TaskChatState> {
     final result = await getTaskMessagesUseCase(taskId);
     _loadingTaskId = null;
 
+    if (isClosed) return;
+
     result.fold((failure) => emit(TaskChatState.error(failure, const [])), (
       messages,
     ) {
@@ -68,6 +70,7 @@ class TaskChatCubit extends Cubit<TaskChatState> {
 
     emit(TaskChatState.submitting(currentMessages));
     final result = await sendTaskMessageUseCase(taskId: taskId, text: trimmed);
+    if (isClosed) return;
     result.fold(
       (failure) => emit(TaskChatState.error(failure, currentMessages)),
       (message) {
@@ -90,7 +93,10 @@ class TaskChatCubit extends Cubit<TaskChatState> {
             column: 'task_id',
             value: taskId,
           ),
-          callback: (_) => refreshTaskMessages(taskId),
+          callback: (_) {
+            if (isClosed) return;
+            refreshTaskMessages(taskId);
+          },
         )
         .subscribe();
   }

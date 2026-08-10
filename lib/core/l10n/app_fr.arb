@@ -37,20 +37,47 @@
   "accessDenied": "Accès refusé",
   "unauthorizedMessage": "Vous n'êtes pas autorisé à accéder à cette page. Veuillez vous reconnecter.",
   "a11yBack": "Retour",
+  "user": "Utilisateur",
+  "member": "Membre",
   "members": "Membres",
+  "workspaces": "Espaces de travail",
   "taskBoard": "Tableau des tâches",
   "notifications": "Notifications",
   "settings": "Paramètres",
   "logout": "Déconnexion",
   "delete": "Supprimer",
   "create": "Créer",
-  "inviteMember": "Inviter un membre",
+  "addMember": "Ajouter un membre",
+  "addMembers": "Ajouter des membres",
+  "viewMembers": "Voir les membres",
   "selectUser": "Sélectionner un utilisateur",
+  "notificationsPreferencesAndAlerts": "Préférences et alertes",
+  "newWorkspace": "Nouvel espace de travail",
+  "workspaceName": "Nom de l'espace de travail",
+  "moveTaskTo": "Déplacer la tâche vers...",
+  "inviteMemberDescription": "Sélectionnez un utilisateur à inviter dans cet espace de travail.",
+  "waitForWorkspacesToLoad": "Attendez le chargement des espaces de travail...",
+  "pleaseWaitForLoginToComplete": "Veuillez attendre la fin de la connexion...",
+  "stillSettingUpWorkspace": "Votre espace de travail est encore en cours de configuration. Réessayez dans une seconde.",
+  "deleteWorkspaceTitle": "Supprimer \"{name}\" ?",
+  "@deleteWorkspaceTitle": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "invitingUser": "Invitation de {email}...",
+  "@invitingUser": {
+    "placeholders": {
+      "email": {}
+    }
+  },
   "deleteWorkspace": "Supprimer l'espace de travail",
   "areYouSureDeleteWorkspace": "Cela supprimera définitivement l'espace de travail et toutes ses tâches. Cette action est irréversible.",
   "workspaceDeleted": "Espace de travail supprimé",
   "noTasksHere": "Aucune tâche ici",
-  "today": "Aujourd'hui",
+  "noMembersHere": "Aucun membre pour le moment",
+  "noUsersAvailable": "Aucun utilisateur disponible",
+  "memberAdded": "Membre ajouté",
   "todo": "À faire",
   "inProgress": "En cours",
   "done": "Terminé"

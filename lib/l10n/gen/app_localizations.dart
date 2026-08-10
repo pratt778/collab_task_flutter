@@ -326,11 +326,29 @@ abstract class AppLocalizations {
   /// **'Back'**
   String get a11yBack;
 
+  /// No description provided for @user.
+  ///
+  /// In en, this message translates to:
+  /// **'User'**
+  String get user;
+
+  /// No description provided for @member.
+  ///
+  /// In en, this message translates to:
+  /// **'Member'**
+  String get member;
+
   /// No description provided for @members.
   ///
   /// In en, this message translates to:
   /// **'Members'**
   String get members;
+
+  /// No description provided for @workspaces.
+  ///
+  /// In en, this message translates to:
+  /// **'Workspaces'**
+  String get workspaces;
 
   /// No description provided for @taskBoard.
   ///
@@ -368,17 +386,83 @@ abstract class AppLocalizations {
   /// **'Create'**
   String get create;
 
-  /// No description provided for @inviteMember.
+  /// No description provided for @addMember.
   ///
   /// In en, this message translates to:
-  /// **'Invite Member'**
-  String get inviteMember;
+  /// **'Add Member'**
+  String get addMember;
+
+  /// No description provided for @addMembers.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Members'**
+  String get addMembers;
+
+  /// No description provided for @viewMembers.
+  ///
+  /// In en, this message translates to:
+  /// **'View Members'**
+  String get viewMembers;
 
   /// No description provided for @selectUser.
   ///
   /// In en, this message translates to:
   /// **'Select User'**
   String get selectUser;
+
+  /// No description provided for @newWorkspace.
+  ///
+  /// In en, this message translates to:
+  /// **'New Workspace'**
+  String get newWorkspace;
+
+  /// No description provided for @workspaceName.
+  ///
+  /// In en, this message translates to:
+  /// **'Workspace Name'**
+  String get workspaceName;
+
+  /// No description provided for @moveTaskTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Move task to...'**
+  String get moveTaskTo;
+
+  /// No description provided for @inviteMemberDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a user to invite to this workspace.'**
+  String get inviteMemberDescription;
+
+  /// No description provided for @waitForWorkspacesToLoad.
+  ///
+  /// In en, this message translates to:
+  /// **'Wait for workspaces to load...'**
+  String get waitForWorkspacesToLoad;
+
+  /// No description provided for @pleaseWaitForLoginToComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Please wait for login to complete...'**
+  String get pleaseWaitForLoginToComplete;
+
+  /// No description provided for @stillSettingUpWorkspace.
+  ///
+  /// In en, this message translates to:
+  /// **'Still setting up your workspace. Please try in a second.'**
+  String get stillSettingUpWorkspace;
+
+  /// No description provided for @deleteWorkspaceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete \"{name}\"?'**
+  String deleteWorkspaceTitle(Object name);
+
+  /// No description provided for @invitingUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Inviting {email}...'**
+  String invitingUser(Object email);
 
   /// No description provided for @deleteWorkspace.
   ///
@@ -403,6 +487,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No tasks here'**
   String get noTasksHere;
+
+  /// No description provided for @noMembersHere.
+  ///
+  /// In en, this message translates to:
+  /// **'No members yet'**
+  String get noMembersHere;
+
+  /// No description provided for @noUsersAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No users available'**
+  String get noUsersAvailable;
+
+  /// No description provided for @memberAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Member added'**
+  String get memberAdded;
 
   /// No description provided for @account.
   ///
@@ -433,6 +535,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Password and biometric'**
   String get passwordAndBiometric;
+
+  /// No description provided for @notificationsPreferencesAndAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Preferences and alerts'**
+  String get notificationsPreferencesAndAlerts;
 
   /// No description provided for @preferences.
   ///

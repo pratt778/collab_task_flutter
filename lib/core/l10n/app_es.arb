@@ -37,20 +37,47 @@
   "accessDenied": "Acceso denegado",
   "unauthorizedMessage": "No estás autorizado para acceder a esta página. Por favor, inicia sesión de nuevo.",
   "a11yBack": "Atrás",
+  "user": "Usuario",
+  "member": "Miembro",
   "members": "Miembros",
+  "workspaces": "Espacios de trabajo",
   "taskBoard": "Tablero de tareas",
   "notifications": "Notificaciones",
   "settings": "Configuración",
   "logout": "Cerrar sesión",
   "delete": "Eliminar",
   "create": "Crear",
-  "inviteMember": "Invitar miembro",
+  "addMember": "Agregar miembro",
+  "addMembers": "Agregar miembros",
+  "viewMembers": "Ver miembros",
   "selectUser": "Seleccionar usuario",
+  "notificationsPreferencesAndAlerts": "Preferencias y alertas",
+  "newWorkspace": "Nuevo espacio de trabajo",
+  "workspaceName": "Nombre del espacio de trabajo",
+  "moveTaskTo": "Mover tarea a...",
+  "inviteMemberDescription": "Selecciona un usuario para invitar a este espacio de trabajo.",
+  "waitForWorkspacesToLoad": "Espera a que se carguen los espacios de trabajo...",
+  "pleaseWaitForLoginToComplete": "Por favor, espera a que termine el inicio de sesión...",
+  "stillSettingUpWorkspace": "Todavía estamos configurando tu espacio de trabajo. Vuelve a intentarlo en un segundo.",
+  "deleteWorkspaceTitle": "¿Eliminar \"{name}\"?",
+  "@deleteWorkspaceTitle": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "invitingUser": "Invitando a {email}...",
+  "@invitingUser": {
+    "placeholders": {
+      "email": {}
+    }
+  },
   "deleteWorkspace": "Eliminar espacio de trabajo",
   "areYouSureDeleteWorkspace": "Esto eliminará permanentemente el espacio de trabajo y todas sus tareas. Esta acción no se puede deshacer.",
   "workspaceDeleted": "Espacio de trabajo eliminado",
   "noTasksHere": "No hay tareas aquí",
-  "today": "Hoy",
+  "noMembersHere": "Aún no hay miembros",
+  "noUsersAvailable": "No hay usuarios disponibles",
+  "memberAdded": "Miembro agregado",
   "todo": "Por hacer",
   "inProgress": "En progreso",
   "done": "Terminado"

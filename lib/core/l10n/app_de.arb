@@ -37,20 +37,47 @@
   "accessDenied": "Zugriff verweigert",
   "unauthorizedMessage": "Sie sind nicht autorisiert, auf diese Seite zuzugreifen. Bitte melden Sie sich erneut an.",
   "a11yBack": "Zurück",
+  "user": "Benutzer",
+  "member": "Mitglied",
   "members": "Mitglieder",
+  "workspaces": "Arbeitsbereiche",
   "taskBoard": "Aufgaben-Board",
   "notifications": "Benachrichtigungen",
   "settings": "Einstellungen",
   "logout": "Abmelden",
   "delete": "Löschen",
   "create": "Erstellen",
-  "inviteMember": "Mitglied einladen",
+  "addMember": "Mitglied hinzufügen",
+  "addMembers": "Mitglieder hinzufügen",
+  "viewMembers": "Mitglieder anzeigen",
   "selectUser": "Benutzer auswählen",
+  "notificationsPreferencesAndAlerts": "Einstellungen und Benachrichtigungen",
+  "newWorkspace": "Neuer Arbeitsbereich",
+  "workspaceName": "Name des Arbeitsbereichs",
+  "moveTaskTo": "Aufgabe verschieben zu...",
+  "inviteMemberDescription": "Wählen Sie einen Benutzer aus, den Sie zu diesem Arbeitsbereich einladen möchten.",
+  "waitForWorkspacesToLoad": "Warten Sie, bis die Arbeitsbereiche geladen sind...",
+  "pleaseWaitForLoginToComplete": "Bitte warten Sie, bis die Anmeldung abgeschlossen ist...",
+  "stillSettingUpWorkspace": "Ihr Arbeitsbereich wird noch eingerichtet. Bitte versuchen Sie es in einer Sekunde erneut.",
+  "deleteWorkspaceTitle": "\"{name}\" löschen?",
+  "@deleteWorkspaceTitle": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "invitingUser": "Lade {email} ein...",
+  "@invitingUser": {
+    "placeholders": {
+      "email": {}
+    }
+  },
   "deleteWorkspace": "Arbeitsbereich löschen",
   "areYouSureDeleteWorkspace": "Dies löscht den Arbeitsbereich und alle Aufgaben dauerhaft. Dieser Vorgang kann nicht rückgängig gemacht werden.",
   "workspaceDeleted": "Arbeitsbereich gelöscht",
   "noTasksHere": "Keine Aufgaben hier",
-  "today": "Heute",
+  "noMembersHere": "Noch keine Mitglieder",
+  "noUsersAvailable": "Keine Benutzer verfügbar",
+  "memberAdded": "Mitglied hinzugefügt",
   "todo": "Zu erledigen",
   "inProgress": "In Bearbeitung",
   "done": "Erledigt"

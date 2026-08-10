@@ -128,7 +128,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get a11yBack => 'Back';
 
   @override
+  String get user => 'User';
+
+  @override
+  String get member => 'Member';
+
+  @override
   String get members => 'Members';
+
+  @override
+  String get workspaces => 'Workspaces';
 
   @override
   String get taskBoard => 'Task Board';
@@ -149,10 +158,50 @@ class AppLocalizationsEn extends AppLocalizations {
   String get create => 'Create';
 
   @override
-  String get inviteMember => 'Invite Member';
+  String get addMember => 'Add Member';
+
+  @override
+  String get addMembers => 'Add Members';
+
+  @override
+  String get viewMembers => 'View Members';
 
   @override
   String get selectUser => 'Select User';
+
+  @override
+  String get newWorkspace => 'New Workspace';
+
+  @override
+  String get workspaceName => 'Workspace Name';
+
+  @override
+  String get moveTaskTo => 'Move task to...';
+
+  @override
+  String get inviteMemberDescription =>
+      'Select a user to invite to this workspace.';
+
+  @override
+  String get waitForWorkspacesToLoad => 'Wait for workspaces to load...';
+
+  @override
+  String get pleaseWaitForLoginToComplete =>
+      'Please wait for login to complete...';
+
+  @override
+  String get stillSettingUpWorkspace =>
+      'Still setting up your workspace. Please try in a second.';
+
+  @override
+  String deleteWorkspaceTitle(Object name) {
+    return 'Delete \"$name\"?';
+  }
+
+  @override
+  String invitingUser(Object email) {
+    return 'Inviting $email...';
+  }
 
   @override
   String get deleteWorkspace => 'Delete Workspace';
@@ -168,6 +217,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noTasksHere => 'No tasks here';
 
   @override
+  String get noMembersHere => 'No members yet';
+
+  @override
+  String get noUsersAvailable => 'No users available';
+
+  @override
+  String get memberAdded => 'Member added';
+
+  @override
   String get account => 'Account';
 
   @override
@@ -181,6 +239,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get passwordAndBiometric => 'Password and biometric';
+
+  @override
+  String get notificationsPreferencesAndAlerts => 'Preferences and alerts';
 
   @override
   String get preferences => 'Preferences';

@@ -49,6 +49,10 @@ class WorkspaceCubit extends Cubit<WorkspaceState> {
 
   Future<void> loadWorkspaces() async {
     // debugPrint('⏳ WorkspaceCubit: Starting loadWorkspaces()...');
+    final currentSelectedId = state.maybeWhen(
+      loaded: (_, selected, _, _) => selected?.id,
+      orElse: () => null,
+    );
     emit(const WorkspaceState.loading());
     final result = await getMyWorkspacesUseCase.call();
 
@@ -82,11 +86,6 @@ class WorkspaceCubit extends Cubit<WorkspaceState> {
           await createDefaultWorkspace();
         } else {
           // If we were already in a workspace, try to stay in it
-          final currentSelectedId = state.maybeWhen(
-            loaded: (_, selected, _, _) => selected?.id,
-            orElse: () => null,
-          );
-
           final workspaceToSelect = workspaces.firstWhere(
             (w) => w.id == currentSelectedId,
             orElse: () => workspaces.first,
@@ -276,7 +275,7 @@ class WorkspaceCubit extends Cubit<WorkspaceState> {
     );
 
     state.maybeWhen(
-      loaded: (workspaces, _, allUsers, __) {
+      loaded: (workspaces, _, allUsers, _) {
         emit(
           WorkspaceState.loaded(
             workspaces: workspaces,
