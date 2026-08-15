@@ -9,6 +9,11 @@ Log of features and functions changed in this project. Append a new entry under 
 
 Group entries under one date heading per day. Newest date at the top.
 
+## 2026-08-15
+- **Added** `ProfileScreen` and clean-architecture profile feature under `lib/features/profile/`. Fetches user profile from Supabase `profiles` table (with fallback to current auth metadata), displays avatar, display name, email, phone number, account ID (with copy to clipboard), member since date, and last updated timestamp. Includes an "Edit Profile" bottom sheet for updating display name and phone number with immediate database sync.
+- **Updated** `SettingsScreen` to remove security, auto-sync, and haptic feedback switch items, and wired the "Profile" list tile to navigate to `ProfileScreen`.
+- **Added** `/profile` route to `MainRoutes` in `app_router.dart`.
+
 ---
 
 ## 2026-08-10

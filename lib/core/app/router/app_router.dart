@@ -15,6 +15,7 @@ import 'package:collab_task/features/chat/presentation/pages/chat_screen.dart';
 import 'package:collab_task/features/tasks/presentation/pages/task_discussion_screen.dart';
 import 'package:collab_task/features/notifications/presentation/pages/notifications_screen.dart';
 import 'package:collab_task/features/settings/presentation/pages/settings_screen.dart';
+import 'package:collab_task/features/profile/presentation/pages/profile_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class MainRoutes {
@@ -44,6 +45,8 @@ class MainRoutes {
   static const String notificationPath = '/notification';
   static const String settingsName = 'settings';
   static const String settingsPath = '/settings';
+  static const String profileName = 'profile';
+  static const String profilePath = '/profile';
   static const String chatName = 'chat';
   static const String chatPath = '/chat';
 
@@ -192,6 +195,14 @@ class MainRoutes {
         ),
         name: settingsName,
         path: settingsPath,
+      ),
+      GoRoute(
+        pageBuilder: (context, state) => slideTransitionPage<void>(
+          state: state,
+          child: const ProfileScreen(),
+        ),
+        name: profileName,
+        path: profilePath,
       ),
     ],
   );

@@ -26,6 +26,8 @@ class TaskChatCubit extends Cubit<TaskChatState> {
     await _fetchMessages(taskId, showLoading: false);
   }
 
+
+  // loads the past or previous messages. 
   Future<void> _fetchMessages(
     String taskId, {
     required bool showLoading,
@@ -78,7 +80,7 @@ class TaskChatCubit extends Cubit<TaskChatState> {
       },
     );
   }
-
+  // the future subscribe, it will recieve the message in real time. when another sends sends the msg. 
   void _subscribeToChanges(String taskId) {
     _channel?.unsubscribe();
     _subscribedTaskId = taskId;

@@ -49,6 +49,18 @@ import 'package:collab_task/features/chat/presentation/cubit/task_chat_cubit.dar
     as _i719;
 import 'package:collab_task/features/locale/presentation/cubit/locale_cubit.dart'
     as _i881;
+import 'package:collab_task/features/profile/data/datasources/profile_remote_datasource.dart'
+    as _i794;
+import 'package:collab_task/features/profile/data/repositories/profile_repository_impl.dart'
+    as _i213;
+import 'package:collab_task/features/profile/domain/repositories/profile_repository.dart'
+    as _i413;
+import 'package:collab_task/features/profile/domain/usecases/get_profile_usecase.dart'
+    as _i691;
+import 'package:collab_task/features/profile/domain/usecases/update_profile_usecase.dart'
+    as _i980;
+import 'package:collab_task/features/profile/presentation/cubit/profile_cubit.dart'
+    as _i863;
 import 'package:collab_task/features/shared/cubits/network_cubits.dart'
     as _i889;
 import 'package:collab_task/features/tasks/data/datasources/task_datasource.dart'
@@ -149,6 +161,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i625.WorkspaceRemoteDatasource>(
       () => _i625.WorkspaceRemoteDatasourceImpl(),
     );
+    gh.lazySingleton<_i794.ProfileRemoteDatasource>(
+      () => _i794.ProfileRemoteDatasourceImpl(),
+    );
     gh.factory<_i223.TaskDetailCubit>(
       () => _i223.TaskDetailCubit(
         gh<_i121.GetTaskDetailUseCase>(),
@@ -180,6 +195,11 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i867.SendTaskMessageUseCase>(
       () => _i867.SendTaskMessageUseCase(gh<_i7.ChatRepository>()),
     );
+    gh.lazySingleton<_i413.ProfileRepository>(
+      () => _i213.ProfileRepositoryImpl(
+        remoteDatasource: gh<_i794.ProfileRemoteDatasource>(),
+      ),
+    );
     gh.lazySingleton<_i55.LoginUseCase>(
       () => _i55.LoginUseCase(gh<_i835.AuthRepository>()),
     );
@@ -202,6 +222,12 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i786.WorkspaceRepositoryImpl(
         remoteDatasource: gh<_i625.WorkspaceRemoteDatasource>(),
       ),
+    );
+    gh.lazySingleton<_i691.GetProfileUseCase>(
+      () => _i691.GetProfileUseCase(gh<_i413.ProfileRepository>()),
+    );
+    gh.lazySingleton<_i980.UpdateProfileUseCase>(
+      () => _i980.UpdateProfileUseCase(gh<_i413.ProfileRepository>()),
     );
     gh.lazySingleton<_i981.AuthCubit>(
       () => _i981.AuthCubit(
@@ -237,6 +263,12 @@ extension GetItInjectableX on _i174.GetIt {
         workspaceRepository: gh<_i400.WorkspaceRepository>(),
         authRepository: gh<_i835.AuthRepository>(),
         secureStorage: gh<_i445.SecureStorageHelper>(),
+      ),
+    );
+    gh.factory<_i863.ProfileCubit>(
+      () => _i863.ProfileCubit(
+        gh<_i691.GetProfileUseCase>(),
+        gh<_i980.UpdateProfileUseCase>(),
       ),
     );
     return this;

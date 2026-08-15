@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:collab_task/core/app/router/app_router.dart';
 import 'package:collab_task/core/config/constants/color_constant.dart';
 import 'package:collab_task/features/locale/presentation/cubit/locale_cubit.dart';
 import 'package:collab_task/features/theme/presentation/cubit/theme_cubit.dart';
@@ -18,11 +20,9 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  bool _notificationsEnabled = true;
-  bool _pushNotifications = true;
-
   @override
   Widget build(BuildContext context) {
+    
     final colors = context.appColors;
     final l = AppLocalizations.of(context);
     final themeMode = context.watch<ThemeCubit>().state;
@@ -48,21 +48,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
               title: l.profile,
               subtitle: l.updatePersonalInfo,
               colors: colors,
-              onTap: () {},
-            ),
-            _buildSettingsTile(
-              icon: Icons.lock_rounded,
-              title: l.security,
-              subtitle: l.passwordAndBiometric,
-              colors: colors,
-              onTap: () {},
+              onTap: () => context.pushNamed(MainRoutes.profileName),
             ),
             _buildSettingsTile(
               icon: Icons.notifications_rounded,
               title: l.notifications,
               subtitle: l.notificationsPreferencesAndAlerts,
               colors: colors,
-              onTap: () {},
+              onTap: () => context.pushNamed(MainRoutes.notificationName),
             ),
           ], colors),
 
@@ -83,28 +76,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               subtitle: _getLanguageLabel(l, localeCode),
               colors: colors,
               onTap: () => _showLanguageBottomSheet(colors),
-            ),
-          ], colors),
-
-          SizedBox(height: 32.h),
-
-          _buildSectionHeader(l.appSettings.toUpperCase(), colors),
-          _buildGroupedContainer([
-            _buildSwitchTile(
-              icon: Icons.cloud_done_rounded,
-              title: l.autoSync,
-              subtitle: l.keepDataUpdated,
-              value: _notificationsEnabled,
-              colors: colors,
-              onChanged: (v) => setState(() => _notificationsEnabled = v),
-            ),
-            _buildSwitchTile(
-              icon: Icons.vibration_rounded,
-              title: l.hapticFeedback,
-              subtitle: l.softVibrations,
-              value: _pushNotifications,
-              colors: colors,
-              onChanged: (v) => setState(() => _pushNotifications = v),
             ),
           ], colors),
 
@@ -233,55 +204,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildSwitchTile({
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    required bool value,
-    required AppColorsExtension colors,
-    required ValueChanged<bool> onChanged,
-  }) {
-    return Padding(
-      padding: EdgeInsets.all(16.r),
-      child: Row(
-        children: [
-          Icon(icon, size: 22.sp, color: colors.textSecondary),
-          SizedBox(width: 16.w),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 15.sp,
-                    fontWeight: FontWeight.w700,
-                    color: colors.textPrimary,
-                  ),
-                ),
-                SizedBox(height: 2.h),
-                Text(
-                  subtitle,
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w500,
-                    color: colors.textSecondary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Switch.adaptive(
-            value: value,
-            onChanged: onChanged,
-            activeThumbColor: colors.primary,
-            activeTrackColor: colors.primary.withValues(alpha: 0.2),
-          ),
-        ],
       ),
     );
   }

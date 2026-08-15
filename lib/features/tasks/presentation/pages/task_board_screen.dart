@@ -852,7 +852,7 @@ class _TaskBoardScreenState extends State<TaskBoardScreen> {
                     child: ListView.separated(
                       shrinkWrap: true,
                       itemCount: memberTiles.length,
-                      separatorBuilder: (_, __) => Divider(
+                      separatorBuilder: (_, _) => Divider(
                         color: context.appColors.divider,
                         height: 1,
                       ),
