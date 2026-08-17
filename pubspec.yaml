@@ -65,6 +65,8 @@ dependencies:
   internet_connection_checker_plus: ^2.9.1+2
   intl: ^0.20.2
   injectable: ^2.5.1
+  supabase_flutter: ^2.12.4
+  flutter_dotenv: ^5.2.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -131,6 +133,7 @@ flutter:
   assets:
     - assets/images/
     - assets/icons/
+    - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

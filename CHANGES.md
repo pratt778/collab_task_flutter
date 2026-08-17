@@ -9,12 +9,36 @@ Log of features and functions changed in this project. Append a new entry under 
 
 Group entries under one date heading per day. Newest date at the top.
 
+## 2026-08-15
+- **Added** `ProfileScreen` and clean-architecture profile feature under `lib/features/profile/`. Fetches user profile from Supabase `profiles` table (with fallback to current auth metadata), displays avatar, display name, email, phone number, account ID (with copy to clipboard), member since date, and last updated timestamp. Includes an "Edit Profile" bottom sheet for updating display name and phone number with immediate database sync.
+- **Updated** `SettingsScreen` to remove security, auto-sync, and haptic feedback switch items, and wired the "Profile" list tile to navigate to `ProfileScreen`.
+- **Added** `/profile` route to `MainRoutes` in `app_router.dart`.
+
 ---
 
+## 2026-08-10
+- **Fixed** `TaskChatCubit` crashing with "Bad state: Cannot emit new states after calling close". A stale Supabase realtime subscription from a screen that had been popped could still fire `refreshTaskMessages` on the closed cubit when another user posted a message, so `emit` was called after `close()`. Added `isClosed` guards after every awaited call and in the realtime callback (`task_chat_cubit.dart:44,70,93`).
+- **Fixed** workspace selection resetting to the first workspace on reload. `loadWorkspaces()` read the previously-selected id from state after emitting `loading`, so it was always null and the cubit fell back to `workspaces.first` after adding a member or deleting another workspace. The selected id is now captured before the `loading` emit (`workspace_cubit.dart:52`), so members and tasks stay on the workspace you were in.
+- **Fixed** task board localization coverage. Moved static board strings, workspace dialogs, drawer labels, and empty/error states onto `AppLocalizations`, while leaving runtime values like workspace names, user names, and task data dynamic. Added the missing ARB keys and regenerated localization code so the board no longer mixes localized and hard-coded text.
+- **Fixed** settings language updates. Replaced the hard-coded `_selectedLanguage` value with the active `LocaleCubit` state, localized the settings screen labels, and made the language row refresh when the user changes locale so English no longer stays stuck on screen.
+
+## 2026-05-22
+- **Fixed** analyzer cleanup in settings and task detail. Replaced deprecated radio-list usage with selectable list rows and made the task delete icon const.
+- **Removed** the legacy demo route and screen. Protected app routes now redirect unauthenticated users to login, while authenticated users are redirected away from auth-only screens to the task board.
+- **Updated** task board reliability. Deduplicated workspace task loads, made realtime task refreshes quiet, applied create/update responses locally, and replaced raw failure text with localized retry states.
+- **Fixed** task deletion flow. Detail deletes now wait for backend success, show a confirmation dialog, expose localized retry errors, and remove the deleted task from the board list without issuing a duplicate delete request.
+- **Updated** project docs to match the current app shape. Replaced stale `main_development.dart` / `main_common.dart` references with `lib/main.dart` and clarified that Supabase-backed auth, workspaces, and task CRUD are now the active implementation path.
+
 ## 2026-05-01
-- **Project Initiation**: Started the transition from `flutter_clean_starter` to `CollabTask`.
-- **Validation**: Verified the starter codebase, dependencies, and architecture.
-- **Planning**: Reviewed and aligned the `build_plan.md` and `collab_task.md` with the existing chassis.
+- **Project Renaming**: Renamed package from `flutter_clean_starter` to `collab_task` globally. Updated Android and iOS display names and package identifiers.
+- **Phase 1 (Foundation)**: Registered `WebSocketService` in DI, added task/ws endpoints to `ApiConstants`, and created `MockDataGenerator`.
+- **Phase 2 (Core Layer)**: Implemented Task entities, models, datasources, and repositories. Added use cases for CRUD operations.
+- **Phase 3 (Task UI)**: Created `TaskBoardScreen` with Kanban layout, `TaskCard` widget, and `TaskDetailScreen` placeholder. Updated routing and splash screen navigation.
+- **Codebase Cleanup**: Removed the `demo` feature and its tests. Fixed all lints and static analysis errors.
+
+- **Task UI Enhancements**: Implemented `CreateTaskModal` and wired it to the `TaskBoardScreen` FAB. Added `LongPressDraggable` support to Kanban cards and `DragTarget` to columns for real-time reordering.
+- **Task Detail Polish**: Added `toggleChecklistItem` logic to `TaskDetailCubit` and wired the UI checkboxes.
+- **Supabase Integration Start**: Added `supabase_flutter` dependency and initialized the client in `main_common.dart`. Kept mock REST implementation as default for now.
 
 ## 2026-04-27
 - **Initial scaffold** extracted from `irrigation_flutter`. See [`STARTER.md`](STARTER.md) for day-1 setup.

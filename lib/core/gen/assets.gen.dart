@@ -11,4 +11,9 @@
 
 class Assets {
   const Assets._();
+
+  static const String aEnv = '.env';
+
+  /// List of all assets
+  static List<String> get values => [aEnv];
 }

@@ -1,6 +1,6 @@
-# Flutter Clean Starter
+# CollabTask
 
-A Flutter chassis with clean architecture, freezed sealed cubit states, dartz `Either<Failure, T>` repos, get_it DI, ARB localization, theming, error pages, network recovery, and reference tests — wired end-to-end and ready to fork.
+A Flutter mobile app for collaborative task management. The current implementation uses clean architecture, Cubit/Freezed state, GetIt + injectable DI, ARB localization, Supabase auth/data access, workspaces, and a Kanban-style task board.
 
 **Start here:** [`STARTER.md`](STARTER.md) for day-1 setup.
 **Conventions:** [`CLAUDE.md`](CLAUDE.md).
@@ -8,5 +8,5 @@ A Flutter chassis with clean architecture, freezed sealed cubit states, dartz `E
 
 ```bash
 flutter pub get
-flutter run -t lib/main_development.dart
+flutter run -t lib/main.dart
 ```

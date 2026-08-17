@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:collab_task/core/config/constants/color_constant.dart';
 
 /// Semantic color tokens that flip between light and dark mode.
 ///
@@ -7,6 +8,10 @@ import 'package:flutter/material.dart';
 /// they don't change between modes.
 @immutable
 class AppColorsExtension extends ThemeExtension<AppColorsExtension> {
+  final Color primary;
+  final Color secondary;
+  final Color textDark;
+  final Color surfaceWhite;
   final Color scaffold;
   final Color surface;
   final Color surfaceAlt;
@@ -22,6 +27,10 @@ class AppColorsExtension extends ThemeExtension<AppColorsExtension> {
   final Color shadow;
 
   const AppColorsExtension({
+    required this.primary,
+    required this.secondary,
+    required this.textDark,
+    required this.surfaceWhite,
     required this.scaffold,
     required this.surface,
     required this.surfaceAlt,
@@ -38,39 +47,51 @@ class AppColorsExtension extends ThemeExtension<AppColorsExtension> {
   });
 
   static const light = AppColorsExtension(
-    scaffold: Color(0xFFF9F9F9),
-    surface: Color(0xFFFFFFFF),
-    surfaceAlt: Color(0xFFFAFAFA),
-    surfaceMuted: Color(0xFFF0F0F0),
-    surfaceGreyLight: Color(0xFFF7F7F7),
-    textPrimary: Color(0xFF080808),
-    textSecondary: Color(0xFF464646),
-    textTertiary: Color(0xFF696969),
-    textDisabled: Color(0xFF939393),
-    divider: Color(0xFFCDCDCD),
-    dividerLight: Color(0xFFE9E9E9),
-    border: Color(0xFFE6E6E6),
-    shadow: Color(0x40C1BDBD),
+    primary: AppColors.primaryBlue,
+    secondary: AppColors.primaryIndigo,
+    textDark: AppColors.textDark,
+    surfaceWhite: AppColors.surfaceWhite,
+    scaffold: AppColors.scaffoldBackground,
+    surface: AppColors.surfaceWhite,
+    surfaceAlt: AppColors.surfaceSubtle,
+    surfaceMuted: AppColors.surfaceSubtle,
+    surfaceGreyLight: AppColors.surfaceSubtle,
+    textPrimary: AppColors.textDark,
+    textSecondary: AppColors.textSecondary,
+    textTertiary: AppColors.textTertiary,
+    textDisabled: AppColors.textDisabled,
+    divider: AppColors.divider,
+    dividerLight: AppColors.surfaceSubtle,
+    border: AppColors.borderSubtle,
+    shadow: Colors.black12,
   );
 
   static const dark = AppColorsExtension(
-    scaffold: Color(0xFF0E1213),
-    surface: Color(0xFF161B1D),
-    surfaceAlt: Color(0xFF1E2527),
-    surfaceMuted: Color(0xFF252C2F),
-    surfaceGreyLight: Color(0xFF1A2022),
-    textPrimary: Color(0xFFF5F5F5),
-    textSecondary: Color(0xFFCFD3D5),
-    textTertiary: Color(0xFF9BA3A6),
-    textDisabled: Color(0xFF6B7478),
-    divider: Color(0xFF2E3639),
-    dividerLight: Color(0xFF2E3639),
-    border: Color(0xFF2A3235),
-    shadow: Color(0x66000000),
+    primary: AppColors.primaryBlue,
+    secondary: AppColors.primaryIndigo,
+    textDark: AppColors.surfaceWhite,
+    surfaceWhite: AppColors.surfaceWhite,
+    scaffold: Color(0xFF0F172A),
+    surface: Color(0xFF1E293B),
+    surfaceAlt: Color(0xFF334155),
+    surfaceMuted: Color(0xFF475569),
+    surfaceGreyLight: Color(0xFF1E293B),
+    textPrimary: Color(0xFFF1F5F9),
+    textSecondary: Color(0xFFCBD5E1),
+    textTertiary: Color(0xFF94A3B8),
+    textDisabled: Color(0xFF475569),
+    divider: Color(0xFF334155),
+    dividerLight: Color(0xFF334155),
+    border: Color(0xFF475569),
+    shadow: Colors.black38,
   );
 
   @override
   AppColorsExtension copyWith({
+    Color? primary,
+    Color? secondary,
+    Color? textDark,
+    Color? surfaceWhite,
     Color? scaffold,
     Color? surface,
     Color? surfaceAlt,
@@ -86,6 +107,10 @@ class AppColorsExtension extends ThemeExtension<AppColorsExtension> {
     Color? shadow,
   }) {
     return AppColorsExtension(
+      primary: primary ?? this.primary,
+      secondary: secondary ?? this.secondary,
+      textDark: textDark ?? this.textDark,
+      surfaceWhite: surfaceWhite ?? this.surfaceWhite,
       scaffold: scaffold ?? this.scaffold,
       surface: surface ?? this.surface,
       surfaceAlt: surfaceAlt ?? this.surfaceAlt,
@@ -109,6 +134,10 @@ class AppColorsExtension extends ThemeExtension<AppColorsExtension> {
   ) {
     if (other is! AppColorsExtension) return this;
     return AppColorsExtension(
+      primary: Color.lerp(primary, other.primary, t)!,
+      secondary: Color.lerp(secondary, other.secondary, t)!,
+      textDark: Color.lerp(textDark, other.textDark, t)!,
+      surfaceWhite: Color.lerp(surfaceWhite, other.surfaceWhite, t)!,
       scaffold: Color.lerp(scaffold, other.scaffold, t)!,
       surface: Color.lerp(surface, other.surface, t)!,
       surfaceAlt: Color.lerp(surfaceAlt, other.surfaceAlt, t)!,

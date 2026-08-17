@@ -9,6 +9,7 @@ import 'package:flutter/foundation.dart';
 import 'package:collab_task/core/config/constants/app_constant.dart';
 import 'package:collab_task/core/error/exceptions.dart';
 import 'package:collab_task/core/helper/secure_storage_helper.dart';
+import 'package:collab_task/core/network/safe_chucker_interceptor.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 class ApiHelper {
@@ -17,7 +18,7 @@ class ApiHelper {
   ApiHelper({required this.dio});
 
   final Map<String, CancelToken> _cancelTokens = {};
-  ChuckerDioInterceptor? _chuckerInterceptor;
+  SafeChuckerInterceptor? _chuckerInterceptor;
 
   Future<void> init() async {
     _updateChuckerState();
@@ -38,7 +39,7 @@ class ApiHelper {
         dio.interceptors.contains(_chuckerInterceptor);
 
     if (enabled && !hasInterceptor) {
-      _chuckerInterceptor = ChuckerDioInterceptor();
+      _chuckerInterceptor = SafeChuckerInterceptor();
       dio.interceptors.add(_chuckerInterceptor!);
     } else if (!enabled && hasInterceptor) {
       dio.interceptors.remove(_chuckerInterceptor);
@@ -172,6 +173,40 @@ class ApiHelper {
     );
 
     final response = await dio.post<T>(
+      path,
+      data: body,
+      queryParameters: queryParams,
+      cancelToken: cancelToken,
+      options: (options ?? Options()).copyWith(headers: headers),
+    );
+
+    _validateResponse(response);
+    return response;
+  }
+
+  Future<Response<T>> patch<T>({
+    required String path,
+    required dynamic body,
+    Map<String, dynamic> queryParams = const {},
+    String? authHeader,
+    String? acceptHeader,
+    bool isMultipart = false,
+    Map<String, dynamic>? extraHeaders,
+    Options? options,
+    String? requestKey,
+  }) async {
+    final key =
+        requestKey ?? buildRequestKey('PATCH', path, queryParams: queryParams);
+    final cancelToken = _createCancelToken(key);
+
+    final headers = await _buildHeaders(
+      authHeader: authHeader,
+      acceptHeader: acceptHeader,
+      isMultipart: isMultipart,
+      extraHeaders: extraHeaders,
+    );
+
+    final response = await dio.patch<T>(
       path,
       data: body,
       queryParameters: queryParams,

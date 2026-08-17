@@ -6,9 +6,9 @@ import 'package:collab_task/core/config/theme/app_colors_extension.dart';
 class AppTheme {
   static final ThemeData light = _buildTheme(
     ColorScheme.fromSeed(
-      seedColor: AppColors.primaryTeal,
-      primary: AppColors.primaryTeal,
-      secondary: AppColors.secondaryTeal,
+      seedColor: AppColors.primaryBlue,
+      primary: AppColors.primaryBlue,
+      secondary: AppColors.primaryIndigo,
       error: AppColors.errorRed,
       surface: AppColorsExtension.light.surface,
       onPrimary: Colors.white,
@@ -21,10 +21,10 @@ class AppTheme {
 
   static final ThemeData dark = _buildTheme(
     ColorScheme.fromSeed(
-      seedColor: AppColors.primaryTeal,
+      seedColor: AppColors.primaryBlue,
       brightness: Brightness.dark,
-      primary: AppColors.secondaryTeal,
-      secondary: AppColors.primaryTeal,
+      primary: AppColors.primaryBlue,
+      secondary: AppColors.primaryIndigo,
       error: AppColors.errorRed,
       surface: AppColorsExtension.dark.surface,
       onPrimary: Colors.white,
@@ -54,171 +54,73 @@ class AppTheme {
       scaffoldBackgroundColor: appColors.scaffold,
       extensions: <ThemeExtension<dynamic>>[appColors],
 
-      // AppBar — primaryTeal in both modes (brand color)
-      appBarTheme: const AppBarTheme(
-        backgroundColor: AppColors.primaryTeal,
-        foregroundColor: Colors.white,
+      // AppBar
+      appBarTheme: AppBarTheme(
+        backgroundColor: appColors.scaffold,
+        foregroundColor: appColors.textPrimary,
         elevation: 0,
+        scrolledUnderElevation: 0,
         centerTitle: false,
+        titleTextStyle: GoogleFonts.inter(
+          fontSize: 18,
+          fontWeight: FontWeight.w700,
+          color: appColors.textPrimary,
+        ),
       ),
 
-      // Elevated Button
+      // Buttons
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primaryTeal,
+          backgroundColor: appColors.primary,
           foregroundColor: Colors.white,
-          textStyle: const TextStyle(
-            fontFamily: 'Inter',
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
+          elevation: 0,
+          textStyle: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w600),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         ),
       ),
 
-      // Outlined Button
-      outlinedButtonTheme: OutlinedButtonThemeData(
-        style: OutlinedButton.styleFrom(
-          foregroundColor: AppColors.primaryTeal,
-          side: const BorderSide(color: AppColors.primaryTeal),
-          textStyle: const TextStyle(
-            fontFamily: 'Inter',
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-      ),
-
-      // Text Button
-      textButtonTheme: TextButtonThemeData(
-        style: TextButton.styleFrom(
-          foregroundColor: AppColors.primaryTeal,
-        ),
-      ),
-
-      // Input Decoration
+      // Input
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: appColors.surface,
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding: const EdgeInsets.all(16),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(14),
           borderSide: BorderSide(color: appColors.border),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(14),
           borderSide: BorderSide(color: appColors.border),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide:
-              const BorderSide(color: AppColors.primaryTeal, width: 1.5),
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide(color: appColors.primary, width: 1.5),
         ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.errorRed),
-        ),
-        hintStyle: TextStyle(
-          fontFamily: 'Inter',
-          fontSize: 14,
-          color: appColors.textDisabled,
-        ),
+        hintStyle: GoogleFonts.inter(fontSize: 14, color: appColors.textTertiary),
       ),
 
       // Card
       cardTheme: CardThemeData(
         color: appColors.surface,
-        elevation: 1,
+        elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(20),
+          side: BorderSide(color: appColors.border, width: 0.5),
         ),
-      ),
-
-      // Divider
-      dividerTheme: DividerThemeData(
-        color: appColors.divider,
-        thickness: 1,
-        space: 1,
-      ),
-
-      // Bottom Navigation Bar
-      bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        backgroundColor: appColors.surface,
-        selectedItemColor: AppColors.primaryTeal,
-        unselectedItemColor: appColors.textTertiary,
       ),
 
       // Floating Action Button
-      floatingActionButtonTheme: const FloatingActionButtonThemeData(
-        backgroundColor: AppColors.primaryTeal,
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        backgroundColor: appColors.primary,
         foregroundColor: Colors.white,
+        elevation: 4,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
       ),
 
-      // Icon
-      iconTheme: IconThemeData(
-        color: appColors.textSecondary,
-      ),
-
-      // Checkbox
-      checkboxTheme: CheckboxThemeData(
-        fillColor: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.selected)) {
-            return AppColors.primaryTeal;
-          }
-          return appColors.surface;
-        }),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(4),
-        ),
-      ),
-
-      // Switch
-      switchTheme: SwitchThemeData(
-        thumbColor: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.selected)) {
-            return AppColors.primaryTeal;
-          }
-          return appColors.surface;
-        }),
-        trackColor: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.selected)) {
-            return AppColors.secondaryTeal;
-          }
-          return appColors.surfaceMuted;
-        }),
-      ),
-
-      // SnackBar
-      snackBarTheme: SnackBarThemeData(
-        backgroundColor: appColors.textPrimary,
-        contentTextStyle: TextStyle(
-          fontFamily: 'Inter',
-          fontSize: 14,
-          color: appColors.surface,
-        ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-        behavior: SnackBarBehavior.floating,
-      ),
-
-      // Dialog
-      dialogTheme: DialogThemeData(
-        backgroundColor: appColors.surface,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-      ),
-
-      // ProgressIndicator
-      progressIndicatorTheme: const ProgressIndicatorThemeData(
-        color: AppColors.primaryTeal,
+      // Progress
+      progressIndicatorTheme: ProgressIndicatorThemeData(
+        color: appColors.primary,
       ),
     );
   }

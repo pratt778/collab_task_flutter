@@ -1,54 +1,110 @@
-import 'package:flutter/cupertino.dart';
 import 'package:injectable/injectable.dart';
-import 'package:collab_task/core/config/constants/api_constant.dart';
-import 'package:collab_task/core/network/api_helper.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as sb;
+import 'package:collab_task/core/error/exceptions.dart';
 import 'package:collab_task/core/utils/safe_request_mapper.dart';
 import 'package:collab_task/features/auth/data/models/login_response_model.dart';
 
 abstract class AuthRemoteDatasource {
-  Future<LoginResponseModel> login({
-    required String phoneNumber,
-    required String customerNo,
-    required String organizationCode,
+  Future<UserModel> login({required String email, required String password});
+  Future<UserModel> register({
+    required String email,
+    required String password,
+    required String name,
   });
   Future<void> logout();
+  Future<void> resetPassword(String email);
+  Future<UserModel> verifyOtp({
+    required String email,
+    required String token,
+    required sb.OtpType type,
+  });
+  Future<void> updatePassword(String newPassword);
+  Future<List<UserModel>> getAllUsers();
 }
 
 @LazySingleton(as: AuthRemoteDatasource)
 class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
-  final ApiHelper apiHelper;
-  AuthRemoteDatasourceImpl({required this.apiHelper});
+  sb.SupabaseClient get _client => sb.Supabase.instance.client;
+
   @override
-  Future<LoginResponseModel> login({
-    required String phoneNumber,
-    required String customerNo,
-    required String organizationCode,
+  Future<List<UserModel>> getAllUsers() {
+    return SafeRequest.call(() async {
+      final response = await _client.from('profiles').select();
+      return (response as List).map((e) => UserModel.fromJson(e)).toList();
+    });
+  }
+
+  @override
+  Future<UserModel> login({required String email, required String password}) {
+    return SafeRequest.call(() async {
+      final response = await _client.auth.signInWithPassword(
+        email: email,
+        password: password,
+      );
+      if (response.user == null) {
+        throw const AuthException(message: 'Login failed: User is null');
+      }
+      return UserModel.fromSupabase(response.user!);
+    });
+  }
+
+  @override
+  Future<UserModel> register({
+    required String email,
+    required String password,
+    required String name,
   }) {
     return SafeRequest.call(() async {
-      debugPrint(
-        'organizationCode: $organizationCode, customerNo: $customerNo, phoneNumber: $phoneNumber',
+      final response = await _client.auth.signUp(
+        email: email,
+        password: password,
+        data: {'display_name': name},
       );
-      final response = await apiHelper.post(
-        path: '${ApiConstants.baseUrl}/${ApiConstants.login}',
-        body: {
-          'contact_number': phoneNumber,
-          'customer_no': customerNo,
-          'organization_code': organizationCode,
-        },
-      );
-      final loginResponseModel = LoginResponseModel.fromJson(
-        response.data['data'],
-      );
-      return loginResponseModel;
+      if (response.user == null) {
+        throw const AuthException(message: 'Registration failed: User is null');
+      }
+      return UserModel.fromSupabase(response.user!);
     });
   }
 
   @override
   Future<void> logout() {
     return SafeRequest.call(() async {
-      await apiHelper.post(
-        path: '${ApiConstants.baseUrl}/${ApiConstants.logout}',
-        body: {},
+      await _client.auth.signOut();
+    });
+  }
+
+  @override
+  Future<void> resetPassword(String email) {
+    return SafeRequest.call(() async {
+      await _client.auth.resetPasswordForEmail(email);
+    });
+  }
+
+  @override
+  Future<UserModel> verifyOtp({
+    required String email,
+    required String token,
+    required sb.OtpType type,
+  }) {
+    return SafeRequest.call(() async {
+      final response = await _client.auth.verifyOTP(
+        email: email,
+        token: token,
+        type: type,
+      );
+      if (response.user == null) {
+        throw const AuthException(message: 'Verification failed: User is null');
+      }
+      return UserModel.fromSupabase(response.user!);
+    });
+  }
+
+  @override
+  Future<void> updatePassword(String newPassword) {
+    return SafeRequest.call(() async {
+      await _client.auth.updateUser(
+        sb.UserAttributes(password: newPassword),
       );
     });
   }

@@ -1,16 +1,12 @@
+import 'package:collab_task/core/extension/snackbar_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:collab_task/core/app/router/app_router.dart';
-import 'package:collab_task/core/config/constants/app_size_constant.dart';
 import 'package:collab_task/core/config/constants/color_constant.dart';
 import 'package:collab_task/core/config/theme/app_colors_extension.dart';
 import 'package:collab_task/core/config/constants/typography_constant.dart';
-import 'package:collab_task/core/error/failure_messages.dart';
-import 'package:collab_task/core/extension/snackbar_extension.dart';
-import 'package:collab_task/l10n/gen/app_localizations.dart';
-import 'package:collab_task/core/helper/secure_storage_helper.dart';
 import 'package:collab_task/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:collab_task/features/auth/presentation/cubit/auth_state.dart';
 import 'package:collab_task/features/auth/presentation/widgets/app_primary_button.dart';
@@ -24,273 +20,234 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController _customerOrgIdController =
-      TextEditingController();
-  final TextEditingController _phoneController = TextEditingController();
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  bool _rememberMe = false;
 
   @override
   void dispose() {
-    _customerOrgIdController.dispose();
-    _phoneController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _customerOrgIdController.text = SecureStorageHelper().getAccountInfo();
-    _phoneController.text = SecureStorageHelper().getPhoneNumber();
-  }
-
   void _onLoginPressed() {
-    if (!_formKey.currentState!.validate()) return;
-
+    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
+      return;
+    }
     context.read<AuthCubit>().login(
-      phoneNumber: _phoneController.text.trim(),
-      customerNo: customerOrganizationCode(
-        _customerOrgIdController.text.trim(),
-      )['customerNo']!,
-      organizationCode: customerOrganizationCode(
-        _customerOrgIdController.text.trim(),
-      )['organizationCode']!,
+      email: _emailController.text.trim(),
+      password: _passwordController.text.trim(),
     );
   }
 
-  Map<String, String> customerOrganizationCode(String fullid) {
-    if (fullid.contains('@')) {
-      final List<String> parts = fullid.split('@');
-
-      // parts[0] is everything before @
-      // parts[1] is everything after @
-      final String customerNo = parts[0];
-      final String organizationCode = parts[1];
-
-      // Now use them in your request
-      debugPrint('Customer ID: $customerNo');
-      debugPrint('Org Code: $organizationCode');
-      return {'customerNo': customerNo, 'organizationCode': organizationCode};
-    } else {
-      // Handle error if the user forgets the @ symbol
-      debugPrint('Invalid format. Use customerId@orgCode');
-      return {};
-    }
-  }
+  void _onForgotPasswordPressed() =>
+      context.goNamed(MainRoutes.forgotPasswordName);
+  void _onRegisterPressed() => context.goNamed(MainRoutes.registerName);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // resizeToAvoidBottomInset: false,
-      body: BlocConsumer<AuthCubit, AuthState>(
-        listener: (context, state) {
-          state.whenOrNull(
-            error: (failure) {
-              context.showSnackbar(
-                localizedFailureMessage(context, failure),
-                isError: true,
-              );
-            },
-            authenticated: (user) {
-              context.showSnackbar(
-                AppLocalizations.of(context).loginSuccessful,
-              );
-              context.goNamed(MainRoutes.demoName);
-            },
-          );
-        },
-        builder: (context, state) {
-          final bool isLoading = state.maybeWhen(
-            loading: () => true,
-            orElse: () => false,
-          );
+    final colors = context.appColors;
 
-          return Stack(
-            children: [
-              Container(
-                height: double.infinity * 0.57,
-                width: double.infinity,
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      AppColors.primaryTeal,
-                      AppColors.secondaryTeal,
-                      AppColors.primaryTeal,
+    return BlocListener<AuthCubit, AuthState>(
+      listener: (context, state) {
+        state.whenOrNull(
+          authenticated: (_) {
+            context.showSnackbar('Logged in successfully');
+            context.goNamed(MainRoutes.taskBoardName);
+          },
+          error: (failure) {
+            context.showSnackbar(failure.message, isError: true);
+          },
+        );
+      },
+      child: Scaffold(
+        backgroundColor: colors.scaffold,
+        body: Stack(
+          children: [
+            const SizedBox.expand(),
+            // Hero Gradient Background
+            Container(
+              height: 320.h,
+              width: double.infinity,
+              decoration: const BoxDecoration(
+                gradient: AppColors.primaryGradient,
+              ),
+              child: SafeArea(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 24.w,
+                    vertical: 40.h,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        padding: EdgeInsets.all(12.r),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(16.r),
+                        ),
+                        child: Icon(
+                          Icons.flutter_dash_rounded,
+                          size: 32.sp,
+                          color: Colors.white,
+                        ),
+                      ),
+                      SizedBox(height: 24.h),
+                      Text(
+                        'Hello',
+                        style: AppTypography.h1.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                      Text(
+                        'Sign in to continue',
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
                     ],
                   ),
                 ),
               ),
-              SafeArea(
-                child: CustomScrollView(
-                  keyboardDismissBehavior:
-                      ScrollViewKeyboardDismissBehavior.onDrag,
-                  slivers: [
-                    SliverToBoxAdapter(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Branding placeholder — swap in your own logo asset.
-                          Center(
-                            child: Padding(
-                              padding: EdgeInsets.only(top: 80.h, bottom: 16.h),
-                              child: Icon(
-                                Icons.flutter_dash,
-                                size: 96.r,
-                                color: AppColors.surfaceWhite,
-                              ),
-                            ),
-                          ),
-                          // Hello text
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 24.w),
-                            child: Text(
-                              AppLocalizations.of(context).hello,
-                              style: AppTypography.h1.copyWith(
-                                color: AppColors.textDark,
-                                fontWeight: FontWeight.w800,
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 4.h),
+            ),
 
-                          // Welcome back text
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 24.w),
-                            child: Text(
-                              AppLocalizations.of(context).welcomeBack,
-                              style: AppTypography.h1.copyWith(
-                                color: AppColors.surfaceWhite,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          24.verticalSpace,
-                        ],
-                      ),
-                    ),
-                    // White card with form — extends to bottom
-                    SliverFillRemaining(
-                      hasScrollBody: false,
-                      child: Container(
-                        width: double.infinity,
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 20.w,
-                          vertical: 27.h,
-                        ),
-                        decoration: BoxDecoration(
-                          color: context.appColors.surface,
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(AppSizes.radiusXL),
-                            topRight: Radius.circular(AppSizes.radiusXL),
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.1),
-                              blurRadius: 20,
-                              offset: const Offset(0, 8),
-                            ),
-                          ],
-                        ),
-                        child: Form(
-                          key: _formKey,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Title
-                              Center(
-                                child: Text(
-                                  AppLocalizations.of(
-                                    context,
-                                  ).enterToYourAccount,
-                                  style: AppTypography.h3,
-                                ),
-                              ),
-                              SizedBox(height: 32.h),
-
-                              // User Name field
-                              AppTextField(
-                                label: AppLocalizations.of(context).customerId,
-                                hintText: AppLocalizations.of(
-                                  context,
-                                ).customerIdHint,
-                                controller: _customerOrgIdController,
-                                validator: (value) {
-                                  if (value == null || value.trim().isEmpty) {
-                                    return AppLocalizations.of(
-                                      context,
-                                    ).pleaseEnterCustomerId;
-                                  }
-                                  if (!value.contains('@')) {
-                                    return AppLocalizations.of(
-                                      context,
-                                    ).pleaseEnterValidCustomerId;
-                                  }
-                                  final parts = value.split('@');
-                                  if (parts.length != 2) {
-                                    return AppLocalizations.of(
-                                      context,
-                                    ).pleaseEnterValidCustomerId;
-                                  }
-                                  if (parts[0].isEmpty || parts[1].isEmpty) {
-                                    return AppLocalizations.of(
-                                      context,
-                                    ).pleaseEnterValidCustomerId;
-                                  }
-
-                                  return null;
-                                },
-                              ),
-                              16.verticalSpace,
-
-                              // Phone Number field
-                              AppTextField(
-                                label: AppLocalizations.of(context).phoneNumber,
-                                hintText: AppLocalizations.of(
-                                  context,
-                                ).phoneNumberHint,
-                                keyboardType: TextInputType.phone,
-                                controller: _phoneController,
-                                validator: (value) {
-                                  if (value == null || value.trim().isEmpty) {
-                                    return AppLocalizations.of(
-                                      context,
-                                    ).pleaseEnterPhoneNumber;
-                                  }
-                                  if (value.length != 10) {
-                                    return AppLocalizations.of(
-                                      context,
-                                    ).pleaseEnterValidPhoneNumber;
-                                  }
-                                  if (!value.startsWith('9')) {
-                                    return AppLocalizations.of(
-                                      context,
-                                    ).pleaseEnterValidPhoneNumber;
-                                  }
-                                  return null;
-                                },
-                              ),
-                              24.verticalSpace,
-
-                              // Login button
-                              AppPrimaryButton(
-                                text: AppLocalizations.of(context).logIn,
-                                icon: Icons.arrow_forward,
-                                isLoading: isLoading,
-                                onPressed: _onLoginPressed,
-                              ),
-                              85.verticalSpace,
-                            ],
-                          ),
-                        ),
-                      ),
+            // Login Form
+            Positioned.fill(
+              top: 240.h,
+              child: Container(
+                padding: EdgeInsets.fromLTRB(24.w, 40.h, 24.w, 24.h),
+                decoration: BoxDecoration(
+                  color: colors.surface,
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(36.r),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      blurRadius: 20,
+                      offset: const Offset(0, -10),
                     ),
                   ],
                 ),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Welcome Back',
+                        style: TextStyle(
+                          fontSize: 22.sp,
+                          fontWeight: FontWeight.w800,
+                          color: colors.textPrimary,
+                        ),
+                      ),
+                      SizedBox(height: 32.h),
+                      AppTextField(
+                        label: 'Email Address',
+                        hintText: 'Enter your email',
+                        controller: _emailController,
+                        keyboardType: TextInputType.emailAddress,
+                      ),
+                      16.verticalSpace,
+                      AppTextField(
+                        label: 'Password',
+                        hintText: 'Enter your password',
+                        controller: _passwordController,
+                        obscureText: true,
+                      ),
+                      SizedBox(height: 12.h),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              SizedBox(
+                                height: 24.w,
+                                width: 24.w,
+                                child: Checkbox(
+                                  value: _rememberMe,
+                                  activeColor: AppColors.primaryBlue,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(6.r),
+                                  ),
+                                  onChanged: (v) =>
+                                      setState(() => _rememberMe = v!),
+                                ),
+                              ),
+                              SizedBox(width: 10.w),
+                              Text(
+                                'Remember me',
+                                style: TextStyle(
+                                  fontSize: 13.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: colors.textSecondary,
+                                ),
+                              ),
+                            ],
+                          ),
+                          GestureDetector(
+                            onTap: _onForgotPasswordPressed,
+                            child: Text(
+                              'Forgot Password?',
+                              style: TextStyle(
+                                fontSize: 13.sp,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.primaryBlue,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      40.verticalSpace,
+                      BlocBuilder<AuthCubit, AuthState>(
+                        builder: (context, state) {
+                          return AppPrimaryButton(
+                            text: 'Login',
+                            onPressed: state.maybeWhen(
+                              loading: () => null,
+                              orElse: () => _onLoginPressed,
+                            ),
+                          );
+                        },
+                      ),
+                      32.verticalSpace,
+                      Center(
+                        child: GestureDetector(
+                          onTap: _onRegisterPressed,
+                          child: RichText(
+                            text: TextSpan(
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                color: colors.textSecondary,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              children: const [
+                                TextSpan(text: "Don't have an account? "),
+                                TextSpan(
+                                  text: 'Register',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w800,
+                                    color: AppColors.primaryBlue,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 40.h),
+                    ],
+                  ),
+                ),
               ),
-            ],
-          );
-        },
+            ),
+          ],
+        ),
       ),
     );
   }

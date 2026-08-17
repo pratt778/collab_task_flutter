@@ -1,11 +1,11 @@
-enum Environment { prod, staging, dev }
+import 'package:flutter/foundation.dart';
 
 class AppConfig {
-  static late Environment environment;
-  static bool get enableIpConfig => environment != Environment.prod;
-  static bool get isProduction => environment == Environment.prod;
+  static bool get enableIpConfig => !kReleaseMode;
+  static bool get isProduction => kReleaseMode;
 
-  static void init({required Environment env}) {
-    environment = env;
+  // Compatibility for old code that might still call init
+  static void init({dynamic env}) {
+    debugPrint('AppConfig initialized (flavors removed)');
   }
 }

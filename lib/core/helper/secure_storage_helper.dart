@@ -67,7 +67,8 @@ class SecureStorageHelper {
   }
 
   bool isUserLoggedIn() {
-    return _cache.containsKey('token') && _cache.containsKey('userCode');
+    // return _cache.containsKey('token') && _cache.containsKey('userCode');
+    return _cache.containsKey('userCode');
   }
 
   bool isAppPreviouslyUsed() {
@@ -141,6 +142,15 @@ class SecureStorageHelper {
 
   bool getDarkMode() {
     return _cache['dark_mode'] == 'true';
+  }
+
+  void saveActiveWorkspaceId(String id) {
+    _cache['active_workspace_id'] = id;
+    _storage.write(key: 'active_workspace_id', value: id);
+  }
+
+  String? getActiveWorkspaceId() {
+    return _cache['active_workspace_id'];
   }
 
   void debugDump() {

@@ -14,8 +14,7 @@ class AuthState with _$AuthState {
   const factory AuthState.loading() = _AuthLoading;
 
   /// User successfully authenticated
-  const factory AuthState.authenticated(LoginResponseEntity user) =
-      _AuthAuthenticated;
+  const factory AuthState.authenticated(UserEntity user) = _AuthAuthenticated;
 
   /// User logged out or session expired
   const factory AuthState.unauthenticated() = _AuthUnauthenticated;

@@ -126,4 +126,183 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get a11yBack => 'Back';
+
+  @override
+  String get user => 'User';
+
+  @override
+  String get member => 'Member';
+
+  @override
+  String get members => 'Members';
+
+  @override
+  String get workspaces => 'Workspaces';
+
+  @override
+  String get taskBoard => 'Task Board';
+
+  @override
+  String get notifications => 'Notifications';
+
+  @override
+  String get settings => 'Settings';
+
+  @override
+  String get logout => 'Logout';
+
+  @override
+  String get delete => 'Delete';
+
+  @override
+  String get create => 'Create';
+
+  @override
+  String get addMember => 'Add Member';
+
+  @override
+  String get addMembers => 'Add Members';
+
+  @override
+  String get viewMembers => 'View Members';
+
+  @override
+  String get selectUser => 'Select User';
+
+  @override
+  String get newWorkspace => 'New Workspace';
+
+  @override
+  String get workspaceName => 'Workspace Name';
+
+  @override
+  String get moveTaskTo => 'Move task to...';
+
+  @override
+  String get inviteMemberDescription =>
+      'Select a user to invite to this workspace.';
+
+  @override
+  String get waitForWorkspacesToLoad => 'Wait for workspaces to load...';
+
+  @override
+  String get pleaseWaitForLoginToComplete =>
+      'Please wait for login to complete...';
+
+  @override
+  String get stillSettingUpWorkspace =>
+      'Still setting up your workspace. Please try in a second.';
+
+  @override
+  String deleteWorkspaceTitle(Object name) {
+    return 'Delete \"$name\"?';
+  }
+
+  @override
+  String invitingUser(Object email) {
+    return 'Inviting $email...';
+  }
+
+  @override
+  String get deleteWorkspace => 'Delete Workspace';
+
+  @override
+  String get areYouSureDeleteWorkspace =>
+      'This will permanently remove the workspace and all its tasks. This action cannot be undone.';
+
+  @override
+  String get workspaceDeleted => 'Workspace deleted';
+
+  @override
+  String get noTasksHere => 'No tasks here';
+
+  @override
+  String get noMembersHere => 'No members yet';
+
+  @override
+  String get noUsersAvailable => 'No users available';
+
+  @override
+  String get memberAdded => 'Member added';
+
+  @override
+  String get account => 'Account';
+
+  @override
+  String get profile => 'Profile';
+
+  @override
+  String get updatePersonalInfo => 'Update your personal info';
+
+  @override
+  String get security => 'Security';
+
+  @override
+  String get passwordAndBiometric => 'Password and biometric';
+
+  @override
+  String get notificationsPreferencesAndAlerts => 'Preferences and alerts';
+
+  @override
+  String get preferences => 'Preferences';
+
+  @override
+  String get theme => 'Theme';
+
+  @override
+  String get lightMode => 'Light Mode';
+
+  @override
+  String get darkMode => 'Dark Mode';
+
+  @override
+  String get systemDefault => 'System Default';
+
+  @override
+  String get language => 'Language';
+
+  @override
+  String get english => 'English';
+
+  @override
+  String get nepali => 'Nepali (नेपाली)';
+
+  @override
+  String get german => 'German (Deutsch)';
+
+  @override
+  String get french => 'French (Français)';
+
+  @override
+  String get spanish => 'Spanish (Español)';
+
+  @override
+  String get appSettings => 'App Settings';
+
+  @override
+  String get autoSync => 'Auto-sync';
+
+  @override
+  String get keepDataUpdated => 'Keep data updated in real-time';
+
+  @override
+  String get hapticFeedback => 'Haptic Feedback';
+
+  @override
+  String get softVibrations => 'Soft vibrations on interactions';
+
+  @override
+  String get logoutAccount => 'Logout Account';
+
+  @override
+  String get appearance => 'Appearance';
+
+  @override
+  String get todo => 'To Do';
+
+  @override
+  String get inProgress => 'In Progress';
+
+  @override
+  String get done => 'Done';
 }

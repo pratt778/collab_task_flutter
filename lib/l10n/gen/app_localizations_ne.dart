@@ -126,4 +126,184 @@ class AppLocalizationsNe extends AppLocalizations {
 
   @override
   String get a11yBack => 'Back';
+
+  @override
+  String get user => 'प्रयोगकर्ता';
+
+  @override
+  String get member => 'सदस्य';
+
+  @override
+  String get members => 'सदस्यहरू';
+
+  @override
+  String get workspaces => 'कार्यस्थानहरू';
+
+  @override
+  String get taskBoard => 'कार्य बोर्ड';
+
+  @override
+  String get notifications => 'सूचनाहरू';
+
+  @override
+  String get settings => 'सेटिङहरू';
+
+  @override
+  String get logout => 'लगआउट';
+
+  @override
+  String get delete => 'मेटाउनुहोस्';
+
+  @override
+  String get create => 'सिर्जना गर्नुहोस्';
+
+  @override
+  String get addMember => 'सदस्य थप्नुहोस्';
+
+  @override
+  String get addMembers => 'सदस्यहरू थप्नुहोस्';
+
+  @override
+  String get viewMembers => 'सदस्यहरू हेर्नुहोस्';
+
+  @override
+  String get selectUser => 'प्रयोगकर्ता छान्नुहोस्';
+
+  @override
+  String get newWorkspace => 'नयाँ कार्यस्थान';
+
+  @override
+  String get workspaceName => 'कार्यस्थानको नाम';
+
+  @override
+  String get moveTaskTo => 'कार्य सार्नुहोस्...';
+
+  @override
+  String get inviteMemberDescription =>
+      'यस कार्यस्थानमा आमन्त्रित गर्न प्रयोगकर्ता छान्नुहोस्।';
+
+  @override
+  String get waitForWorkspacesToLoad =>
+      'कार्यस्थानहरू लोड हुन प्रतीक्षा गर्नुहोस्...';
+
+  @override
+  String get pleaseWaitForLoginToComplete =>
+      'कृपया लगइन पूरा हुन प्रतीक्षा गर्नुहोस्...';
+
+  @override
+  String get stillSettingUpWorkspace =>
+      'तपाईंको कार्यस्थान अझै सेटअप भइरहेको छ। कृपया एकछिनपछि फेरि प्रयास गर्नुहोस्।';
+
+  @override
+  String deleteWorkspaceTitle(Object name) {
+    return '\"$name\" मेटाउने?';
+  }
+
+  @override
+  String invitingUser(Object email) {
+    return 'प्रयोगकर्ता $email लाई आमन्त्रित गर्दै...';
+  }
+
+  @override
+  String get deleteWorkspace => 'कार्यस्थान मेटाउनुहोस्';
+
+  @override
+  String get areYouSureDeleteWorkspace =>
+      'यसले कार्यस्थान र यसका सबै कार्यहरू स्थायी रूपमा हटाउनेछ। यो कार्य फिर्ता गर्न सकिँदैन।';
+
+  @override
+  String get workspaceDeleted => 'कार्यस्थान मेटाइयो';
+
+  @override
+  String get noTasksHere => 'यहाँ कुनै कार्य छैन';
+
+  @override
+  String get noMembersHere => 'अहिलेसम्म कुनै सदस्य छैन';
+
+  @override
+  String get noUsersAvailable => 'प्रयोगकर्ता उपलब्ध छैनन्';
+
+  @override
+  String get memberAdded => 'सदस्य थपियो';
+
+  @override
+  String get account => 'Account';
+
+  @override
+  String get profile => 'Profile';
+
+  @override
+  String get updatePersonalInfo => 'Update your personal info';
+
+  @override
+  String get security => 'Security';
+
+  @override
+  String get passwordAndBiometric => 'Password and biometric';
+
+  @override
+  String get notificationsPreferencesAndAlerts => 'Preferences and alerts';
+
+  @override
+  String get preferences => 'Preferences';
+
+  @override
+  String get theme => 'Theme';
+
+  @override
+  String get lightMode => 'Light Mode';
+
+  @override
+  String get darkMode => 'Dark Mode';
+
+  @override
+  String get systemDefault => 'System Default';
+
+  @override
+  String get language => 'Language';
+
+  @override
+  String get english => 'English';
+
+  @override
+  String get nepali => 'Nepali (नेपाली)';
+
+  @override
+  String get german => 'German (Deutsch)';
+
+  @override
+  String get french => 'French (Français)';
+
+  @override
+  String get spanish => 'Spanish (Español)';
+
+  @override
+  String get appSettings => 'App Settings';
+
+  @override
+  String get autoSync => 'Auto-sync';
+
+  @override
+  String get keepDataUpdated => 'Keep data updated in real-time';
+
+  @override
+  String get hapticFeedback => 'Haptic Feedback';
+
+  @override
+  String get softVibrations => 'Soft vibrations on interactions';
+
+  @override
+  String get logoutAccount => 'Logout Account';
+
+  @override
+  String get appearance => 'Appearance';
+
+  @override
+  String get todo => 'गर्नु पर्ने';
+
+  @override
+  String get inProgress => 'प्रगतिमा';
+
+  @override
+  String get done => 'समाप्त';
 }

@@ -3,7 +3,7 @@ import 'dart:math';
 /// Utility to generate mock task data for UI testing.
 class MockDataGenerator {
   static List<Map<String, dynamic>> generateMockTasks({int count = 10}) {
-    final statuses = ['todo', 'in_progress', 'done'];
+    final statuses = ['todo', 'inProgress', 'done'];
     final labels = ['design', 'urgent', 'bug', 'feature', 'backend'];
     final users = ['user_1', 'user_2', 'user_3'];
 

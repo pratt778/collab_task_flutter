@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:collab_task/core/config/constants/api_constant.dart';
 
 /// Status enum for WebSocket connection states.
 enum WebSocketStatus { connecting, connected, disconnected, error }
@@ -42,7 +43,7 @@ class WebSocketService {
       final wsUrl = baseUrl
           .replaceFirst('https://', 'wss://')
           .replaceFirst('http://', 'ws://');
-      final url = '$wsUrl?token=$token';
+      final url = '$wsUrl/${ApiConstants.ws}?token=$token';
 
       debugPrint('[WS] Connecting to $url');
       _webSocket = await WebSocket.connect(

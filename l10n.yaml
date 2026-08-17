@@ -4,3 +4,5 @@ output-localization-file: app_localizations.dart
 output-class: AppLocalizations
 nullable-getter: false
 output-dir: lib/l10n/gen
+# Add specific language support
+# No explicit 'supported-locales' needed if all ARBs in arb-dir are picked up.

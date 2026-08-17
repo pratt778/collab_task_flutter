@@ -2,13 +2,13 @@
 
 Transitioned from the Flutter Clean Starter to the **CollabTask** implementation.
 
-## Project Status: Phase 1 (WebSocket + Mock API)
+## Project Status: Supabase Task MVP
 
-We are currently implementing the foundation for real-time collaboration. See `build_plan.md` for the full roadmap.
+The app has moved beyond the original starter plan. Current code uses Supabase for auth, workspaces, and task CRUD. Realtime collaboration, notifications, and production route guards remain follow-up work. See `build_plan.md` for the historical roadmap and current gaps.
 
 ## Reference Features
 - **`auth/`** — full data/domain/presentation example.
-- **`demo/`** — placeholder list-fetch feature. **To be replaced by `tasks/` feature in Phase 2.**
+- **`tasks/`** — current task board, task detail, and task CRUD feature.
 
 Read [`CLAUDE.md`](CLAUDE.md) for conventions and [`test.md`](test.md) for the testing curriculum.
 
@@ -30,9 +30,9 @@ Read [`CLAUDE.md`](CLAUDE.md) for conventions and [`test.md`](test.md) for the t
 5. **Point the API at your backend**: `lib/core/config/constants/api_constant.dart` → `devIp`, `localIp`, and the endpoint paths.
 6. **Run** with the dev flavor:
    ```bash
-   flutter run -t lib/main_development.dart
+   flutter run -t lib/main.dart
    ```
-   Splash → IP-config screen (dev/staging only) → auth → demo list (fetched from `jsonplaceholder`).
+   Splash → IP-config screen in debug → auth → task board.
 
 ## App icons
 
@@ -56,7 +56,7 @@ The default brand color is `#096B72` (AppColors.primaryTeal). Edit `flutter_nati
 
 ## Firebase + FCM (off by default)
 
-The starter does **not** ship with a Firebase project. Push notifications and Firebase init are commented out in `lib/main_common.dart`, and the Google Services Gradle plugin is commented out in `android/settings.gradle.kts` + `android/app/build.gradle.kts` (without that, Gradle fails on missing `google-services.json` even when Dart never calls `Firebase.initializeApp()`). The `firebase_core` and `firebase_messaging` packages stay in `pubspec.yaml` so you can wire them when you're ready.
+The starter does **not** ship with a Firebase project. Push notifications and Firebase init are commented out in `lib/main.dart`, and the Google Services Gradle plugin is commented out in `android/settings.gradle.kts` + `android/app/build.gradle.kts` (without that, Gradle fails on missing `google-services.json` even when Dart never calls `Firebase.initializeApp()`). The `firebase_core` and `firebase_messaging` packages stay in `pubspec.yaml` so you can wire them when you're ready.
 
 To enable:
 
@@ -64,13 +64,13 @@ To enable:
 2. From the project root: `flutterfire configure` — pick or create your Firebase project; the CLI generates `lib/firebase_options.dart`, `android/app/google-services.json`, and `ios/Runner/GoogleService-Info.plist`.
 3. In `android/settings.gradle.kts`: uncomment the `id("com.google.gms.google-services")…` line.
 4. In `android/app/build.gradle.kts`: uncomment the `id("com.google.gms.google-services")` line.
-5. In `lib/main_common.dart`: uncomment the four Firebase imports and the Firebase + FCM block inside `initializeApp()`.
+5. In `lib/main.dart`: uncomment the Firebase imports and the Firebase + FCM block inside `initializeApp()`.
 6. In `lib/core/app/di/injection_container.dart`: uncomment the `FcmNotificationService` registration in `_registerExternal()`.
 7. The chassis `AuthSessionWriter` (`lib/features/auth/data/services/auth_session_writer.dart`) does **not** call FCM. Add `fcm.subscribeToTopics(...)` and the matching `fcm.unsubscribeFromTopics(...)` there if your project subscribes users to FCM topics on login. The file's docstring shows the pattern.
 
 The `FcmNotificationService` itself (`lib/core/services/fcm_notification_service.dart`) is fully written — permission request, background handler, foreground display, tap routing — and ready to use.
 
-If your project doesn't need push notifications: remove `firebase_core` and `firebase_messaging` from `pubspec.yaml`, delete `lib/core/services/fcm_notification_service.dart`, and remove the commented Firebase block from `main_common.dart` and the two `build.gradle.kts` files.
+If your project doesn't need push notifications: remove `firebase_core` and `firebase_messaging` from `pubspec.yaml`, delete `lib/core/services/fcm_notification_service.dart`, and remove the commented Firebase block from `main.dart` and the two `build.gradle.kts` files.
 
 ## Common scripts
 
@@ -81,10 +81,10 @@ If your project doesn't need push notifications: remove `firebase_core` and `fir
 Once you've renamed the package, swapped icons + splash, and (optionally) wired Firebase, do a real launch:
 
 ```bash
-flutter run -t lib/main_development.dart
+flutter run -t lib/main.dart
 ```
 
-Expected flow: splash → IP-config (dev only) → auth → demo list (fetched from `jsonplaceholder.typicode.com/posts`). If splash or auth crashes, check `main_common.dart`'s `initializeApp()` and the `MultipleBlocProviders` in `injection_container.dart`.
+Expected flow: splash → IP-config in debug → auth → task board. If splash or auth crashes, check `main.dart`'s `initializeApp()` and the `MultipleBlocProviders` in `lib/core/app/di/multi_bloc_provider.dart`.
 
 ## Logging changes to CHANGES.md
 
@@ -92,9 +92,9 @@ Append a dated entry to [`CHANGES.md`](CHANGES.md) for every meaningful code cha
 
 ## Adding your first feature
 
-The fastest path: copy `lib/features/demo/` to `lib/features/<your_feature>/`, then find-replace `Demo` / `demo` with your feature's name (case-aware).
+The fastest path: copy an existing real feature with a similar shape, then rename the files/classes and adjust the layer contracts.
 
-The chassis uses **`injectable`** for DI — each datasource / repo / use case / cubit in `demo/` is annotated, so once you copy and rename, the new feature wires itself up automatically. Two manual steps remain:
+The chassis uses **`injectable`** for DI. Annotated datasources, repositories, use cases, and cubits wire through generated registrations after codegen. Two manual steps remain:
 
 1. **Routes** — add a `GoRoute` to `lib/core/app/router/app_router.dart` and a `name` / `path` constant in `MainRoutes`.
 2. **ARB** — add user-facing copy to `lib/core/l10n/app_en.arb` (and the other locale ARB), then `flutter pub get` to regenerate.
@@ -106,12 +106,6 @@ dart run build_runner build --delete-conflicting-outputs
 ```
 
 Or just `./scripts/clean.sh` which does everything plus a fresh pub get.
-
-When you're confident the demo feature is no longer needed, delete it:
-- `rm -rf lib/features/demo/`
-- Remove its imports + DI registrations from `injection_container.dart` and `multi_bloc_provider.dart`.
-- Remove the `demo` route + name constants from `app_router.dart`.
-- Update `splash_screen.dart`'s post-login destination to point at your real first feature.
 
 ## What's already done for you
 
@@ -125,6 +119,6 @@ When you're confident the demo feature is no longer needed, delete it:
 - **Localization**: ARB-based with `gen-l10n`. English + a placeholder second locale you can swap.
 - **Network recovery**: `NetworkCubit` + `GlobalNetworkRecoveryListener` (snackbar on reconnect) + `NetworkAutoRefreshMixin` (re-fetches on connectivity recovery).
 - **Image cache**: `AppImageCacheManager` capping the on-disk image cache at 100 objects / 7 days.
-- **FCM**: `FcmNotificationService` set up — wire it in `main_common.dart` if you need push (else delete the file + remove from DI).
+- **FCM**: `FcmNotificationService` set up — wire it in `main.dart` if you need push (else delete the file + remove from DI).
 - **Lint rules**: see `analysis_options.yaml`.
 - **Tests**: see `test/` and `test.md`.

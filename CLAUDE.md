@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - **Dart SDK**: ^3.11.0
 - **Features**: Auth, Task Board (Kanban), Real-time Chat (WebSockets), Notifications.
-- **Status**: Transitioning from starter to Phase 1 (WebSocket + Mock API).
+- **Status**: Supabase-backed auth, workspaces, and task CRUD are implemented. Realtime sync, notifications, route hardening, and broader tests are the main remaining work.
 
 
 ## Architecture Rules
@@ -57,7 +57,7 @@ Base rule set: `package:flutter_lints/flutter.yaml`. Custom rules in `analysis_o
 ## State Management
 
 - Use Cubit (from flutter_bloc) for feature state management.
-- **All state classes use `@freezed` sealed unions** following the `initial / loading / loaded(data) / error(Failure)` pattern (mutation cubits use `submitting / success / error`). See `AuthState` and `DemoState` for canonical examples. Run `dart run build_runner build --delete-conflicting-outputs` after creating/changing a state.
+- **All state classes use `@freezed` sealed unions** following the `initial / loading / loaded(data) / error(Failure)` pattern (mutation cubits use `submitting / success / error`). See `AuthState`, `TaskListState`, and `TaskDetailState` for canonical examples. Run `dart run build_runner build --delete-conflicting-outputs` after creating/changing a state.
 - UI consumes states via `state.when(...)` / `state.maybeWhen(...)`, not field reads.
 - Parallel flows (e.g. list + add + types in one feature) → split into separate cubits, each with its own freezed state. Don't stuff multiple status fields into one state.
 - Cubits consume use case results via `.fold()`.
@@ -89,16 +89,15 @@ Base rule set: `package:flutter_lints/flutter.yaml`. Custom rules in `analysis_o
 ## Routing
 
 - go_router with routes defined in `lib/core/app/router/app_router.dart`.
-- Initial route: `/` (splash). Splash decides destination: prod → `/auth` or `/demo` via `isUserLoggedIn()`; dev/staging → `/ipConfig` (see Environment Config).
-- `redirect` exempts `splashPath` and `ipConfigPath` from the unauthenticated → `/auth` bounce; other unauthenticated routes are redirected.
+- Initial route: `/` (splash). Splash decides destination: release → `/auth` via `isUserLoggedIn()`; debug → `/ipConfig`.
 
-## Environment Config
+## Project Configuration
 
-- Three entry points: `main_development.dart`, `main_staging.dart`, `main_production.dart`.
-- `AppConfig` in `lib/core/config/constants/app_constant.dart` controls env-specific behavior. `AppConfig.enableIpConfig` is `true` for dev/staging, `false` for prod.
-- Chucker HTTP inspector disabled in production.
-- **Runtime base URL (dev/staging).** `ApiConstants.baseUrl` is a mutable `static String` so the dev IP-config screen can swap hosts without a rebuild. `main_common.dart` reads the saved host via `SecureStorageHelper.getBaseIp()` and patches `baseUrl` *before* `setupInjection()` so `Dio`'s `baseUrl` is correct on first request. In prod the default (`devIp`) is untouched.
-- **IP config screen** (`lib/features/dev/presentation/pages/ip_config_screen.dart`) is routed-to from splash when `enableIpConfig` is true. On "Next" it saves the host, mutates `ApiConstants.baseUrl`, patches `sl<Dio>().options.baseUrl` for live session, then navigates to `/demo` or `/auth`. Plain English strings (not localized — dev-only surface).
+- Single entry point: `lib/main.dart`.
+- `AppConfig` in `lib/core/config/constants/app_constant.dart` controls runtime behavior. `AppConfig.enableIpConfig` is `true` in debug mode, `false` in release mode.
+- Chucker HTTP inspector disabled in release mode.
+- **Runtime base URL (Debug only).** `ApiConstants.baseUrl` is a mutable `static String` so the dev IP-config screen can swap hosts without a rebuild. `main.dart` reads the saved host via `SecureStorageHelper.getBaseIp()` and patches `baseUrl` *before* `setupInjection()` so `Dio`'s `baseUrl` is correct on first request.
+- **IP config screen** (`lib/features/dev/presentation/pages/ip_config_screen.dart`) is routed-to from splash when `enableIpConfig` is true. On "Next" it saves the host, mutates `ApiConstants.baseUrl`, patches `sl<Dio>().options.baseUrl` for live session, then navigates to `/auth`.
 
 ## Theming
 
@@ -110,7 +109,7 @@ Base rule set: `package:flutter_lints/flutter.yaml`. Custom rules in `analysis_o
 ## Push Notifications (FCM)
 
 - `FcmNotificationService` (`lib/core/services/fcm_notification_service.dart`) — singleton handling all FCM: permission request, background handler, foreground display via `flutter_local_notifications`, tap handling.
-- Wire it via `FcmNotificationService().init()` in `main_common.dart` after Firebase init when your project needs push notifications. If you don't, delete the file and remove its DI registration.
+- Wire it via `FcmNotificationService().init()` in `main.dart` after Firebase init when your project needs push notifications. If you don't, delete the file and remove its DI registration.
 - Background handler must remain a top-level function (Firebase requirement).
 
 ## Storage
@@ -119,7 +118,7 @@ Base rule set: `package:flutter_lints/flutter.yaml`. Custom rules in `analysis_o
 
 ## Network Recovery & Error Pages
 
-- **Auto-refetch on reconnect.** List screens that fetch data should mix in `NetworkAutoRefreshMixin` (`lib/features/shared/widget/network_auto_refresh_mixin.dart`) on their `State<...>` and implement `onNetworkRestored()` to re-trigger their fetches. The mixin subscribes to `NetworkCubit.onRecoveryStream` and calls the override when connectivity comes back. Canonical example: `DemoScreen`.
+- **Auto-refetch on reconnect.** List screens that fetch data should mix in `NetworkAutoRefreshMixin` (`lib/features/shared/widget/network_auto_refresh_mixin.dart`) on their `State<...>` and implement `onNetworkRestored()` to re-trigger their fetches. The mixin subscribes to `NetworkCubit.onRecoveryStream` and calls the override when connectivity comes back.
 - **Global "back online" banner.** `GlobalNetworkRecoveryListener` (`lib/features/shared/widget/global_recovery_listener_widget.dart`) wraps the app inside `MaterialApp.router`'s `builder:` and shows a single snackbar via `navigatorKey.currentContext` on recovery. Already wired — don't add per-screen banners.
 - **Full-screen error pages.** When a load fails in a way that makes the screen unusable, swap the whole scaffold for a shared page instead of rendering an inline error:
   - `AppErrorPage` (`lib/core/app/pages/app_error_page.dart`) — takes `title?`, `message?`, `onRetry?`. Title/message default to localized `somethingWentWrong` / `errUnexpected` when null.
@@ -161,15 +160,15 @@ Group entries from the same day under one heading; newest date at the top. Skip 
 
 Firebase + FCM are **off by default** in the starter. To wire them, follow the steps in [`STARTER.md`](STARTER.md). Until you do:
 
-- `lib/main_common.dart` has the Firebase + FCM init commented out with TODOs.
+- `lib/main.dart` has the Firebase + FCM init commented out with TODOs.
 - `injection_container.dart` does **not** register `FcmNotificationService`.
 - `AuthSessionWriter` does **not** call FCM. Re-add `fcm.subscribeToTopics(...)` there once you've enabled FCM and want post-login topic subscriptions.
 
 ## Common Commands
 
 ```bash
-# Run the app (dev)
-flutter run -t lib/main_development.dart
+# Run the app
+flutter run
 
 # Run all tests
 flutter test
@@ -190,6 +189,10 @@ Shell shortcuts for the recurring chores. All exit non-zero on failure so they'r
 
 | Script | What it does | When to run |
 |---|---|---|
+| `./scripts/build.sh` | Run `build_runner` once | When you add/change code-gen files (freezed, injectable) |
+| `./scripts/watch.sh` | Run `build_runner` in watch mode | Auto-generate files on save during development |
+| `./scripts/fix.sh` | Apply automated dart fixes | To quickly resolve lint issues and deprecations |
+| `./scripts/feature.sh <name>` | Create clean-architecture folders | Starting a new feature (e.g., `./scripts/feature.sh projects`) |
 | `./scripts/fix_ios.sh` | `pod deintegrate` + nuke `Pods/` and `Podfile.lock` + `pod install --repo-update` | "pod install failed", linker errors, module-not-found, after switching branches with iOS dep changes |
 | `./scripts/clean.sh` | `flutter clean` + remove `.dart_tool/` and `pubspec.lock` + `pub get` + `build_runner` | Freezed gen drifted, dep changes flaky, "this should work but doesn't" after a branch switch. Doesn't touch iOS Pods — use `fix_ios.sh` for that |
 | `./scripts/check.sh` | `flutter analyze` + `flutter test` | Before pushing a branch or opening a PR. Pre-CI guard |

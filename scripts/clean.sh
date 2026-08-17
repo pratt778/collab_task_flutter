@@ -22,7 +22,4 @@ rm -rf .dart_tool pubspec.lock
 echo "→ flutter pub get…"
 flutter pub get
 
-echo "→ Regenerating freezed/json_serializable…"
-dart run build_runner build --delete-conflicting-outputs
-
 echo "✓ Clean complete."

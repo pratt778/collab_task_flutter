@@ -47,7 +47,7 @@ class NotFoundPage extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   debugPrint('Retry button pressed');
-                  context.goNamed(MainRoutes.demoName);
+                  context.goNamed(MainRoutes.taskBoardName);
                 },
                 child: Text(l.retry),
               ),
