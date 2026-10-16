@@ -26,10 +26,10 @@ class _SplashScreenState extends State<SplashScreen> {
     await Future.delayed(const Duration(seconds: 2));
     if (!mounted) return;
 
-    if (AppConfig.enableIpConfig) {
-      context.goNamed(MainRoutes.ipConfigName);
-      return;
-    }
+    // if (AppConfig.enableIpConfig) {
+    //   context.goNamed(MainRoutes.ipConfigName);
+    //   return;
+    // }
 
     final isLoggedIn = SecureStorageHelper().isUserLoggedIn();
     context.goNamed(isLoggedIn ? MainRoutes.taskBoardName : MainRoutes.authName);
