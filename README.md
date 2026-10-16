@@ -138,7 +138,7 @@ Each feature directory adheres to the Clean Architecture layer separation:
 
 - **`domain/`**: The core business logic layer, free from external dependencies. Contains **Entities**, abstract **Repository interfaces**, and specific **UseCases**.
 - **`data/`**: The infrastructure layer. Contains **Data Sources** (Supabase clients, Dio requests), **Models** (JSON serialization with `freezed`), and concrete **Repository implementations**.
-- **`presentation/`**: The UI layer. Contains **Screens/Pages**, **BLoC/Cubits** managing UI state, and feature-specific **Widgets**.
+- **`presentation/`**: The UI layer. Contains **Screens/Pages**, **Cubits** managing UI state, and feature-specific **Widgets**.
 
 ---
 
@@ -214,12 +214,12 @@ flutter run -d <device_id>
 
 ## 🧪 Testing
 
-The codebase employs an automated testing strategy covering pure utility logic, async exception mapping, and BLoC/Cubit state machines.
+The codebase employs an automated testing strategy covering pure utility logic, async exception mapping, and Cubit state machines.
 
 ### Testing Stack
 
 - **[flutter_test](https://api.flutter.dev/flutter/flutter_test/flutter_test-library.html):** Core test framework and widget test harness.
-- **[bloc_test](https://pub.dev/packages/bloc_test):** Declarative testing for BLoC and Cubit state emission streams.
+- **[bloc_test](https://pub.dev/packages/bloc_test):** Declarative testing for Cubit state emission streams.
 - **[mocktail](https://pub.dev/packages/mocktail):** Type-safe, null-safe mocking library without code generation.
 
 ### Running Tests
