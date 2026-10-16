@@ -51,6 +51,7 @@ class _TaskBoardScreenState extends State<TaskBoardScreen> {
     _loadedWorkspaceId = workspace.id;
     context.read<TaskListCubit>().getTasks(workspace.id);
   }
+  final bool _loading =false;
 
   @override
   Widget build(BuildContext context) {

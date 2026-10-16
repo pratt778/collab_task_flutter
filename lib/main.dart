@@ -51,7 +51,7 @@ Future<void> initializeApp() async {
       ApiConstants.supabaseAnonKey.isNotEmpty) {
     await Supabase.initialize(
       url: ApiConstants.supabaseUrl,
-      anonKey: ApiConstants.supabaseAnonKey,
+      publishableKey: ApiConstants.supabaseAnonKey,
     );
   } else {
     debugPrint(

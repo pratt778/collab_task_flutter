@@ -43,7 +43,7 @@ class AuthCubit extends Cubit<AuthState> {
       )));
       return true;
     }
-    emit(const AuthState.unauthenticated());
+    emit(const AuthState.unauthenticated());                                                                                                                                                                                                                                        
     return false;
   }
 

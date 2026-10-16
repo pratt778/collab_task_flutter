@@ -57,6 +57,8 @@ class RetryInterceptor extends Interceptor {
       case DioExceptionType.connectionError:
       case DioExceptionType.connectionTimeout:
         return true;
+      case DioExceptionType.transformTimeout:
+        return true;
       case DioExceptionType.sendTimeout:
       case DioExceptionType.receiveTimeout:
         return isIdempotent;

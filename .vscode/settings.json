@@ -1,0 +1,31 @@
+{
+  "dart.analysisExcludedFolders": [
+    "build",
+    ".dart_tool",
+    "android/.gradle",
+    "android/app/build",
+    "ios/Pods",
+    ".fvm",
+    "vendor"
+  ],
+  "dart.maxAnalysisSdk": "3.11.0",
+  "dart.analyzerFileAnalyzerErrorsAsInfo": true,
+  "editor.suggestSelection": "first",
+  "files.watcherExclude": {
+    "**/build/**": true,
+    "**/.dart_tool/**": true,
+    "**/android/.gradle/**": true,
+    "**/node_modules/**": true
+  },
+  "search.exclude": {
+    "**/build": true,
+    "**/.dart_tool": true,
+    "**/android/.gradle": true
+  },
+  "dart.runPubGetOnSave": "never",
+  "dart.analyzerVmAdditionalArgs": ["--old-gen-heap-size=768"],
+  "dart.autoImportCompletions": false,
+  "dart.pushToCharPredictions": false,
+  "dart.enableSdkCompletion": false,
+  "dart.checkForSdkUpdatesOnStartup": false
+}

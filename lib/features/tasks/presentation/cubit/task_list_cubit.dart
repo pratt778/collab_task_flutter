@@ -57,12 +57,19 @@ class TaskListCubit extends Cubit<TaskListState> {
 
   Future<void> createTask(TaskEntity task) async {
     final result = await createTaskUseCase(task);
-    result.fold((failure) => emit(TaskListState.error(failure)), _upsertTask);
+    result.fold((failure) {
+      return false;
+    }, (newTask){
+      _upsertTask(newTask);
+      return true;
+    });
   }
 
   Future<void> updateTask(TaskEntity task) async {
     final result = await updateTaskUseCase(task);
-    result.fold((failure) => emit(TaskListState.error(failure)), _upsertTask);
+    result.fold((failure) {
+      emit(TaskListState.error(failure));
+    }, _upsertTask);
   }
 
   Future<void> deleteTask(String id) async {
